@@ -1,7 +1,7 @@
 from .vllm_client import vllm
 import logging
 
-logger = logging.getLogger("intellgenthub")
+logger = logging.getLogger("intelligenthub")
 
 async def score_and_filter(article: dict) -> dict:
     text = ((article.get('title') or '') + '\n\n' + (article.get('text') or '')).strip()

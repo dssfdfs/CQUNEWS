@@ -7,9 +7,9 @@ from .config import settings
 import logging
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("intellgenthub")
+logger = logging.getLogger("intelligenthub")
 
-app = FastAPI(title="intellgenthub")
+app = FastAPI(title="intelligenthub")
 
 class IngestReq(BaseModel):
     url: str

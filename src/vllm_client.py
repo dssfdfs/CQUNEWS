@@ -3,7 +3,7 @@ import logging
 import json
 from .config import settings
 
-logger = logging.getLogger("intellgenthub")
+logger = logging.getLogger("intelligenthub")
 
 class VLLMClient:
     def __init__(self):

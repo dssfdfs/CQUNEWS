@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import httpx
 import logging
 
-logger = logging.getLogger("intellgenthub")
+logger = logging.getLogger("intelligenthub")
 
 async def fetch_article_text(url: str) -> str:
     """抓取文章正文"""
