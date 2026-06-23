@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CQUNEWS新闻聚合分析系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div id="login-page" class="page">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-header">
+                        <i class="fa-solid fa-newspaper"></i>
+                        <h1>CQUNEWS新闻聚合分析系统</h1>
+                    </div>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" id="username" class="form-control" placeholder="请输入用户名" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" id="password" class="form-control" placeholder="请输入密码" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">登录</button>
+                        <button type="button" id="register-btn" class="btn btn-link btn-block">注册新用户</button>
+                    </form>
+                    <div id="login-error" class="error-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-page" class="page hidden">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <i class="fa-solid fa-newspaper"></i>
+                    <span>CQUNEWS</span>
+                </div>
+                <ul class="sidebar-menu">
+                    <li class="menu-item active" data-page="news">
+                        <i class="fa-solid fa-newspaper"></i>
+                        <span>新闻情报</span>
+                    </li>
+                    <li class="menu-item" data-page="sources">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>信源管理</span>
+                    </li>
+                    <li class="menu-item" data-page="analysis">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>舆情分析</span>
+                    </li>
+                    <li class="menu-item" data-page="summary">
+                        <i class="fa-solid fa-file-text"></i>
+                        <span>智能摘要</span>
+                    </li>
+                </ul>
+                <div class="sidebar-footer">
+                    <button id="logout-btn" class="btn btn-danger btn-sm">退出登录</button>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <header class="top-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="search-input" placeholder="搜索新闻...">
+                        <button id="search-btn" class="btn btn-primary">搜索</button>
+                    </div>
+                    <div class="user-info">
+                        <span id="user-name">管理员</span>
+                        <span id="user-role">admin</span>
+                    </div>
+                </header>
+
+                <div id="news-page" class="content-page">
+                    <div class="page-header">
+                        <h2>新闻情报</h2>
+                        <div class="filter-bar">
+                            <input type="text" id="filter-keyword" placeholder="关键词">
+                            <input type="date" id="filter-start-date">
+                            <input type="date" id="filter-end-date">
+                            <select id="filter-source">
+                                <option value="">全部信源</option>
+                            </select>
+                            <button id="filter-btn" class="btn btn-secondary">筛选</button>
+                        </div>
+                    </div>
+                    <div id="news-list" class="news-list">
+                    </div>
+                    <div id="news-pagination" class="pagination"></div>
+                </div>
+
+                <div id="sources-page" class="content-page hidden">
+                    <div class="page-header">
+                        <h2>信源管理</h2>
+                        <button id="add-source-btn" class="btn btn-primary">添加信源</button>
+                    </div>
+                    <div id="sources-list" class="sources-list">
+                    </div>
+                </div>
+
+                <div id="analysis-page" class="content-page hidden">
+                    <div class="page-header">
+                        <h2>舆情分析</h2>
+                    </div>
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <h3>热点关键词</h3>
+                            <div id="hot-keywords" class="keywords-list"></div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>词云数据</h3>
+                            <div id="word-cloud" class="word-cloud-container"></div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>事件聚类</h3>
+                            <div id="events-list" class="events-list"></div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>情绪分布</h3>
+                            <div id="sentiment-distribution" class="sentiment-chart"></div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>词汇情绪感知</h3>
+                            <div class="word-sentiment-form">
+                                <input type="text" id="word-sentiment-input" class="form-control" placeholder="输入关键词分析情绪">
+                                <button id="word-sentiment-btn" class="btn btn-primary">分析</button>
+                            </div>
+                            <div id="word-sentiment-result" class="word-sentiment-result hidden"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="summary-page" class="content-page hidden">
+                    <div class="page-header">
+                        <h2>智能摘要</h2>
+                    </div>
+                    <div class="summary-section">
+                        <div class="summary-options">
+                            <div class="option-group">
+                                <label>摘要长度</label>
+                                <select id="summary-length" class="form-control">
+                                    <option value="short">短摘要（50字）</option>
+                                    <option value="medium" selected>中摘要（150字）</option>
+                                    <option value="long">长摘要（300字）</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label>语言风格</label>
+                                <select id="summary-style" class="form-control">
+                                    <option value="neutral" selected>中性客观</option>
+                                    <option value="formal">正式严谨</option>
+                                    <option value="concise">简洁精炼</option>
+                                    <option value="vivid">生动活泼</option>
+                                    <option value="analytical">分析深入</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="summary-input-section">
+                            <div class="input-tabs">
+                                <button class="tab-btn active" data-tab="url">URL导入</button>
+                                <button class="tab-btn" data-tab="text">直接输入</button>
+                            </div>
+                            
+                            <div class="tab-content" id="url-tab">
+                                <input type="text" id="summary-url" class="form-control" placeholder="请输入新闻文章URL">
+                                <button id="summary-url-btn" class="btn btn-primary">导入并生成摘要</button>
+                            </div>
+                            
+                            <div class="tab-content hidden" id="text-tab">
+                                <input type="text" id="summary-title" class="form-control" placeholder="文章标题（可选）">
+                                <textarea id="summary-content" class="form-control" placeholder="请输入文章内容" rows="10"></textarea>
+                                <button id="summary-text-btn" class="btn btn-primary">生成摘要</button>
+                            </div>
+                        </div>
+
+                        <div id="summary-result" class="summary-result hidden">
+                            <div class="summary-tabs">
+                                <button class="summary-tab-btn active" data-summary="short">短摘要</button>
+                                <button class="summary-tab-btn" data-summary="medium">中摘要</button>
+                                <button class="summary-tab-btn" data-summary="long">长摘要</button>
+                            </div>
+                            <div class="summary-content">
+                                <div id="summary-short-content" class="summary-text"></div>
+                                <div id="summary-medium-content" class="summary-text hidden"></div>
+                                <div id="summary-long-content" class="summary-text hidden"></div>
+                            </div>
+                            <div class="sentiment-info">
+                                <h4>情绪分析</h4>
+                                <div id="sentiment-result"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div id="article-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">文章详情</h3>
+                    <button id="close-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="source-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="source-modal-title">添加信源</h3>
+                    <button id="close-source-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="source-form">
+                        <div class="form-group">
+                            <label for="source-name">名称</label>
+                            <input type="text" id="source-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="source-url">网址</label>
+                            <input type="url" id="source-url" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="source-type">类型</label>
+                            <select id="source-type" class="form-control">
+                                <option value="website">网站</option>
+                                <option value="rss">RSS</option>
+                                <option value="wechat">公众号</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="source-rss">RSS地址（可选）</label>
+                            <input type="url" id="source-rss" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
