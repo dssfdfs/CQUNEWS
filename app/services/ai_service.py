@@ -167,3 +167,40 @@ def analyze_sentiment(content: str) -> dict:
         "positive_words": positive_words_found,
         "negative_words": negative_words_found
     }
+
+
+def generate_title(content: str, style: str = "neutral") -> str:
+    sentences = content.split("\n")
+    sentences = [s.strip() for s in sentences if s.strip() and len(s) > 10]
+    
+    if not sentences:
+        return "未命名文章"
+    
+    keywords = extract_keywords(content, max_keywords=5)
+    
+    if len(sentences) >= 1:
+        first_sentence = sentences[0]
+        if len(first_sentence) <= 30:
+            base_title = first_sentence
+        else:
+            base_title = first_sentence[:27] + "..."
+    else:
+        base_title = "文章摘要"
+    
+    if keywords:
+        keyword_str = "、".join(keywords[:3])
+        if style == "formal":
+            title = f"关于{keyword_str}的研究报告"
+        elif style == "vivid":
+            title = f"震惊！{keywords[0]}背后隐藏的秘密"
+        elif style == "question":
+            title = f"{keywords[0]}？一文读懂核心要点"
+        else:
+            title = base_title if base_title != "文章摘要" else f"聚焦{keywords[0]}：深度解读"
+    else:
+        title = base_title
+    
+    if len(title) > 50:
+        title = title[:47] + "..."
+    
+    return title

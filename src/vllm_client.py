@@ -1,6 +1,7 @@
 import httpx
 import logging
 import json
+import random
 from .config import settings
 
 logger = logging.getLogger("intelligenthub")
@@ -8,14 +9,14 @@ logger = logging.getLogger("intelligenthub")
 class VLLMClient:
     def __init__(self):
         self.base_url = settings.VLLM_URL.rstrip("/")
-        self.model = getattr(settings, "VLLM_MODEL", "default-model")  # 可以在 config 里设置模型名
+        self.model = getattr(settings, "VLLM_MODEL", "default-model")
+        self.mock_mode = getattr(settings, "MOCK_MODE", False)
 
     async def analyze(self, text: str, max_tokens: int = 300) -> dict:
-        """
-        使用 vLLM /v1/chat/completions 接口分析新闻内容
-        - 判断是否有价值（keep）
-        - 生成简要摘要
-        """
+        if self.mock_mode:
+            logger.info("Running in MOCK mode, skipping vLLM call")
+            return self._mock_analyze(text)
+
         prompt = f"""
 你是一个新闻内容分析助手。请仔细阅读下面的新闻文本，并根据以下要求输出结果：
 1. 判断这条新闻是否重要、有社会或经济价值，用布尔值表示（True/False）。
@@ -50,7 +51,6 @@ class VLLMClient:
                 data = resp.json()
                 logger.debug(f"vLLM raw response: {json.dumps(data, ensure_ascii=False)[:800]}")
 
-                # 解析内容
                 content = (
                     data.get("choices", [{}])[0]
                     .get("message", {})
@@ -58,7 +58,6 @@ class VLLMClient:
                     .strip()
                 )
 
-                # 尝试从模型返回文本中解析 JSON
                 try:
                     result = json.loads(content)
                 except Exception:
@@ -83,5 +82,18 @@ class VLLMClient:
 
         return {"keep": False, "summary": "", "meta": {}}
 
-# 全局实例
+    def _mock_analyze(self, text: str) -> dict:
+        keep = random.choice([True, True, False])
+        summary = f"[Mock摘要] 这是一篇关于{text[:30]}...的新闻报道，内容涉及多个方面的信息，具有一定的新闻价值。"
+        return {
+            "keep": keep,
+            "summary": summary,
+            "meta": {
+                "usage": {"prompt_tokens": len(text), "completion_tokens": 100},
+                "model": "mock-model",
+                "finish_reason": "stop",
+            },
+            "text": text[:500] + "..." if len(text) > 500 else text,
+        }
+
 vllm = VLLMClient()

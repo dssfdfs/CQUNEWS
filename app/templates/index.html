@@ -45,9 +45,9 @@
                         <i class="fa-solid fa-newspaper"></i>
                         <span>新闻情报</span>
                     </li>
-                    <li class="menu-item" data-page="sources">
-                        <i class="fa-solid fa-globe"></i>
-                        <span>信源管理</span>
+                    <li class="menu-item" data-page="history">
+                        <i class="fa-solid fa-history"></i>
+                        <span>新闻历史</span>
                     </li>
                     <li class="menu-item" data-page="analysis">
                         <i class="fa-solid fa-chart-line"></i>
@@ -59,7 +59,6 @@
                     </li>
                 </ul>
                 <div class="sidebar-footer">
-                    <button id="logout-btn" class="btn btn-danger btn-sm">退出登录</button>
                 </div>
             </nav>
 
@@ -70,9 +69,28 @@
                         <input type="text" id="search-input" placeholder="搜索新闻...">
                         <button id="search-btn" class="btn btn-primary">搜索</button>
                     </div>
-                    <div class="user-info">
-                        <span id="user-name">管理员</span>
-                        <span id="user-role">admin</span>
+                    <div class="user-menu">
+                        <button id="user-avatar-btn" class="user-avatar">
+                            <i class="fa-solid fa-user-circle"></i>
+                            <span id="user-name">用户</span>
+                        </button>
+                        <div id="user-dropdown" class="user-dropdown hidden">
+                            <div class="dropdown-header">
+                                <strong id="dropdown-username">用户名</strong>
+                                <span id="dropdown-role" class="badge bg-primary">角色</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item" id="menu-sources">
+                                <i class="fa-solid fa-globe"></i> 信源管理
+                            </button>
+                            <button class="dropdown-item" id="menu-user-management">
+                                <i class="fa-solid fa-users-cog"></i> 用户管理
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item text-danger" id="logout-btn">
+                                <i class="fa-solid fa-sign-out-alt"></i> 退出登录
+                            </button>
+                        </div>
                     </div>
                 </header>
 
@@ -94,12 +112,40 @@
                     <div id="news-pagination" class="pagination"></div>
                 </div>
 
+                <div id="history-page" class="content-page hidden">
+                    <div class="page-header">
+                        <h2>新闻历史</h2>
+                        <div class="header-actions">
+                            <button id="delete-selected-btn" class="btn btn-danger" disabled>
+                                <i class="fa-solid fa-trash"></i> 删除选中
+                            </button>
+                            <button id="clear-all-btn" class="btn btn-outline-danger">
+                                <i class="fa-solid fa-broom"></i> 清空全部
+                            </button>
+                        </div>
+                    </div>
+                    <div id="history-list" class="history-list">
+                    </div>
+                </div>
+
                 <div id="sources-page" class="content-page hidden">
                     <div class="page-header">
                         <h2>信源管理</h2>
-                        <button id="add-source-btn" class="btn btn-primary">添加信源</button>
+                        <div class="header-actions">
+                            <button id="add-source-btn" class="btn btn-primary">添加信源</button>
+                            <button id="crawl-url-btn" class="btn btn-success">直接爬取网址</button>
+                        </div>
                     </div>
                     <div id="sources-list" class="sources-list">
+                    </div>
+                </div>
+
+                <div id="user-management-page" class="content-page hidden">
+                    <div class="page-header">
+                        <h2>用户管理</h2>
+                        <button id="add-user-btn" class="btn btn-primary">添加用户</button>
+                    </div>
+                    <div id="users-list" class="users-list">
                     </div>
                 </div>
 
@@ -165,6 +211,7 @@
                             <div class="input-tabs">
                                 <button class="tab-btn active" data-tab="url">URL导入</button>
                                 <button class="tab-btn" data-tab="text">直接输入</button>
+                                <button class="tab-btn" data-tab="doc">文档导入</button>
                             </div>
                             
                             <div class="tab-content" id="url-tab">
@@ -174,12 +221,47 @@
                             
                             <div class="tab-content hidden" id="text-tab">
                                 <input type="text" id="summary-title" class="form-control" placeholder="文章标题（可选）">
-                                <textarea id="summary-content" class="form-control" placeholder="请输入文章内容" rows="10"></textarea>
-                                <button id="summary-text-btn" class="btn btn-primary">生成摘要</button>
+                                <textarea id="summary-content" class="form-control" placeholder="请输入文章内容" rows="8"></textarea>
+                                <button id="summary-generate-btn" class="btn btn-primary">生成摘要和标题</button>
+                            </div>
+                            
+                            <div class="tab-content hidden" id="doc-tab">
+                                <div class="doc-upload-area" id="doc-upload-area">
+                                    <i class="fa-solid fa-file-upload"></i>
+                                    <p>点击选择文档或拖拽文件到此处</p>
+                                    <input type="file" id="doc-file-input" accept=".txt,.doc,.docx,.pdf" class="hidden">
+                                </div>
+                                <div id="doc-preview" class="doc-preview hidden">
+                                    <div class="doc-info">
+                                        <i class="fa-solid fa-file-alt"></i>
+                                        <span id="doc-filename"></span>
+                                        <button id="doc-clear-btn" class="btn btn-sm btn-outline-danger">清除</button>
+                                    </div>
+                                    <div id="doc-content-preview" class="doc-content-preview"></div>
+                                    <button id="doc-generate-btn" class="btn btn-primary">生成摘要和标题</button>
+                                </div>
                             </div>
                         </div>
 
                         <div id="summary-result" class="summary-result hidden">
+                                <div class="result-header">
+                                    <h4>生成结果</h4>
+                                    <div class="result-actions">
+                                        <button id="speak-btn" class="btn btn-sm btn-outline-success" title="朗读摘要">
+                                            <i class="fa-solid fa-volume-high"></i> 朗读
+                                        </button>
+                                        <button id="stop-speak-btn" class="btn btn-sm btn-outline-warning hidden" title="停止朗读">
+                                            <i class="fa-solid fa-volume-xmark"></i> 停止
+                                        </button>
+                                        <button id="copy-all-btn" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fa-solid fa-copy"></i> 复制全部
+                                        </button>
+                                    </div>
+                                </div>
+                            <div class="result-section">
+                                <label>生成的标题</label>
+                                <div id="generated-title" class="generated-title"></div>
+                            </div>
                             <div class="summary-tabs">
                                 <button class="summary-tab-btn active" data-summary="short">短摘要</button>
                                 <button class="summary-tab-btn" data-summary="medium">中摘要</button>
@@ -242,6 +324,71 @@
                         </div>
                         <button type="submit" class="btn btn-primary">保存</button>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="user-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="user-modal-title">添加用户</h3>
+                    <button id="close-user-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="user-form">
+                        <div class="form-group">
+                            <label for="user-username">用户名</label>
+                            <input type="text" id="user-username" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-password">密码</label>
+                            <input type="password" id="user-password" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-role">角色</label>
+                            <select id="user-role" class="form-control">
+                                <option value="user">普通用户</option>
+                                <option value="admin">管理员</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="crawl-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="crawl-modal-title">直接爬取网址</h3>
+                    <button id="close-crawl-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="crawl-form">
+                        <div class="form-group">
+                            <label for="crawl-url">网址</label>
+                            <input type="url" id="crawl-url" class="form-control" placeholder="https://example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="crawl-depth">爬取深度</label>
+                            <select id="crawl-depth" class="form-control">
+                                <option value="1">1层</option>
+                                <option value="2" selected>2层</option>
+                                <option value="3">3层</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="crawl-limit">最大文章数</label>
+                            <input type="number" id="crawl-limit" class="form-control" value="10" min="1" max="50">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="start-crawl-btn">开始爬取</button>
+                    </form>
+                    <div id="crawl-progress" class="hidden">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div id="crawl-status"></div>
+                    </div>
                 </div>
             </div>
         </div>

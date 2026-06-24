@@ -1,15 +1,21 @@
 from fastapi import FastAPI, HTTPException, Header, Depends
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from .collectors import fetch_article_text
 from .processors import score_and_filter
-from .storage import init_db, save_article, database
+from .storage import init_db, save_article, get_articles, database
 from .config import settings
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("intelligenthub")
 
 app = FastAPI(title="intelligenthub")
+
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 class IngestReq(BaseModel):
     url: str
@@ -32,6 +38,15 @@ async def shutdown():
 @app.get("/health")
 async def health():
     return {"ok": True}
+
+@app.get("/")
+async def index():
+    return FileResponse(os.path.join(static_dir, "index.html"))
+
+@app.get("/articles")
+async def list_articles(_=Depends(require_apikey)):
+    rows = await get_articles()
+    return [dict(row) for row in rows]
 
 @app.post("/ingest")
 async def ingest(payload: IngestReq, _=Depends(require_apikey)):

@@ -78,3 +78,20 @@ def search_articles(db: Session, keyword: str = None, start_date: datetime = Non
     if source_id:
         query = query.filter(NewsArticle.source_id == source_id)
     return query.all()
+
+
+def delete_news_article(db: Session, article_id: int):
+    db_article = db.query(NewsArticle).filter(NewsArticle.id == article_id).first()
+    if db_article:
+        db.delete(db_article)
+        db.commit()
+    return db_article
+
+
+def delete_news_articles_by_ids(db: Session, article_ids: list = None):
+    if article_ids:
+        deleted_count = db.query(NewsArticle).filter(NewsArticle.id.in_(article_ids)).delete(synchronize_session=False)
+    else:
+        deleted_count = db.query(NewsArticle).delete(synchronize_session=False)
+    db.commit()
+    return deleted_count

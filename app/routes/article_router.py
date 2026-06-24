@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from datetime import datetime
-from app.crud.news_article_crud import create_news_article, get_news_article, get_all_news_articles, search_articles, get_news_article_by_url_hash, get_news_article_by_url, update_article_summary, update_article_sentiment
+from app.crud.news_article_crud import create_news_article, get_news_article, get_all_news_articles, search_articles, get_news_article_by_url_hash, get_news_article_by_url, update_article_summary, update_article_sentiment, delete_news_article, delete_news_articles_by_ids
 from app.crud.keyword_crud import get_or_create_keyword
 from app.crud.entity_crud import get_or_create_entity
-from app.schemas.news_article import NewsArticleCreate, NewsArticleResponse, ArticleIngestRequest, SummaryGenerateRequest, SummaryGenerateResponse, SentimentAnalysisResponse
+from app.schemas.news_article import NewsArticleCreate, NewsArticleResponse, ArticleIngestRequest, SummaryGenerateRequest, SummaryGenerateResponse, SentimentAnalysisResponse, TitleGenerateRequest, TitleGenerateResponse
 from app.services.crawler_service import crawl_article
-from app.services.ai_service import generate_summary, extract_keywords, extract_entities, calculate_score, check_consistency, generate_summary_with_style, analyze_sentiment
+from app.services.ai_service import generate_summary, extract_keywords, extract_entities, calculate_score, check_consistency, generate_summary_with_style, analyze_sentiment, generate_title
 from app.database import get_db
 
 router = APIRouter(prefix="/articles", tags=["articles"])
@@ -100,6 +100,15 @@ def generate_article_summary(request: SummaryGenerateRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.post("/title", response_model=TitleGenerateResponse)
+def generate_article_title(request: TitleGenerateRequest):
+    try:
+        title = generate_title(request.content, request.style)
+        return TitleGenerateResponse(title=title)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/{article_id}/summary")
 def generate_summary_for_article(article_id: int, length: str = "medium", style: str = "neutral", db: Session = Depends(get_db)):
     article = get_news_article(db, article_id)
@@ -108,6 +117,7 @@ def generate_summary_for_article(article_id: int, length: str = "medium", style:
     
     try:
         summaries = generate_summary_with_style(article.content, article.title, length, style)
+        generated_title = generate_title(article.content, style)
         
         update_article_summary(db, article_id, summaries["short"], summaries["medium"], summaries["long"])
         
@@ -116,7 +126,8 @@ def generate_summary_for_article(article_id: int, length: str = "medium", style:
             "summary_short": summaries["short"],
             "summary_medium": summaries["medium"],
             "summary_long": summaries["long"],
-            "selected_summary": summaries.get(length, summaries["medium"])
+            "selected_summary": summaries.get(length, summaries["medium"]),
+            "generated_title": generated_title
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -152,3 +163,27 @@ def analyze_sentiment_for_article(article_id: int, db: Session = Depends(get_db)
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class DeleteArticlesRequest(BaseModel):
+    ids: list[int]
+
+
+@router.delete("/{article_id}", response_model=NewsArticleResponse)
+def delete_article(article_id: int, db: Session = Depends(get_db)):
+    article = delete_news_article(db, article_id)
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return article
+
+
+@router.delete("/batch/")
+def delete_articles(request: DeleteArticlesRequest, db: Session = Depends(get_db)):
+    deleted_count = delete_news_articles_by_ids(db, request.ids)
+    return {"deleted_count": deleted_count, "deleted_ids": request.ids}
+
+
+@router.delete("/clear/")
+def clear_all_articles(db: Session = Depends(get_db)):
+    deleted_count = delete_news_articles_by_ids(db, None)
+    return {"deleted_count": deleted_count}

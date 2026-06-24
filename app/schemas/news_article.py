@@ -51,11 +51,21 @@ class SummaryGenerateRequest(BaseModel):
     style: str = "neutral"
 
 
+class TitleGenerateRequest(BaseModel):
+    content: str
+    style: str = "neutral"
+
+
 class SummaryGenerateResponse(BaseModel):
     summary_short: str
     summary_medium: str
     summary_long: str
     selected_summary: str
+    generated_title: str = None
+
+
+class TitleGenerateResponse(BaseModel):
+    title: str
 
 
 class SentimentAnalysisResponse(BaseModel):
