@@ -7,7 +7,7 @@ from app.crud.keyword_crud import get_or_create_keyword
 from app.crud.entity_crud import get_or_create_entity
 from app.schemas.news_article import NewsArticleCreate, NewsArticleResponse, ArticleIngestRequest, SummaryGenerateRequest, SummaryGenerateResponse, SentimentAnalysisResponse, TitleGenerateRequest, TitleGenerateResponse
 from app.services.crawler_service import crawl_article
-from app.services.ai_service import generate_summary, extract_keywords, extract_entities, calculate_score, check_consistency, generate_summary_with_style, analyze_sentiment, generate_title
+from app.services.ai_service import generate_summary, extract_keywords, extract_entities, calculate_score, check_consistency, generate_summary_with_style, analyze_sentiment, generate_title, classify_news
 from app.database import get_db
 
 router = APIRouter(prefix="/articles", tags=["articles"])
@@ -70,18 +70,18 @@ def get_articles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db))
     return get_all_news_articles(db, skip, limit)
 
 
-@router.get("/{article_id}", response_model=NewsArticleResponse)
-def get_article(article_id: int, db: Session = Depends(get_db)):
-    article = get_news_article(db, article_id)
-    if not article:
-        raise HTTPException(status_code=404, detail="Article not found")
-    return article
-
-
 @router.get("/search/")
 def search_article(keyword: str = None, start_date: datetime = None, end_date: datetime = None, source_id: int = None, db: Session = Depends(get_db)):
     results = search_articles(db, keyword, start_date, end_date, source_id)
     return results
+
+
+@router.get("/by-url/")
+def get_article_by_url(url: str, db: Session = Depends(get_db)):
+    article = get_news_article_by_url(db, url)
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return article
 
 
 @router.post("/summary", response_model=SummaryGenerateResponse)
@@ -90,11 +90,19 @@ def generate_article_summary(request: SummaryGenerateRequest):
         summaries = generate_summary_with_style(request.content, request.title, request.length, request.style)
         selected_summary = summaries.get(request.length, summaries["medium"])
         
+        sentiment = analyze_sentiment(request.content)
+        category = classify_news(request.content, request.title)
+        
         return SummaryGenerateResponse(
             summary_short=summaries["short"],
             summary_medium=summaries["medium"],
             summary_long=summaries["long"],
-            selected_summary=selected_summary
+            selected_summary=selected_summary,
+            sentiment_label=sentiment["sentiment_label"],
+            emotion_label_cn=sentiment["emotion_label_cn"],
+            sentiment_score=sentiment["sentiment_score"],
+            primary_category=category["primary_category"],
+            category_confidence=category["confidence"]
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -105,6 +113,19 @@ def generate_article_title(request: TitleGenerateRequest):
     try:
         title = generate_title(request.content, request.style)
         return TitleGenerateResponse(title=title)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class SentimentRequest(BaseModel):
+    content: str
+
+
+@router.post("/sentiment", response_model=SentimentAnalysisResponse)
+def analyze_article_sentiment(request: SentimentRequest):
+    try:
+        result = analyze_sentiment(request.content)
+        return SentimentAnalysisResponse(**result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -133,19 +154,6 @@ def generate_summary_for_article(article_id: int, length: str = "medium", style:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-class SentimentRequest(BaseModel):
-    content: str
-
-
-@router.post("/sentiment", response_model=SentimentAnalysisResponse)
-def analyze_article_sentiment(request: SentimentRequest):
-    try:
-        result = analyze_sentiment(request.content)
-        return SentimentAnalysisResponse(**result)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @router.post("/{article_id}/sentiment")
 def analyze_sentiment_for_article(article_id: int, db: Session = Depends(get_db)):
     article = get_news_article(db, article_id)
@@ -169,14 +177,6 @@ class DeleteArticlesRequest(BaseModel):
     ids: list[int]
 
 
-@router.delete("/{article_id}", response_model=NewsArticleResponse)
-def delete_article(article_id: int, db: Session = Depends(get_db)):
-    article = delete_news_article(db, article_id)
-    if not article:
-        raise HTTPException(status_code=404, detail="Article not found")
-    return article
-
-
 @router.delete("/batch/")
 def delete_articles(request: DeleteArticlesRequest, db: Session = Depends(get_db)):
     deleted_count = delete_news_articles_by_ids(db, request.ids)
@@ -187,3 +187,19 @@ def delete_articles(request: DeleteArticlesRequest, db: Session = Depends(get_db
 def clear_all_articles(db: Session = Depends(get_db)):
     deleted_count = delete_news_articles_by_ids(db, None)
     return {"deleted_count": deleted_count}
+
+
+@router.get("/{article_id}", response_model=NewsArticleResponse)
+def get_article(article_id: int, db: Session = Depends(get_db)):
+    article = get_news_article(db, article_id)
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return article
+
+
+@router.delete("/{article_id}", response_model=NewsArticleResponse)
+def delete_article(article_id: int, db: Session = Depends(get_db)):
+    article = delete_news_article(db, article_id)
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return article

@@ -8,7 +8,7 @@ class NewsArticleCreate(BaseModel):
     url_hash: str
     title: str
     content: str
-    source_id: int
+    source_id: Optional[int] = None
     summary: str = None
     summary_short: str = None
     summary_medium: str = None
@@ -62,6 +62,11 @@ class SummaryGenerateResponse(BaseModel):
     summary_long: str
     selected_summary: str
     generated_title: str = None
+    sentiment_label: str = None
+    emotion_label_cn: str = None
+    sentiment_score: float = None
+    primary_category: str = None
+    category_confidence: float = None
 
 
 class TitleGenerateResponse(BaseModel):
@@ -71,5 +76,15 @@ class TitleGenerateResponse(BaseModel):
 class SentimentAnalysisResponse(BaseModel):
     sentiment_score: float
     sentiment_label: str
+    emotion_label: str
+    emotion_label_cn: str
+    emotion_scores: dict
     positive_words: list
     negative_words: list
+
+
+class NewsCategoryResponse(BaseModel):
+    primary_category: str
+    confidence: float
+    category_scores: dict
+    top_categories: list

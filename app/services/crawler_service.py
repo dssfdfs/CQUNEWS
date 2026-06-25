@@ -6,7 +6,9 @@ from app.utils.hash_utils import generate_url_hash
 
 
 async def fetch_article(url: str):
-    async with httpx.AsyncClient(timeout=30) as client:
+    async with httpx.AsyncClient(timeout=30, headers={
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    }) as client:
         response = await client.get(url)
         response.raise_for_status()
         return response.text
@@ -14,8 +16,8 @@ async def fetch_article(url: str):
 
 async def crawl_article(url: str):
     html_content = await fetch_article(url)
-    title = extract_title_from_html(html_content)
-    content = extract_text_from_html(html_content)
+    title = extract_title_from_html(html_content, url)
+    content = extract_text_from_html(html_content, url)
     url_hash = generate_url_hash(url)
     return {
         "url": url,

@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:8001';
+const API_BASE = window.location.origin;
 
 let currentUser = null;
 let currentPage = 'news';
@@ -144,12 +144,110 @@ function handleLogout() {
 
 async function loadNews() {
     try {
-        const articles = await apiRequest('/articles/');
+        const [articles, sentimentDist, dailyData, sourceData, sentimentTrend, topKeywords] = await Promise.all([
+            apiRequest('/articles/'),
+            apiRequest('/analysis/sentiment-distribution'),
+            apiRequest('/charts/daily-articles'),
+            apiRequest('/charts/source-distribution'),
+            apiRequest('/charts/sentiment-trend'),
+            apiRequest('/charts/top-keywords')
+        ]);
+        
         renderNewsList(articles);
         loadSourcesForFilter();
+        updateStats(sentimentDist);
+        renderDailyChart(dailyData);
+        renderSourceChart(sourceData);
+        renderSentimentTrendChart(sentimentTrend);
+        renderKeywordsChart(topKeywords);
     } catch (error) {
         console.error('加载新闻失败:', error);
     }
+}
+
+function updateStats(distribution) {
+    document.getElementById('stat-total').textContent = distribution.total || 0;
+    document.getElementById('stat-positive').textContent = distribution.positive || 0;
+    document.getElementById('stat-negative').textContent = distribution.negative || 0;
+    document.getElementById('stat-neutral').textContent = distribution.neutral || 0;
+}
+
+function renderDailyChart(data) {
+    const chart = echarts.init(document.getElementById('daily-chart'));
+    chart.setOption({
+        tooltip: { trigger: 'axis' },
+        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+        xAxis: { type: 'category', data: data.dates || [] },
+        yAxis: { type: 'value' },
+        series: [{
+            name: '新闻数量',
+            type: 'line',
+            smooth: true,
+            data: data.counts || [],
+            areaStyle: { color: 'rgba(54, 162, 235, 0.2)' },
+            itemStyle: { color: '#36a2eb' }
+        }]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function renderSourceChart(data) {
+    const chart = echarts.init(document.getElementById('source-chart'));
+    chart.setOption({
+        tooltip: { trigger: 'item' },
+        legend: { bottom: 0 },
+        series: [{
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['50%', '40%'],
+            avoidLabelOverlap: false,
+            itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+            label: { show: false },
+            emphasis: { label: { show: true, fontSize: 16, fontWeight: 'bold' } },
+            labelLine: { show: false },
+            data: (data.sources || []).map((source, index) => ({
+                value: data.counts[index] || 0,
+                name: source,
+                itemStyle: { color: ['#36a2eb', '#ff6384', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40'][index % 6] }
+            }))
+        }]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function renderSentimentTrendChart(data) {
+    const chart = echarts.init(document.getElementById('sentiment-chart'));
+    chart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['正面', '负面', '中性'], bottom: 0 },
+        grid: { left: '3%', right: '4%', bottom: '15%', containLabel: true },
+        xAxis: { type: 'category', data: data.dates || [] },
+        yAxis: { type: 'value' },
+        series: [
+            { name: '正面', type: 'line', smooth: true, data: data.positive || [], itemStyle: { color: '#4bc0c0' } },
+            { name: '负面', type: 'line', smooth: true, data: data.negative || [], itemStyle: { color: '#ff6384' } },
+            { name: '中性', type: 'line', smooth: true, data: data.neutral || [], itemStyle: { color: '#ffce56' } }
+        ]
+    });
+    window.addEventListener('resize', () => chart.resize());
+}
+
+function renderKeywordsChart(data) {
+    const chart = echarts.init(document.getElementById('keywords-chart'));
+    chart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+        xAxis: { type: 'value' },
+        yAxis: { type: 'category', data: data.keywords || [], inverse: true },
+        series: [{
+            type: 'bar',
+            data: (data.counts || []).map((count, index) => ({
+                value: count,
+                itemStyle: { color: `rgba(54, 162, 235, ${0.3 + index * 0.05})` }
+            }))
+        }]
+    });
+    window.addEventListener('resize', () => chart.resize());
 }
 
 let selectedArticleIds = [];
@@ -752,17 +850,20 @@ async function handleSummaryFromUrl() {
             body: JSON.stringify({ url })
         });
 
-        const articles = await apiRequest('/articles/');
-        const latestArticle = articles[articles.length - 1];
+        let targetArticle;
+        if (ingestResult.kept) {
+            const articles = await apiRequest('/articles/');
+            targetArticle = articles[articles.length - 1];
+        } else {
+            targetArticle = await apiRequest(`/articles/by-url/?url=${encodeURIComponent(url)}`);
+        }
 
-        if (latestArticle) {
-            const summaryResult = await apiRequest(`/articles/${latestArticle.id}/summary?length=${length}&style=${style}`);
-            const sentimentResult = await apiRequest('/articles/sentiment', {
-                method: 'POST',
-                body: JSON.stringify({ content: latestArticle.content })
-            });
+        if (targetArticle) {
+            const summaryResult = await apiRequest(`/articles/${targetArticle.id}/summary?length=${length}&style=${style}`, {
+            method: 'POST'
+        });
 
-            displaySummaryResult(summaryResult, sentimentResult);
+        displaySummaryResult(summaryResult);
         }
     } catch (error) {
         alert('生成摘要失败: ' + error.message);
@@ -796,13 +897,8 @@ async function handleSummaryFromText() {
             body: JSON.stringify({ content, style })
         });
 
-        const sentimentResult = await apiRequest('/articles/sentiment', {
-            method: 'POST',
-            body: JSON.stringify({ content })
-        });
-
         summaryResult.generated_title = titleResult.title;
-        displaySummaryResult(summaryResult, sentimentResult);
+        displaySummaryResult(summaryResult);
     } catch (error) {
         alert('生成摘要失败: ' + error.message);
     }
@@ -855,19 +951,14 @@ async function handleSummaryFromDoc() {
             body: JSON.stringify({ content, style })
         });
 
-        const sentimentResult = await apiRequest('/articles/sentiment', {
-            method: 'POST',
-            body: JSON.stringify({ content })
-        });
-
         summaryResult.generated_title = titleResult.title;
-        displaySummaryResult(summaryResult, sentimentResult);
+        displaySummaryResult(summaryResult);
     } catch (error) {
         alert('生成摘要失败: ' + error.message);
     }
 }
 
-function displaySummaryResult(summary, sentiment) {
+function displaySummaryResult(summary) {
     const resultContainer = document.getElementById('summary-result');
     resultContainer.classList.remove('hidden');
 
@@ -880,11 +971,19 @@ function displaySummaryResult(summary, sentiment) {
 
     const sentimentContainer = document.getElementById('sentiment-result');
     sentimentContainer.innerHTML = `
-        <div class="score ${sentiment.sentiment_label}">${sentiment.sentiment_score}</div>
-        <p>情绪标签: ${sentiment.sentiment_label}</p>
-        ${sentiment.positive_words && sentiment.positive_words.length > 0 ? `<p>正面词汇: ${sentiment.positive_words.join(', ')}</p>` : ''}
-        ${sentiment.negative_words && sentiment.negative_words.length > 0 ? `<p>负面词汇: ${sentiment.negative_words.join(', ')}</p>` : ''}
+        <div class="score ${summary.sentiment_label}">${summary.sentiment_score || '0.0'}</div>
+        <p>情感倾向: ${summary.sentiment_label === 'positive' ? '正面' : summary.sentiment_label === 'negative' ? '负面' : '中立'}</p>
+        <p>情感类型: ${summary.emotion_label_cn || '中立'}</p>
     `;
+
+    const categoryContainer = document.getElementById('category-result');
+    if (categoryContainer) {
+        categoryContainer.innerHTML = `
+            <h4>新闻分类</h4>
+            <div class="category-tag">${summary.primary_category || '其他'}</div>
+            <p>分类置信度: ${(summary.category_confidence * 100 || 0).toFixed(0)}%</p>
+        `;
+    }
 }
 
 function switchSummaryTab(tabName) {
