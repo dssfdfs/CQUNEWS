@@ -104,36 +104,40 @@ async function handleLogin(event) {
     const password = document.getElementById('password').value;
 
     try {
-        const response = await apiRequest('/auth/login', {
+        const response = await fetch('/auth/login', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ username, password })
         });
 
-        setToken(response.access_token);
-        showMainPage({
-            username: username,
-            role: response.role,
-            userId: response.user_id
-        });
+        const data = await response.json();
+
+        if (response.ok) {
+            setToken(data.access_token);
+            showMainPage({
+                username: username,
+                role: data.role,
+                userId: data.user_id
+            });
+        } else {
+            const errorMsg = data.detail || '登录失败';
+            document.getElementById('login-error').textContent = errorMsg;
+            document.getElementById('login-error').style.color = '#dc3545';
+        }
     } catch (error) {
-        document.getElementById('login-error').textContent = error.message;
+        document.getElementById('login-error').textContent = '网络错误，请检查连接';
+        document.getElementById('login-error').style.color = '#dc3545';
     }
 }
 
-async function handleRegister() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+function handleRegister() {
+    window.location.href = '/auth/register-page';
+}
 
-    try {
-        await apiRequest('/auth/register', {
-            method: 'POST',
-            body: JSON.stringify({ username, password, role: 'user' })
-        });
-
-        document.getElementById('login-error').textContent = '注册成功，请登录';
-    } catch (error) {
-        document.getElementById('login-error').textContent = error.message;
-    }
+function handleForgotPassword() {
+    window.location.href = '/auth/forgot-password-page';
 }
 
 function handleLogout() {
@@ -1094,8 +1098,16 @@ async function handleFilter() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 检查注册成功参数
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('register_success') === 'true') {
+        document.getElementById('login-error').textContent = '注册成功！请登录';
+        document.getElementById('login-error').style.color = '#28a745';
+    }
+
     document.getElementById('login-form').addEventListener('submit', handleLogin);
     document.getElementById('register-btn').addEventListener('click', handleRegister);
+    document.getElementById('forgot-password-btn').addEventListener('click', handleForgotPassword);
     document.getElementById('logout-btn').addEventListener('click', handleLogout);
     document.getElementById('user-avatar-btn').addEventListener('click', toggleUserDropdown);
     document.addEventListener('click', closeUserDropdown);
