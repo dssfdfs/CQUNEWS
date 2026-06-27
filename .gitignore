@@ -8,3 +8,10 @@ __pycache__/
 *.pyo
 models/
 *.safetensors
+target/
+node_modules/
+Thumbs.db
+*.log
+.vscode/
+*.class
+*.jar
