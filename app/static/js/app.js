@@ -3,6 +3,8 @@ const API_BASE = window.location.origin;
 let currentUser = null;
 let currentPage = 'news';
 let docContent = '';
+let currentCaptcha = '';
+let captchaSessionKey = '';
 
 function getToken() {
     return localStorage.getItem('token');
@@ -97,11 +99,56 @@ function closeUserDropdown(event) {
     }
 }
 
+async function generateCaptcha() {
+    try {
+        const response = await fetch('/auth/captcha');
+        const data = await response.json();
+        currentCaptcha = data.captcha;
+        captchaSessionKey = data.session_key;
+        const captchaText = document.getElementById('captcha-text');
+        if (captchaText) {
+            captchaText.textContent = data.captcha;
+        }
+    } catch (error) {
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        let captcha = '';
+        for (let i = 0; i < 4; i++) {
+            captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        currentCaptcha = captcha;
+        captchaSessionKey = '';
+        const captchaText = document.getElementById('captcha-text');
+        if (captchaText) {
+            captchaText.textContent = captcha;
+        }
+    }
+}
+
+async function refreshCaptcha() {
+    await generateCaptcha();
+}
+
+function togglePassword(inputId, btnId) {
+    const passwordInput = document.getElementById(inputId);
+    const btn = document.getElementById(btnId);
+    const icon = btn.querySelector('i');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
 async function handleLogin(event) {
     event.preventDefault();
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+    const captcha = document.getElementById('captcha').value;
 
     try {
         const response = await fetch('/auth/login', {
@@ -109,7 +156,7 @@ async function handleLogin(event) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ username, password, captcha, session_key: captchaSessionKey })
         });
 
         const data = await response.json();
@@ -125,10 +172,12 @@ async function handleLogin(event) {
             const errorMsg = data.detail || '登录失败';
             document.getElementById('login-error').textContent = errorMsg;
             document.getElementById('login-error').style.color = '#dc3545';
+            await refreshCaptcha();
         }
     } catch (error) {
         document.getElementById('login-error').textContent = '网络错误，请检查连接';
         document.getElementById('login-error').style.color = '#dc3545';
+        await refreshCaptcha();
     }
 }
 
@@ -686,7 +735,7 @@ async function handleUserSubmit(event) {
     const role = document.getElementById('user-role').value;
 
     try {
-        await apiRequest('/auth/register', {
+        await apiRequest('/auth/admin-create-user', {
             method: 'POST',
             body: JSON.stringify({ username, password, role })
         });
@@ -1105,9 +1154,50 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('login-error').style.color = '#28a745';
     }
 
+    generateCaptcha();
+
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    if (togglePasswordBtn) {
+        togglePasswordBtn.addEventListener('click', () => {
+            togglePassword('password', 'toggle-password');
+        });
+    }
+
+    const toggleConfirmPasswordBtn = document.getElementById('toggle-confirm-password');
+    if (toggleConfirmPasswordBtn) {
+        toggleConfirmPasswordBtn.addEventListener('click', () => {
+            togglePassword('confirm-password', 'toggle-confirm-password');
+        });
+    }
+
+    const captchaImage = document.getElementById('captcha-image');
+    if (captchaImage) {
+        captchaImage.addEventListener('click', refreshCaptcha);
+    }
+
     document.getElementById('login-form').addEventListener('submit', handleLogin);
-    document.getElementById('register-btn').addEventListener('click', handleRegister);
-    document.getElementById('forgot-password-btn').addEventListener('click', handleForgotPassword);
+    
+    const registerBtn = document.getElementById('register-btn');
+    const registerLink = document.getElementById('register-link');
+    if (registerBtn) {
+        registerBtn.addEventListener('click', handleRegister);
+    } else if (registerLink) {
+        registerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleRegister();
+        });
+    }
+
+    const forgotPasswordBtn = document.getElementById('forgot-password-btn');
+    const forgotPasswordLink = document.getElementById('forgot-password-link');
+    if (forgotPasswordBtn) {
+        forgotPasswordBtn.addEventListener('click', handleForgotPassword);
+    } else if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleForgotPassword();
+        });
+    }
     document.getElementById('logout-btn').addEventListener('click', handleLogout);
     document.getElementById('user-avatar-btn').addEventListener('click', toggleUserDropdown);
     document.addEventListener('click', closeUserDropdown);

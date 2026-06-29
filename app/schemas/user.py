@@ -5,6 +5,14 @@ from typing import Optional
 class UserCreate(BaseModel):
     username: str
     password: str
+    captcha: str = ""
+    session_key: str = ""
+    role: str = "user"
+
+
+class AdminUserCreate(BaseModel):
+    username: str
+    password: str
     role: str = "user"
 
 

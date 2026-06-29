@@ -3,146 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注册 - CQUNEWS新闻聚合分析系统</title>
+    <title>用户注册 - 新闻内容摘要与标题生成系统</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/static/css/style.css" rel="stylesheet">
-    <style>
-        .register-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .register-card {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            width: 400px;
-            max-width: 90%;
-        }
-        .register-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .register-header i {
-            font-size: 48px;
-            color: #667eea;
-        }
-        .register-header h1 {
-            font-size: 24px;
-            margin-top: 15px;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-        .btn-block {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        .btn-block:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-        }
-        .btn-link {
-            color: #667eea;
-            text-decoration: none;
-        }
-        .btn-link:hover {
-            color: #764ba2;
-            transform: translateY(-1px);
-        }
-        .error-message {
-            color: #dc3545;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .success-message {
-            color: #28a745;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #667eea;
-            cursor: pointer;
-        }
-        .back-link:hover {
-            color: #764ba2;
-        }
-        .back-link i {
-            margin-right: 5px;
-        }
-    </style>
 </head>
 <body>
     <div class="register-container">
-        <div class="register-card">
-            <div class="register-header">
-                <i class="fa-solid fa-user-plus"></i>
-                <h1>注册新用户</h1>
+        <div class="register-left">
+            <div class="register-logo">
+                <i class="fa-solid fa-newspaper"></i>
+                <h1>新闻内容摘要与标题生成系统</h1>
             </div>
-            <form id="register-form">
-                <div class="form-group">
-                    <label for="username">用户名</label>
-                    <input type="text" id="username" class="form-control" placeholder="请输入用户名" required>
+            <div class="register-illustration">
+                <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20user%20registration%20concept%20with%20digital%20elements%20blue%20gradient%20background&image_size=landscape_16_9" alt="新闻摘要系统">
+            </div>
+        </div>
+        <div class="register-right">
+            <div class="register-card">
+                <div class="register-header">
+                    <h2>用户注册</h2>
+                    <p>创建新账号，开启智能摘要之旅</p>
                 </div>
-                <div class="form-group">
-                    <label for="password">密码</label>
-                    <input type="password" id="password" class="form-control" placeholder="请输入密码（至少6位）" required minlength="6">
-                </div>
-                <div class="form-group">
-                    <label for="confirm-password">确认密码</label>
-                    <input type="password" id="confirm-password" class="form-control" placeholder="请再次输入密码" required>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">注册</button>
-            </form>
-            <div id="register-error" class="error-message"></div>
-            <div id="register-success" class="success-message" style="display:none;"></div>
-            <a href="/" class="back-link">
-                <i class="fa-solid fa-arrow-left"></i> 返回登录页面
-            </a>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username" class="form-control" placeholder="请输入用户名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <div class="password-input-group">
+                            <input type="password" id="password" class="form-control" placeholder="请输入密码" required>
+                            <button type="button" id="toggle-password" class="toggle-password-btn">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">确认密码</label>
+                        <div class="password-input-group">
+                            <input type="password" id="confirm-password" class="form-control" placeholder="请确认密码" required>
+                            <button type="button" id="toggle-confirm-password" class="toggle-password-btn">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="captcha">验证码</label>
+                        <div class="captcha-input-group">
+                            <input type="text" id="captcha" class="form-control captcha-input" placeholder="请输入4位验证码" required maxlength="4">
+                            <div id="captcha-image" class="captcha-image">
+                                <span id="captcha-text">4523</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" id="agree-terms" class="form-check-input" required>
+                        <label for="agree-terms" class="form-check-label">我已阅读并同意<a href="#" class="terms-link">《用户协议》</a>和<a href="#" class="terms-link">《隐私政策》</a></label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">注册</button>
+                    <div class="login-link">
+                        已有账号？<a href="/" id="login-link">立即登录</a>
+                    </div>
+                </form>
+                <div id="register-error" class="error-message"></div>
+                <div id="register-success" class="success-message" style="display:none;"></div>
+            </div>
         </div>
     </div>
 
     <script>
+        let captchaSessionKey = '';
+        
+        async function generateCaptcha() {
+            try {
+                const response = await fetch('/auth/captcha');
+                const data = await response.json();
+                captchaSessionKey = data.session_key;
+                const captchaText = document.getElementById('captcha-text');
+                if (captchaText) {
+                    captchaText.textContent = data.captcha;
+                }
+            } catch (error) {
+                const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                let captcha = '';
+                for (let i = 0; i < 4; i++) {
+                    captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                captchaSessionKey = '';
+                const captchaText = document.getElementById('captcha-text');
+                if (captchaText) {
+                    captchaText.textContent = captcha;
+                }
+            }
+        }
+        
+        document.getElementById('captcha-image').addEventListener('click', generateCaptcha);
+        
+        window.addEventListener('load', generateCaptcha);
+        
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        document.getElementById('toggle-confirm-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('confirm-password');
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
         document.getElementById('register-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
+            const captcha = document.getElementById('captcha').value.trim();
             
             const errorDiv = document.getElementById('register-error');
             const successDiv = document.getElementById('register-success');
             errorDiv.textContent = '';
             successDiv.style.display = 'none';
             
-            // 验证
             if (password !== confirmPassword) {
-                errorDiv.textContent = '两次输入的密码不一致';
+                errorDiv.textContent = '前后密码不一致，请重新输入！';
                 return;
             }
             
@@ -160,14 +162,16 @@
                     body: JSON.stringify({
                         username: username,
                         password: password,
-                        role: 'user'
+                        role: 'user',
+                        captcha: captcha,
+                        session_key: captchaSessionKey
                     })
                 });
                 
                 const data = await response.json();
                 
                 if (response.ok) {
-                    successDiv.textContent = '注册成功！正在跳转到登录页面...';
+                    successDiv.textContent = '已成功注册';
                     successDiv.style.display = 'block';
                     setTimeout(() => {
                         window.location.href = '/?register_success=true';
@@ -176,15 +180,16 @@
                     if (data.detail) {
                         errorDiv.textContent = data.detail;
                     } else {
-                        errorDiv.textContent = '注册失败，请稍后重试';
+                        errorDiv.textContent = '注册失败';
                     }
+                    await generateCaptcha();
                 }
             } catch (error) {
                 errorDiv.textContent = '网络错误，请检查连接';
+                await generateCaptcha();
             }
         });
 
-        // 添加按钮微交互
         document.querySelectorAll('.btn').forEach(btn => {
             btn.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateY(-2px)';

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员登录 - CQUNEWS新闻聚合分析系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div id="login-page" class="page">
+            <div class="login-container">
+                <div class="login-left">
+                    <div class="login-logo">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <h1>管理员后台管理系统</h1>
+                    </div>
+                    <div class="login-illustration">
+                        <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20admin%20dashboard%20management%20interface%20dark%20blue%20professional%20security&image_size=landscape_16_9" alt="管理员系统">
+                    </div>
+                </div>
+                <div class="login-right">
+                    <div class="login-card">
+                        <div class="login-header">
+                            <h2>管理员登录</h2>
+                            <p>请输入管理员账号信息</p>
+                        </div>
+                        <form id="login-form">
+                            <div class="form-group">
+                                <label for="username">管理员账号</label>
+                                <input type="text" id="username" class="form-control" placeholder="请输入管理员账号" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">密码</label>
+                                <div class="password-input-group">
+                                    <input type="password" id="password" class="form-control" placeholder="请输入密码" required>
+                                    <button type="button" id="toggle-password" class="toggle-password-btn">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="captcha">验证码</label>
+                                <div class="captcha-input-group">
+                                    <input type="text" id="captcha" class="form-control captcha-input" placeholder="请输入4位验证码" required maxlength="4">
+                                    <div id="captcha-image" class="captcha-image">
+                                        <span id="captcha-text">4523</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-check">
+                                <input type="checkbox" id="remember-me" class="form-check-input">
+                                <label for="remember-me" class="form-check-label">记住我</label>
+                                <a href="/forgot_password" id="forgot-password-link" class="forgot-password-link">忘记密码？</a>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">登录</button>
+                            <div class="register-link">
+                                返回<a href="/" id="user-login-link">用户登录</a>
+                            </div>
+                        </form>
+                        <div id="login-error" class="error-message"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-page" class="page hidden">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>CQUNEWS Admin</span>
+                </div>
+                <ul class="sidebar-menu">
+                    <li class="menu-item active" data-page="news">
+                        <i class="fa-solid fa-newspaper"></i>
+                        <span>新闻情报</span>
+                    </li>
+                    <li class="menu-item" data-page="history">
+                        <i class="fa-solid fa-history"></i>
+                        <span>新闻历史</span>
+                    </li>
+                    <li class="menu-item" data-page="analysis">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>舆情分析</span>
+                    </li>
+                    <li class="menu-item" data-page="summary">
+                        <i class="fa-solid fa-file-text"></i>
+                        <span>新闻摘要</span>
+                    </li>
+                    <li class="menu-item" data-page="sources">
+                        <i class="fa-solid fa-rss"></i>
+                        <span>来源管理</span>
+                    </li>
+                    <li class="menu-item" data-page="users">
+                        <i class="fa-solid fa-users"></i>
+                        <span>用户管理</span>
+                    </li>
+                </ul>
+            </nav>
+            <div class="main-content">
+                <header class="main-header">
+                    <div class="header-left">
+                        <span id="page-title">新闻情报</span>
+                    </div>
+                    <div class="header-right">
+                        <span id="current-user"></span>
+                        <button id="logout-btn" class="btn btn-outline-secondary">
+                            <i class="fa-solid fa-right-from-bracket"></i> 退出登录
+                        </button>
+                    </div>
+                </header>
+                <div id="page-content" class="content-area">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let captchaSessionKey = '';
+        
+        async function generateCaptcha() {
+            try {
+                const response = await fetch('/auth/captcha');
+                const data = await response.json();
+                captchaSessionKey = data.session_key;
+                const captchaText = document.getElementById('captcha-text');
+                if (captchaText) {
+                    captchaText.textContent = data.captcha;
+                }
+            } catch (error) {
+                const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                let captcha = '';
+                for (let i = 0; i < 4; i++) {
+                    captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                captchaSessionKey = '';
+                const captchaText = document.getElementById('captcha-text');
+                if (captchaText) {
+                    captchaText.textContent = captcha;
+                }
+            }
+        }
+        
+        document.getElementById('captcha-image').addEventListener('click', generateCaptcha);
+        window.addEventListener('load', generateCaptcha);
+        
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const captcha = document.getElementById('captcha').value;
+            
+            try {
+                const response = await fetch('/auth/admin-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, captcha, session_key: captchaSessionKey })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    window.location.href = '/';
+                } else {
+                    const errorMsg = data.detail || '登录失败';
+                    document.getElementById('login-error').textContent = errorMsg;
+                    document.getElementById('login-error').style.color = '#dc3545';
+                    await generateCaptcha();
+                }
+            } catch (error) {
+                document.getElementById('login-error').textContent = '网络错误，请检查连接';
+                document.getElementById('login-error').style.color = '#dc3545';
+                await generateCaptcha();
+            }
+        });
+        
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
