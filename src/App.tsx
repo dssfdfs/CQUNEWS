@@ -18,7 +18,7 @@ import { useStore } from '@/store/useStore';
 import { generateSummary, generateTitles, verifyQuality } from '@/api/deepseek';
 
 function Dashboard() {
-  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory } = useStore();
+  const { step, setStep, content, summary, setSummary, titles, setTitles, quality, setQuality, setIsGenerating, addHistory } = useStore();
   const [activeNav, setActiveNav] = useState('summary');
   const [error, setError] = useState('');
 
@@ -43,7 +43,7 @@ function Dashboard() {
         setQuality(quality);
         
         setStep(5);
-        addHistory({ content, summary, titles });
+        await addHistory({ content, summary, titles, quality });
         
       } catch (err) {
         console.error(err);
@@ -55,7 +55,7 @@ function Dashboard() {
 
     window.addEventListener('generate-all', handleGenerateAll);
     return () => window.removeEventListener('generate-all', handleGenerateAll);
-  }, [content, setStep, setSummary, setTitles, setQuality, setIsGenerating, addHistory]);
+  }, [content, summary, titles, quality, setStep, setSummary, setTitles, setQuality, setIsGenerating, addHistory]);
 
   const handleNavClick = (item: string) => {
     setActiveNav(item);

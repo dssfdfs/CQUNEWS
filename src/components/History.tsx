@@ -1,18 +1,25 @@
-import { useState } from 'react';
-import { Clock, Download, Trash2, Eye, Search, Calendar, Filter } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Clock, Download, Trash2, Eye, Search, Calendar, Filter, ChevronDown } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 
 export function History() {
-  const { history } = useStore();
+  const { history, historyLoading, loadHistory, removeHistory } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | number | null>(null);
+
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
 
   const filteredHistory = history.filter((item) => {
     const matchSearch = item.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.summary.toLowerCase().includes(searchQuery.toLowerCase());
+                        item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.titles.objective.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.titles.dataHighlight.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.titles.lightweight.toLowerCase().includes(searchQuery.toLowerCase());
     const matchDate = !selectedDate || 
-                      new Date(item.createdAt).toLocaleDateString('zh-CN') === selectedDate;
+                      new Date(item.createdAt).toLocaleDateString('zh-CN') === new Date(selectedDate).toLocaleDateString('zh-CN');
     return matchSearch && matchDate;
   });
 
@@ -25,15 +32,28 @@ export function History() {
     return acc;
   }, {} as Record<string, typeof history>);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string | number) => {
     if (window.confirm('确定要删除这条记录吗？')) {
-      const store = useStore.getState();
-      store.history = store.history.filter((item) => item.id !== id);
+      await removeHistory(id);
     }
   };
 
-  const formatTime = (date: Date) => {
+  const formatTime = (date: Date | string) => {
     return new Date(date).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatDate = (date: Date | string) => {
+    const d = new Date(date);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (d.toDateString() === today.toDateString()) {
+      return '今天';
+    } else if (d.toDateString() === yesterday.toDateString()) {
+      return '昨天';
+    }
+    return d.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' });
   };
 
   return (
@@ -77,7 +97,12 @@ export function History() {
       </div>
 
       <div className="card">
-        {Object.keys(groupedHistory).length === 0 ? (
+        {historyLoading ? (
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mb-4" />
+            <p className="text-gray-400">加载中...</p>
+          </div>
+        ) : Object.keys(groupedHistory).length === 0 ? (
           <div className="text-center py-16 text-gray-400">
             <Clock className="w-16 h-16 mx-auto mb-4" />
             <p>暂无历史记录</p>
@@ -89,7 +114,7 @@ export function History() {
               <div key={date} className="p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-1 h-4 bg-primary-600 rounded-full" />
-                  <span className="font-medium text-gray-600">{date}</span>
+                  <span className="font-medium text-gray-600">{formatDate(date)}</span>
                   <span className="text-sm text-gray-400">({items.length}条记录)</span>
                 </div>
                 
@@ -97,11 +122,11 @@ export function History() {
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      className="border border-gray-100 rounded-lg overflow-hidden hover:border-primary-200 transition-colors"
+                      className="border border-gray-100 rounded-lg overflow-hidden hover:border-primary-200 transition-all hover:shadow-sm"
                     >
                       <div className="p-4 cursor-pointer" onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}>
                         <div className="flex items-start justify-between">
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <p className="text-gray-800 font-medium line-clamp-2 mb-2">{item.content.substring(0, 150)}...</p>
                             <div className="flex items-center gap-4 text-sm text-gray-400">
                               <span className="flex items-center gap-1">
@@ -110,12 +135,13 @@ export function History() {
                               </span>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 ml-4">
+                          <div className="flex items-center gap-1 ml-4">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                               }}
                               className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                              title="预览"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
@@ -125,9 +151,13 @@ export function History() {
                                 handleDelete(item.id);
                               }}
                               className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="删除"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
+                            <ChevronDown 
+                              className={`w-4 h-4 text-gray-400 ml-1 transition-transform ${expandedId === item.id ? 'rotate-180' : ''}`} 
+                            />
                           </div>
                         </div>
                       </div>
@@ -137,25 +167,44 @@ export function History() {
                           <div className="space-y-4">
                             <div>
                               <h4 className="text-sm font-medium text-gray-600 mb-2">摘要内容</h4>
-                              <p className="text-gray-700 text-sm">{item.summary}</p>
+                              <p className="text-gray-700 text-sm leading-relaxed">{item.summary}</p>
                             </div>
                             <div>
                               <h4 className="text-sm font-medium text-gray-600 mb-2">生成标题</h4>
                               <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">客观中立</span>
+                                <div className="flex items-start gap-2">
+                                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs shrink-0">客观中立</span>
                                   <span className="text-gray-700 text-sm">{item.titles.objective}</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">数据亮眼</span>
+                                <div className="flex items-start gap-2">
+                                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs shrink-0">数据亮眼</span>
                                   <span className="text-gray-700 text-sm">{item.titles.dataHighlight}</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs">轻松活泼</span>
+                                <div className="flex items-start gap-2">
+                                  <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs shrink-0">轻松活泼</span>
                                   <span className="text-gray-700 text-sm">{item.titles.lightweight}</span>
                                 </div>
                               </div>
                             </div>
+                            {item.quality && (
+                              <div>
+                                <h4 className="text-sm font-medium text-gray-600 mb-2">质量评估</h4>
+                                <div className="grid grid-cols-3 gap-4">
+                                  <div className="bg-white p-3 rounded-lg border border-gray-100">
+                                    <p className="text-xs text-gray-400 mb-1">覆盖率</p>
+                                    <p className="text-lg font-semibold text-gray-800">{item.quality.coverageRate}%</p>
+                                  </div>
+                                  <div className="bg-white p-3 rounded-lg border border-gray-100">
+                                    <p className="text-xs text-gray-400 mb-1">标题偏离度</p>
+                                    <p className="text-lg font-semibold text-gray-800">{item.quality.titleDeviation}%</p>
+                                  </div>
+                                  <div className="bg-white p-3 rounded-lg border border-gray-100">
+                                    <p className="text-xs text-gray-400 mb-1">幻觉次数</p>
+                                    <p className="text-lg font-semibold text-gray-800">{item.quality.hallucinationCount}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}

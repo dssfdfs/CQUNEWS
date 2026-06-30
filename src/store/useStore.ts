@@ -1,35 +1,40 @@
 import { create } from 'zustand';
+import { createHistory, getHistoryList, deleteHistory } from '@/api/history';
+
+interface Titles {
+  objective: string;
+  dataHighlight: string;
+  lightweight: string;
+}
+
+interface Quality {
+  coverageRate: number;
+  titleDeviation: number;
+  hallucinationCount: number;
+}
+
+interface HistoryItem {
+  id: string | number;
+  content: string;
+  summary: string;
+  titles: Titles;
+  quality?: Quality | null;
+  createdAt: Date | string;
+}
 
 interface NewsState {
   content: string;
   summary: string;
-  titles: {
-    objective: string;
-    dataHighlight: string;
-    lightweight: string;
-  };
-  quality: {
-    coverageRate: number;
-    titleDeviation: number;
-    hallucinationCount: number;
-  };
+  titles: Titles;
+  quality: Quality;
   step: number;
   summaryType: string;
   model: string;
   language: string;
   inputType: string;
   isGenerating: boolean;
-  history: Array<{
-    id: string;
-    content: string;
-    summary: string;
-    titles: {
-      objective: string;
-      dataHighlight: string;
-      lightweight: string;
-    };
-    createdAt: Date;
-  }>;
+  history: HistoryItem[];
+  historyLoading: boolean;
   
   isAuthenticated: boolean;
   currentUser: {
@@ -40,31 +45,17 @@ interface NewsState {
   
   setContent: (content: string) => void;
   setSummary: (summary: string) => void;
-  setTitles: (titles: {
-    objective: string;
-    dataHighlight: string;
-    lightweight: string;
-  }) => void;
-  setQuality: (quality: {
-    coverageRate: number;
-    titleDeviation: number;
-    hallucinationCount: number;
-  }) => void;
+  setTitles: (titles: Titles) => void;
+  setQuality: (quality: Quality) => void;
   setStep: (step: number) => void;
   setSummaryType: (summaryType: string) => void;
   setModel: (model: string) => void;
   setLanguage: (language: string) => void;
   setInputType: (inputType: string) => void;
   setIsGenerating: (isGenerating: boolean) => void;
-  addHistory: (item: {
-    content: string;
-    summary: string;
-    titles: {
-      objective: string;
-      dataHighlight: string;
-      lightweight: string;
-    };
-  }) => void;
+  addHistory: (item: { content: string; summary: string; titles: Titles; quality?: Quality }) => Promise<void>;
+  loadHistory: () => Promise<void>;
+  removeHistory: (id: string | number) => Promise<void>;
   clearAll: () => void;
   
   login: (username: string, password: string) => boolean;
@@ -96,6 +87,7 @@ export const useStore = create<NewsState>((set) => ({
   inputType: 'text',
   isGenerating: false,
   history: [],
+  historyLoading: false,
   
   isAuthenticated: false,
   currentUser: null,
@@ -110,9 +102,69 @@ export const useStore = create<NewsState>((set) => ({
   setLanguage: (language) => set({ language }),
   setInputType: (inputType) => set({ inputType }),
   setIsGenerating: (isGenerating) => set({ isGenerating }),
-  addHistory: (item) => set((state) => ({
-    history: [{ ...item, id: Date.now().toString(), createdAt: new Date() }, ...state.history],
-  })),
+  
+  addHistory: async (item) => {
+    try {
+      const newItem = await createHistory({
+        content: item.content,
+        summary: item.summary,
+        titles: item.titles,
+        quality: item.quality,
+      });
+      set((state) => ({
+        history: [{ 
+          id: newItem.id, 
+          content: newItem.content, 
+          summary: newItem.summary, 
+          titles: newItem.titles,
+          quality: newItem.quality,
+          createdAt: newItem.created_at 
+        }, ...state.history],
+      }));
+    } catch {
+      set((state) => ({
+        history: [{ 
+          ...item, 
+          id: Date.now().toString(), 
+          createdAt: new Date() 
+        }, ...state.history],
+      }));
+    }
+  },
+  
+  loadHistory: async () => {
+    set({ historyLoading: true });
+    try {
+      const response = await getHistoryList(1, 50);
+      set({ 
+        history: response.items.map(item => ({
+          id: item.id,
+          content: item.content,
+          summary: item.summary,
+          titles: item.titles,
+          quality: item.quality,
+          createdAt: item.created_at,
+        })),
+        historyLoading: false,
+      });
+    } catch {
+      set({ historyLoading: false });
+    }
+  },
+  
+  removeHistory: async (id) => {
+    try {
+      await deleteHistory(typeof id === 'number' ? id : parseInt(id));
+      set((state) => ({
+        history: state.history.filter(item => item.id !== id),
+      }));
+    } catch {
+      set((state) => ({
+        history: state.history.filter(item => item.id !== id),
+      }));
+    }
+  },
+  
   clearAll: () => set({
     content: '',
     summary: '',
@@ -148,5 +200,5 @@ export const useStore = create<NewsState>((set) => ({
     return true;
   },
   
-  logout: () => set({ isAuthenticated: false, currentUser: null }),
+  logout: () => set({ isAuthenticated: false, currentUser: null, history: [] }),
 }));
