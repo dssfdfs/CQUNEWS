@@ -46,8 +46,8 @@ export async function callDeepSeek(model: string, messages: Message[], apiConfig
     },
     body: JSON.stringify({
       ...requestBody,
-      api_key: apiConfig?.apiKey,
-      api_url: apiConfig?.apiUrl,
+      api_key: apiConfig?.apiKey || '',
+      api_url: apiConfig?.apiUrl || '',
     }),
   });
 

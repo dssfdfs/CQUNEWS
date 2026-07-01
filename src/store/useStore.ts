@@ -133,6 +133,30 @@ const loadApiConfigsFromStorage = () => {
 const { isAuthenticated: initialAuth, currentUser: initialUser } = loadUserFromStorage();
 const initialApiConfigs = loadApiConfigsFromStorage();
 
+const categoryKeywords: Record<string, string[]> = {
+  '时政': ['国务院', '中央', '国家主席', '总理', '部长', '人大', '政协', '政策', '政府', '改革', '发展', '规划', '教育强国'],
+  '国际': ['国际新闻', '外交部', '海外', '美国', '欧盟', '日本', '韩国', '英国', '德国', '法国', '俄罗斯', '全球', '世界各国'],
+  '科技': ['科技', '技术', '互联网', '人工智能', 'AI', '大数据', '云计算', '5G', '芯片', '软件', '算法', '计算机', '手机', '数字化'],
+  '财经': ['经济', '金融', '股票', '市场', '公司', '企业', '投资', '银行', '保险', '基金', '价格', '增长', '收入', 'GDP'],
+  '体育': ['体育', '足球', '篮球', '比赛', '奥运', '运动员', '球队', '冠军', '联赛', '世界杯', 'NBA', 'CBA'],
+  '娱乐': ['娱乐', '电影', '明星', '综艺', '音乐', '演唱会', '电视剧', '演员', '歌手', '娱乐圈'],
+  '健康': ['健康', '医疗', '医院', '医生', '疾病', '疫苗', '药品', '治疗', '养生', '体检', '卫生'],
+};
+
+const classifyContent = (content: string): string => {
+  
+  
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
+    for (const keyword of keywords) {
+      const regex = new RegExp(`[\\s,，。！？、；：]${keyword}[\\s,，。！？、；：]|^${keyword}[\\s,，。！？、；：]|[\\s,，。！？、；：]${keyword}$|^${keyword}$`);
+      if (regex.test(content) || content.includes(keyword)) {
+        return category;
+      }
+    }
+  }
+  return '综合';
+};
+
 export const useStore = create<NewsState>((set, get) => ({
   content: '',
   summary: '',
@@ -171,13 +195,14 @@ export const useStore = create<NewsState>((set, get) => ({
   setIsGenerating: (isGenerating) => set({ isGenerating }),
   addHistory: (item) => {
     const currentState = get();
+    const category = classifyContent(item.content);
     const newItem = { 
       ...item, 
       id: Date.now().toString(), 
       createdAt: new Date(),
       quality: currentState.quality,
       status: '已完成',
-      category: '其他'
+      category
     };
     set((state) => ({
       history: [newItem, ...state.history],

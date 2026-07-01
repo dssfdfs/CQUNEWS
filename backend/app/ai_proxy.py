@@ -65,7 +65,7 @@ class ProcessResponse(BaseModel):
 MODEL_CONFIGS = {
     "DeepSeek": {
         "url": "https://api.deepseek.com/chat/completions",
-        "default_key": "sk-cf5b7fb15a554d84b5610e406b7bb51c",
+        "default_key": "",
         "model_name": "deepseek-v4-flash",
     },
     "豆包": {
@@ -91,57 +91,26 @@ MODEL_CONFIGS = {
 }
 
 
-def generate_mock_response(messages: list[dict[str, str]]) -> dict[str, Any]:
-    last_message = messages[-1]["content"] if messages else ""
-    
-    if "摘要" in last_message:
-        mock_summary = """这是一段模拟生成的新闻摘要。该新闻主要讲述了人工智能技术在各个领域的广泛应用和快速发展，包括自动驾驶、医疗诊断、金融分析等多个方面。文章指出，随着技术的不断进步，AI正在深刻改变人们的生活方式和工作模式，同时也带来了一些新的挑战和机遇。专家表示，未来人工智能将继续发挥重要作用，推动社会向更加智能化的方向发展。"""
-        return {
-            "choices": [{"message": {"role": "assistant", "content": mock_summary}}],
-            "usage": {"prompt_tokens": 100, "completion_tokens": 150, "total_tokens": 250},
-        }
-    
-    if "标题" in last_message:
-        mock_titles = """1. 人工智能技术持续突破 多领域应用迎来新机遇
-2. AI技术渗透率达85% 推动产业升级加速
-3. AI时代已来！这些改变正在发生"""
-        return {
-            "choices": [{"message": {"role": "assistant", "content": mock_titles}}],
-            "usage": {"prompt_tokens": 100, "completion_tokens": 80, "total_tokens": 180},
-        }
-    
-    if "覆盖率" in last_message or "质量" in last_message:
-        mock_quality = '{"coverageRate": 88, "titleDeviation": 12, "hallucinationCount": 0}'
-        return {
-            "choices": [{"message": {"role": "assistant", "content": mock_quality}}],
-            "usage": {"prompt_tokens": 150, "completion_tokens": 30, "total_tokens": 180},
-        }
-    
-    mock_response = "这是一个模拟响应。由于您尚未配置有效的API密钥，系统正在使用模拟数据进行演示。您可以在设置中心配置真实的API密钥以获取实际的AI生成结果。"
-    return {
-        "choices": [{"message": {"role": "assistant", "content": mock_response}}],
-        "usage": {"prompt_tokens": 50, "completion_tokens": 60, "total_tokens": 110},
-    }
+class ProcessRequestWithConfig(ProcessRequest):
+    api_key: Optional[str] = Field(None, description="API密钥")
+    api_url: Optional[str] = Field(None, description="API地址")
 
 
 @router.post("/process")
 async def process_ai_request(
     request: Request,
-    req: ProcessRequest,
-    api_key: Optional[str] = None,
-    api_url: Optional[str] = None,
+    req: ProcessRequestWithConfig,
 ):
     config = MODEL_CONFIGS.get(req.model)
     if not config:
         raise HTTPException(status_code=400, detail=f"不支持的模型: {req.model}")
 
-    target_url = api_url or config["url"]
-    target_api_key = api_key or config["default_key"]
+    target_url = req.api_url if (req.api_url and req.api_url != '/api/process') else config["url"]
+    target_api_key = req.api_key or config["default_key"]
     target_model = config["model_name"]
 
     if not target_api_key:
-        logger.info("No API key configured for %s, returning mock response", req.model)
-        return generate_mock_response(req.messages)
+        raise HTTPException(status_code=400, detail="请在设置中心配置API密钥")
 
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:
@@ -160,22 +129,18 @@ async def process_ai_request(
             response = await client.post(target_url, json=payload, headers=headers)
 
             if not response.is_success:
-                logger.warning(
-                    "AI API request failed: %s %s, falling back to mock",
-                    response.status_code,
-                    response.text,
-                )
-                return generate_mock_response(req.messages)
+                logger.warning("AI API request failed: %s %s", response.status_code, response.text)
+                raise HTTPException(status_code=response.status_code, detail=f"API调用失败: {response.text[:200]}")
 
             result = response.json()
             return result
 
     except httpx.RequestError as e:
-        logger.warning("AI API request error: %s, falling back to mock", e)
-        return generate_mock_response(req.messages)
+        logger.error("AI API request error: %s", e)
+        raise HTTPException(status_code=500, detail=f"网络连接失败: {str(e)}")
     except json.JSONDecodeError as e:
-        logger.warning("AI API response parse error: %s, falling back to mock", e)
-        return generate_mock_response(req.messages)
+        logger.error("AI API response parse error: %s", e)
+        raise HTTPException(status_code=500, detail="API响应解析失败")
 
 
 @router.post("/upload")
@@ -194,3 +159,47 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         logger.error("File upload failed: %s", e)
         raise HTTPException(status_code=500, detail=f"文件上传失败: {str(e)}")
+
+
+class TestRequest(BaseModel):
+    content: str = Field(..., description="测试内容")
+    summaryType: str = Field("标准摘要", description="摘要类型")
+    language: str = Field("中文", description="语言")
+    model: str = Field(..., description="AI模型名称")
+
+
+@router.post("/test-api")
+async def test_api_connection(req: TestRequest, api_key: Optional[str] = None, api_url: Optional[str] = None):
+    config = MODEL_CONFIGS.get(req.model)
+    if not config:
+        return {"success": False, "message": f"不支持的模型: {req.model}"}
+
+    target_url = api_url or config["url"]
+    target_api_key = api_key or config["default_key"]
+
+    if not target_api_key:
+        return {"success": False, "message": "请先配置API密钥"}
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            payload = {
+                "model": config["model_name"],
+                "messages": [{"role": "user", "content": "测试连接"}],
+                "temperature": 0.7,
+                "max_tokens": 50,
+            }
+
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {target_api_key}",
+            }
+
+            response = await client.post(target_url, json=payload, headers=headers)
+
+            if response.is_success:
+                return {"success": True, "message": f"API连接成功，状态码: {response.status_code}"}
+            else:
+                return {"success": False, "message": f"连接失败: {response.status_code} {response.text[:200]}"}
+
+    except httpx.RequestError as e:
+        return {"success": False, "message": f"连接失败: {str(e)}"}

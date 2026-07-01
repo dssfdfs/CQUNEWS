@@ -62,11 +62,10 @@ export function Settings() {
   const handleTestApi = async () => {
     setTestResult(null);
     try {
-      const response = await fetch(`${apiUrl}/summary`, {
+      const response = await fetch('/api/test-api', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(apiKey && { 'Authorization': `Bearer ${apiKey}` }),
         },
         body: JSON.stringify({
           content: '测试内容',
@@ -76,11 +75,8 @@ export function Settings() {
         }),
       });
       
-      if (response.ok) {
-        setTestResult({ success: true, message: 'API连接成功' });
-      } else {
-        setTestResult({ success: false, message: `连接失败: ${response.status} ${response.statusText}` });
-      }
+      const result = await response.json();
+      setTestResult({ success: result.success, message: result.message });
     } catch (error) {
       setTestResult({ success: false, message: `连接失败: ${error instanceof Error ? error.message : '未知错误'}` });
     }

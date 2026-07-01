@@ -84,15 +84,17 @@ export function TitleOutput() {
             </div>
             
             {item.value ? (
-              <input
-                type="text"
-                value={item.value}
-                onChange={(e) => {
-                  setTitles({ ...titles, [item.id]: e.target.value });
-                }}
-                className="w-full bg-gray-50 rounded-lg p-3 text-gray-700 border-none outline-none focus:ring-2 focus:ring-primary-500"
-                readOnly={false}
-              />
+              <div className="w-full bg-gray-50 rounded-lg p-3 min-h-[60px] max-h-[120px] overflow-y-auto">
+                <input
+                  type="text"
+                  value={item.value}
+                  onChange={(e) => {
+                    setTitles({ ...titles, [item.id]: e.target.value });
+                  }}
+                  className="w-full text-gray-700 border-none outline-none bg-transparent"
+                  readOnly={false}
+                />
+              </div>
             ) : (
               <div className="bg-gray-50 rounded-lg p-4 text-center">
                 <Type className={`w-8 h-8 ${iconColorClasses[item.color as keyof typeof iconColorClasses]} mx-auto mb-2 opacity-50`} />

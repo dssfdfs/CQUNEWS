@@ -1,10 +1,9 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FileText, RefreshCw, Copy, Check, Download } from 'lucide-react';
 import { useStore } from '@/store/useStore';
-import { generateSummary } from '@/api/deepseek';
 
 export function SummaryOutput() {
-  const { summary, setSummary, content, summaryType, language, setIsGenerating } = useStore();
+  const { summary, setSummary, content, setIsGenerating } = useStore();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -19,14 +18,8 @@ export function SummaryOutput() {
     if (!content) return;
     
     setIsGenerating(true);
-    try {
-      const newSummary = await generateSummary(content, summaryType, language);
-      setSummary(newSummary);
-    } catch {
-      console.error('Failed to regenerate summary');
-    } finally {
-      setIsGenerating(false);
-    }
+    setSummary('');
+    window.dispatchEvent(new Event('generate-all'));
   };
 
   const handleDownload = () => {
