@@ -60,10 +60,10 @@ export async function callDeepSeek(model: string, messages: Message[], apiConfig
   return data.choices[0].message.content;
 }
 
-export async function generateSummary(content: string, summaryType: string, language: string, apiConfig?: ApiConfig): Promise<string> {
+export async function generateSummary(content: string, summaryType: string, language: string, apiConfig?: ApiConfig, customPrompt?: string): Promise<string> {
   const systemPrompt = `你是一个专业的新闻摘要助手。请根据用户提供的新闻内容，生成一份${language === '中文' ? '中文' : 'English'}的${summaryType}。`;
   
-  const userPrompt = `请对以下新闻内容进行${summaryType}：
+  let userPrompt = `请对以下新闻内容进行${summaryType}：
 
 ${content}
 
@@ -73,13 +73,17 @@ ${content}
 3. 语言简洁明了
 4. ${language === '中文' ? '使用中文' : 'Use English'}`;
 
+  if (customPrompt) {
+    userPrompt += `\n\n额外要求：${customPrompt}`;
+  }
+
   return callDeepSeek(apiConfig?.model || 'DeepSeek', [
     { role: 'system', content: systemPrompt },
     { role: 'user', content: userPrompt },
   ], apiConfig);
 }
 
-export async function generateTitles(content: string, language: string, apiConfig?: ApiConfig): Promise<{
+export async function generateTitles(content: string, language: string, apiConfig?: ApiConfig, customPrompt?: string): Promise<{
   objective: string;
   dataHighlight: string;
   lightweight: string;
@@ -94,6 +98,8 @@ ${content}
 1. 客观纪实型标题：准确反映新闻事实，简洁明了
 2. 数据亮点型标题：突出新闻中的关键数据或统计信息
 3. 轻量化标题：轻松活泼，吸引读者注意力
+${customPrompt ? `
+额外要求：${customPrompt}` : ''}
 
 ${language === '中文' ? '请使用中文' : 'Please use English'}，每个标题一行，按顺序输出。`;
 

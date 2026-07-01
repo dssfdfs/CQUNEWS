@@ -84,15 +84,15 @@ export function TitleOutput() {
             </div>
             
             {item.value ? (
-              <div className="w-full bg-gray-50 rounded-lg p-3 min-h-[60px] max-h-[120px] overflow-y-auto">
-                <input
-                  type="text"
+              <div className="w-full bg-gray-50 rounded-lg p-3 min-h-[80px] max-h-[150px] overflow-y-auto">
+                <textarea
                   value={item.value}
                   onChange={(e) => {
                     setTitles({ ...titles, [item.id]: e.target.value });
                   }}
-                  className="w-full text-gray-700 border-none outline-none bg-transparent"
-                  readOnly={false}
+                  className="w-full text-gray-700 border-none outline-none bg-transparent resize-none"
+                  placeholder="标题内容"
+                  rows={3}
                 />
               </div>
             ) : (

@@ -193,10 +193,21 @@ export function History() {
     }
   };
 
+  const handleBatchDelete = () => {
+    if (selectedIds.size === 0) {
+      alert("请先选择要删除的记录");
+      return;
+    }
+    if (window.confirm(`确定要删除选中的 ${selectedIds.size} 条记录吗？`)) {
+      selectedIds.forEach(id => removeHistory(id));
+      setSelectedIds(new Set());
+    }
+  };
+
   const handleBatchExport = async () => {
     const itemsToExport = selectedIds.size > 0 
       ? history.filter(item => selectedIds.has(item.id))
-      : filteredHistory;
+      : history;
 
     if (itemsToExport.length === 0) {
       alert('没有可导出的记录');
@@ -252,13 +263,22 @@ export function History() {
         </div>
         <div className="flex items-center gap-3">
           {selectedIds.size > 0 && (
-            <button
-              onClick={handleBatchExport}
-              className="btn-secondary flex items-center gap-2"
-            >
-              <Folder className="w-4 h-4" />
-              导出选中 ({selectedIds.size})
-            </button>
+            <>
+              <button
+                onClick={handleBatchDelete}
+                className="btn-secondary flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100"
+              >
+                <Trash2 className="w-4 h-4" />
+                删除选中 ({selectedIds.size})
+              </button>
+              <button
+                onClick={handleBatchExport}
+                className="btn-secondary flex items-center gap-2"
+              >
+                <Folder className="w-4 h-4" />
+                导出选中 ({selectedIds.size})
+              </button>
+            </>
           )}
           <button
             onClick={handleBatchExport}

@@ -3,7 +3,7 @@ import { FileText, Upload, Mic, Video, Send, ChevronDown, CheckCircle, X, File }
 import { useStore } from '@/store/useStore';
 
 export function ContentInput() {
-  const { content, setContent, summaryType, setSummaryType, model, setModel, language, setLanguage, inputType, setInputType, isGenerating } = useStore();
+  const { content, setContent, summaryType, setSummaryType, model, setModel, language, setLanguage, inputType, setInputType, isGenerating, customPrompt, setCustomPrompt } = useStore();
   const [isSummaryTypeOpen, setIsSummaryTypeOpen] = useState(false);
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -302,6 +302,13 @@ export function ContentInput() {
         </div>
       </div>
       
+      <textarea
+        value={customPrompt}
+        onChange={(e) => setCustomPrompt(e.target.value)}
+        placeholder="输入个性化要求（可选），例如：摘要要更简洁、标题要更吸引人..."
+        className="input-field h-24 resize-none mb-6 text-gray-700 placeholder-gray-400"
+      />
+
       <button
         onClick={handleGenerate}
         disabled={!content.trim() || isGenerating}

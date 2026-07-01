@@ -18,7 +18,7 @@ import { useStore } from '@/store/useStore';
 import { generateSummary, generateTitles, verifyQuality } from '@/api/deepseek';
 
 function Dashboard() {
-  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs } = useStore();
+  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language } = useStore();
   const [activeNav, setActiveNav] = useState('summary');
   const [error, setError] = useState('');
 
@@ -33,11 +33,11 @@ function Dashboard() {
       
       try {
         setStep(2);
-        const summary = await generateSummary(content, '标准摘要', '中文', apiConfig);
+        const summary = await generateSummary(content, summaryType, language, apiConfig, customPrompt);
         setSummary(summary);
         
         setStep(3);
-        const titles = await generateTitles(content, '中文', apiConfig);
+        const titles = await generateTitles(content, language, apiConfig, customPrompt);
         setTitles(titles);
         
         setStep(4);
@@ -65,7 +65,7 @@ function Dashboard() {
       window.removeEventListener('generate-all', handleGenerateAll);
       window.removeEventListener('navigate-to-summary', handleNavigateToSummary);
     };
-  }, [content, setStep, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs]);
+  }, [content, setStep, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language]);
 
   const handleNavClick = (item: string) => {
     setActiveNav(item);

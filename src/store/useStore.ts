@@ -44,6 +44,7 @@ interface NewsState {
   language: string;
   inputType: string;
   isGenerating: boolean;
+  customPrompt: string;
   history: HistoryItem[];
   
   isAuthenticated: boolean;
@@ -73,6 +74,7 @@ interface NewsState {
   setLanguage: (language: string) => void;
   setInputType: (inputType: string) => void;
   setIsGenerating: (isGenerating: boolean) => void;
+  setCustomPrompt: (customPrompt: string) => void;
   addHistory: (item: {
     content: string;
     summary: string;
@@ -83,6 +85,7 @@ interface NewsState {
     };
   }) => void;
   updateHistory: (id: string, updates: Partial<HistoryItem>) => void;
+  removeMultipleHistory: (ids: string[]) => void;
   removeHistory: (id: string) => void;
   clearAll: () => void;
   
@@ -130,8 +133,35 @@ const loadApiConfigsFromStorage = () => {
   };
 };
 
+const loadHistoryFromStorage = (userId: string | null) => {
+  if (!userId) return [];
+  try {
+    const historyStr = localStorage.getItem(`history_${userId}`);
+    if (historyStr) {
+      const history = JSON.parse(historyStr);
+      return history.map((item: any) => ({
+        ...item,
+        createdAt: new Date(item.createdAt),
+      }));
+    }
+  } catch (e) {
+    console.error("Failed to load history from storage:", e);
+  }
+  return [];
+};
+
+const saveHistoryToStorage = (userId: string | null, history: HistoryItem[]) => {
+  if (!userId) return;
+  try {
+    localStorage.setItem(`history_${userId}`, JSON.stringify(history));
+  } catch (e) {
+    console.error("Failed to save history to storage:", e);
+  }
+};
+
 const { isAuthenticated: initialAuth, currentUser: initialUser } = loadUserFromStorage();
 const initialApiConfigs = loadApiConfigsFromStorage();
+const initialHistory = loadHistoryFromStorage(initialUser?.id || null);
 
 const categoryKeywords: Record<string, string[]> = {
   '时政': ['国务院', '中央', '国家主席', '总理', '部长', '人大', '政协', '政策', '政府', '改革', '发展', '规划', '教育强国'],
@@ -176,7 +206,8 @@ export const useStore = create<NewsState>((set, get) => ({
   language: '中文',
   inputType: 'text',
   isGenerating: false,
-  history: [],
+  customPrompt: "",
+  history: initialHistory,
   
   isAuthenticated: initialAuth,
   currentUser: initialUser,
@@ -193,32 +224,46 @@ export const useStore = create<NewsState>((set, get) => ({
   setLanguage: (language) => set({ language }),
   setInputType: (inputType) => set({ inputType }),
   setIsGenerating: (isGenerating) => set({ isGenerating }),
+  setCustomPrompt: (customPrompt) => set({ customPrompt }),
   addHistory: (item) => {
     const currentState = get();
     const category = classifyContent(item.content);
     const newItem = { 
       ...item, 
-      id: Date.now().toString(), 
+      id: Date.now().toString() + Math.random().toString(36).slice(2, 9), 
       createdAt: new Date(),
       quality: currentState.quality,
       status: '已完成',
       category
     };
-    set((state) => ({
-      history: [newItem, ...state.history],
-    }));
+    set((state) => {
+      const newHistory = [newItem, ...state.history];
+      saveHistoryToStorage(state.currentUser?.id || null, newHistory);
+      return { history: newHistory };
+    });
   },
   updateHistory: (id, updates) => {
-    set((state) => ({
-      history: state.history.map((item) => 
+    set((state) => {
+      const newHistory = state.history.map((item) => 
         item.id === id ? { ...item, ...updates, createdAt: new Date() } : item
-      ),
-    }));
+      );
+      saveHistoryToStorage(state.currentUser?.id || null, newHistory);
+      return { history: newHistory };
+    });
+  },
+  removeMultipleHistory: (ids) => {
+    set((state) => {
+      const newHistory = state.history.filter((item) => !ids.includes(item.id));
+      saveHistoryToStorage(state.currentUser?.id || null, newHistory);
+      return { history: newHistory };
+    });
   },
   removeHistory: (id) => {
-    set((state) => ({
-      history: state.history.filter((item) => item.id !== id),
-    }));
+    set((state) => {
+      const newHistory = state.history.filter((item) => item.id !== id);
+      saveHistoryToStorage(state.currentUser?.id || null, newHistory);
+      return { history: newHistory };
+    });
   },
   clearAll: () => set({
     content: '',
@@ -261,7 +306,7 @@ export const useStore = create<NewsState>((set, get) => ({
       return false;
     }
     const newUser = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + Math.random().toString(36).slice(2, 9),
       username,
       email,
       password,
