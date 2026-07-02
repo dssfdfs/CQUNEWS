@@ -1,0 +1,1751 @@
+[2026-06-30 09:40:28] [INFO] [cqunews] main.py:19 - Initializing database...
+[2026-06-30 09:40:29] [INFO] [cqunews] database.py:59 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 09:40:29] [INFO] [cqunews] main.py:21 - Starting APScheduler...
+[2026-06-30 09:40:29] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 09:40:56] [ERROR] [cqunews] routers.py:171 - Crawl trigger failed: select
+[2026-06-30 09:42:03] [INFO] [cqunews] crawler.py:274 - Start crawling: 人民网-时政
+[2026-06-30 09:42:04] [WARNING] [cqunews] crawler.py:120 - Blocked (403) by http://politics.people.com.cn/
+[2026-06-30 09:42:04] [INFO] [cqunews] crawler.py:278 - Crawl done: 人民网-时政 — 0 items, 1 errors
+[2026-06-30 09:44:01] [INFO] [cqunews] main.py:19 - Initializing database...
+[2026-06-30 09:44:01] [INFO] [cqunews] database.py:59 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 09:44:01] [INFO] [cqunews] main.py:21 - Starting APScheduler...
+[2026-06-30 09:44:01] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 09:44:18] [INFO] [cqunews] crawler.py:280 - Start crawling: 新华网-时政
+[2026-06-30 09:44:18] [INFO] [cqunews] crawler.py:202 - Found 89 candidate links from 新华网-时政
+[2026-06-30 09:46:01] [INFO] [cqunews] crawler.py:280 - Start crawling: 新华网-时政
+[2026-06-30 09:46:01] [INFO] [cqunews] crawler.py:202 - Found 89 candidate links from 新华网-时政
+[2026-06-30 09:46:46] [INFO] [cqunews] main.py:19 - Initializing database...
+[2026-06-30 09:46:46] [INFO] [cqunews] database.py:63 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 09:46:46] [INFO] [cqunews] main.py:21 - Starting APScheduler...
+[2026-06-30 09:46:46] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 09:46:46] [INFO] [cqunews] scheduler.py:60 - APScheduler stopped.
+[2026-06-30 09:46:46] [INFO] [cqunews] main.py:27 - Shutdown complete.
+[2026-06-30 09:47:03] [INFO] [cqunews] main.py:19 - Initializing database...
+[2026-06-30 09:47:03] [INFO] [cqunews] database.py:63 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 09:47:03] [INFO] [cqunews] main.py:21 - Starting APScheduler...
+[2026-06-30 09:47:03] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 09:47:11] [INFO] [cqunews] crawler.py:280 - Start crawling: 新华网-时政
+[2026-06-30 09:47:11] [INFO] [cqunews] crawler.py:202 - Found 89 candidate links from 新华网-时政
+[2026-06-30 09:48:06] [INFO] [cqunews] crawler.py:280 - Start crawling: 新华网-财经
+[2026-06-30 09:48:06] [INFO] [cqunews] crawler.py:284 - Crawl done: 新华网-财经 — 0 items, 1 errors
+[2026-06-30 09:48:17] [INFO] [cqunews] crawler.py:284 - Crawl done: 新华网-时政 — 7 items, 0 errors
+[2026-06-30 09:49:17] [INFO] [cqunews] database.py:63 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 09:49:39] [INFO] [cqunews] crawler.py:285 - Start crawling: 新华网-时政
+[2026-06-30 09:49:39] [INFO] [cqunews] crawler.py:207 - Found 88 candidate links from 新华网-时政
+[2026-06-30 09:50:28] [INFO] [cqunews] crawler.py:285 - Start crawling: 新华网-时政
+[2026-06-30 09:50:28] [INFO] [cqunews] crawler.py:207 - Found 88 candidate links from 新华网-时政
+[2026-06-30 09:50:40] [INFO] [cqunews] crawler.py:289 - Crawl done: 新华网-时政 — 3 items, 0 errors
+[2026-06-30 09:51:38] [INFO] [cqunews] crawler.py:287 - Start crawling: 新华网-时政
+[2026-06-30 09:51:38] [INFO] [cqunews] crawler.py:209 - Found 88 candidate links from 新华网-时政
+[2026-06-30 09:51:39] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 09:51:40] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 09:51:42] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 09:51:43] [INFO] [cqunews] crawler.py:291 - Crawl done: 新华网-时政 — 3 items, 0 errors
+[2026-06-30 09:52:08] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/politics/20260629/abc123.htm
+[2026-06-30 09:52:08] [DEBUG] [cqunews] crawler.py:175 - Non-200 404 for http://www.news.cn/politics/20260629/abc123.htm
+[2026-06-30 09:52:30] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 09:52:30] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 09:52:30] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 09:52:59] [INFO] [cqunews] crawler.py:287 - Start crawling: 新华网-时政
+[2026-06-30 09:53:00] [INFO] [cqunews] crawler.py:209 - Found 88 candidate links from 新华网-时政
+[2026-06-30 09:53:01] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 09:53:03] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 09:53:05] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 09:53:07] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 09:53:09] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 09:53:09] [INFO] [cqunews] crawler.py:291 - Crawl done: 新华网-时政 — 5 items, 0 errors
+[2026-06-30 09:53:09] [INFO] [cqunews] crawler.py:287 - Start crawling: 新华网-财经
+[2026-06-30 09:53:09] [INFO] [cqunews] crawler.py:291 - Crawl done: 新华网-财经 — 0 items, 1 errors
+[2026-06-30 09:53:09] [INFO] [cqunews] crawler.py:287 - Start crawling: 新华网-科技
+[2026-06-30 09:53:09] [INFO] [cqunews] crawler.py:209 - Found 38 candidate links from 新华网-科技
+[2026-06-30 09:53:10] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-06-30 09:53:12] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-06-30 09:53:13] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-06-30 09:53:15] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-06-30 09:53:17] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-06-30 09:53:17] [INFO] [cqunews] crawler.py:291 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-06-30 09:53:43] [INFO] [cqunews] crawler.py:287 - Start crawling: 新华网-时政
+[2026-06-30 09:53:43] [INFO] [cqunews] crawler.py:209 - Found 88 candidate links from 新华网-时政
+[2026-06-30 09:53:44] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 09:53:46] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 09:53:47] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 09:53:49] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 09:53:50] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 09:53:50] [INFO] [cqunews] crawler.py:291 - Crawl done: 新华网-时政 — 5 items, 0 errors
+[2026-06-30 09:54:11] [INFO] [cqunews] crawler.py:287 - Start crawling: 新华网-时政
+[2026-06-30 09:54:11] [INFO] [cqunews] crawler.py:209 - Found 88 candidate links from 新华网-时政
+[2026-06-30 09:54:13] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 09:54:15] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 09:54:16] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 09:54:18] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 09:54:20] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 09:54:20] [INFO] [cqunews] crawler.py:291 - Crawl done: 新华网-时政 — 5 items, 0 errors
+[2026-06-30 09:54:20] [INFO] [cqunews] crawler.py:287 - Start crawling: 新华网-财经
+[2026-06-30 09:54:20] [INFO] [cqunews] crawler.py:291 - Crawl done: 新华网-财经 — 0 items, 1 errors
+[2026-06-30 09:54:20] [INFO] [cqunews] crawler.py:287 - Start crawling: 新华网-科技
+[2026-06-30 09:54:20] [INFO] [cqunews] crawler.py:209 - Found 38 candidate links from 新华网-科技
+[2026-06-30 09:54:22] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-06-30 09:54:24] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-06-30 09:54:25] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-06-30 09:54:26] [DEBUG] [cqunews] crawler.py:171 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-06-30 09:54:28] [DEBUG] [cqunews] crawler.py:171 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-06-30 09:54:29] [INFO] [cqunews] crawler.py:291 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-06-30 10:02:27] [INFO] [cqunews] main.py:19 - Initializing database...
+[2026-06-30 10:02:27] [INFO] [cqunews] database.py:63 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 10:02:27] [INFO] [cqunews] main.py:21 - Starting APScheduler...
+[2026-06-30 10:02:27] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 10:03:05] [INFO] [cqunews] main.py:19 - Initializing database...
+[2026-06-30 10:03:05] [INFO] [cqunews] database.py:63 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 10:03:05] [INFO] [cqunews] main.py:21 - Starting APScheduler...
+[2026-06-30 10:03:05] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 10:03:34] [INFO] [cqunews] main.py:19 - Initializing database...
+[2026-06-30 10:03:34] [INFO] [cqunews] database.py:63 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 10:03:34] [INFO] [cqunews] main.py:21 - Starting APScheduler...
+[2026-06-30 10:03:34] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 10:04:33] [INFO] [cqunews] main.py:19 - Initializing database...
+[2026-06-30 10:04:33] [INFO] [cqunews] database.py:63 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 10:04:33] [INFO] [cqunews] main.py:21 - Starting APScheduler...
+[2026-06-30 10:04:33] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 10:05:00] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-06-30T10:05:00.241238
+[2026-06-30 10:05:00] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-时政
+[2026-06-30 10:05:00] [INFO] [cqunews] crawler.py:237 - Found 88 candidate links from 新华网-时政
+[2026-06-30 10:05:01] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 10:05:03] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 10:05:04] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 10:05:06] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 10:05:08] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 10:05:09] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/2026lhjskls/index.html
+[2026-06-30 10:05:11] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-06-30 10:05:13] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/20260629/129c67899ce34053b1f89a1333eba226/c.html
+[2026-06-30 10:05:13] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-时政 — 7 items, 0 errors
+[2026-06-30 10:05:13] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-科技
+[2026-06-30 10:05:13] [INFO] [cqunews] crawler.py:237 - Found 38 candidate links from 新华网-科技
+[2026-06-30 10:05:15] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-06-30 10:05:17] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-06-30 10:05:19] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-06-30 10:05:21] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-06-30 10:05:23] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-06-30 10:05:25] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-06-30 10:05:26] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-06-30 10:05:28] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-06-30 10:05:28] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-06-30 10:05:28] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-国际
+[2026-06-30 10:05:28] [INFO] [cqunews] crawler.py:237 - Found 94 candidate links from 新华网-国际
+[2026-06-30 10:05:30] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-06-30 10:05:31] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-06-30 10:05:32] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-06-30 10:05:34] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-06-30 10:05:36] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-06-30 10:05:37] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-06-30 10:05:38] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-06-30 10:05:39] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260625/45341251187b4f638ce2cdb87dab7551/c.html
+[2026-06-30 10:05:40] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-06-30 10:05:40] [INFO] [cqunews] crawler.py:315 - Start crawling: 新浪新闻
+[2026-06-30 10:05:40] [INFO] [cqunews] crawler.py:237 - Found 81 candidate links from 新浪新闻
+[2026-06-30 10:05:42] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/xl/2026-06-29/doc-inifackz0248942.shtml
+[2026-06-30 10:05:43] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/xl/2026-06-29/doc-inifayqs6939768.shtml
+[2026-06-30 10:05:45] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/xl/2026-06-29/doc-inifapys2187173.shtml
+[2026-06-30 10:05:47] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-29/doc-inifauhu7031267.shtml
+[2026-06-30 10:05:49] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/o/2026-06-29/doc-inifayqk5235846.shtml
+[2026-06-30 10:05:51] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifcewk1947218.shtml
+[2026-06-30 10:05:53] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifayqn2038269.shtml
+[2026-06-30 10:05:55] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/zx/2026-06-30/doc-inifcmeq3595375.shtml
+[2026-06-30 10:05:56] [INFO] [cqunews] crawler.py:319 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-06-30 10:05:56] [INFO] [cqunews] crawler.py:315 - Start crawling: 澎湃新闻
+[2026-06-30 10:05:56] [INFO] [cqunews] crawler.py:237 - Found 8 candidate links from 澎湃新闻
+[2026-06-30 10:05:57] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33472824
+[2026-06-30 10:05:59] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33467960
+[2026-06-30 10:06:01] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33477730
+[2026-06-30 10:06:02] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33478634
+[2026-06-30 10:06:03] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482675
+[2026-06-30 10:06:05] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33475393
+[2026-06-30 10:06:07] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33479214
+[2026-06-30 10:06:08] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33439243
+[2026-06-30 10:06:08] [INFO] [cqunews] crawler.py:319 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-06-30 10:06:08] [INFO] [cqunews] crawler.py:315 - Start crawling: 中国新闻网-滚动
+[2026-06-30 10:06:09] [INFO] [cqunews] crawler.py:237 - Found 146 candidate links from 中国新闻网-滚动
+[2026-06-30 10:06:11] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gj/shipin/2026/06-30/news1059901.shtml
+[2026-06-30 10:06:13] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/ny/shipin/2026/06-30/news1059899.shtml
+[2026-06-30 10:06:14] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gn/2026/06-30/10649740.shtml
+[2026-06-30 10:06:16] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gj/shipin/2026/06-30/news1059898.shtml
+[2026-06-30 10:06:18] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/2026/06-30/10649738.shtml
+[2026-06-30 10:06:19] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gj/2026/06-30/10649724.shtml
+[2026-06-30 10:06:20] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gn/2026/06-30/10649737.shtml
+[2026-06-30 10:06:22] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/mil/shipin/2026/06-30/news1059906.shtml
+[2026-06-30 10:06:22] [INFO] [cqunews] crawler.py:319 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-06-30 11:04:33] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-06-30T11:04:33.421798
+[2026-06-30 11:04:33] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-时政
+[2026-06-30 11:04:33] [INFO] [cqunews] crawler.py:237 - Found 88 candidate links from 新华网-时政
+[2026-06-30 11:04:35] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 11:04:37] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 11:04:38] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 11:04:40] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 11:04:41] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 11:04:42] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/2026lhjskls/index.html
+[2026-06-30 11:04:44] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-06-30 11:04:46] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/20260629/129c67899ce34053b1f89a1333eba226/c.html
+[2026-06-30 11:04:46] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-时政 — 7 items, 0 errors
+[2026-06-30 11:04:46] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-科技
+[2026-06-30 11:04:47] [INFO] [cqunews] crawler.py:237 - Found 38 candidate links from 新华网-科技
+[2026-06-30 11:04:48] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-06-30 11:04:50] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-06-30 11:04:51] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-06-30 11:04:53] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-06-30 11:04:55] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-06-30 11:04:56] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-06-30 11:04:58] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-06-30 11:05:00] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-06-30 11:05:00] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-06-30 11:05:00] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-国际
+[2026-06-30 11:05:01] [INFO] [cqunews] crawler.py:237 - Found 94 candidate links from 新华网-国际
+[2026-06-30 11:05:02] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-06-30 11:05:04] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-06-30 11:05:05] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-06-30 11:05:07] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-06-30 11:05:09] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-06-30 11:05:10] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-06-30 11:05:11] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-06-30 11:05:13] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260625/45341251187b4f638ce2cdb87dab7551/c.html
+[2026-06-30 11:05:13] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-06-30 11:05:13] [INFO] [cqunews] crawler.py:315 - Start crawling: 新浪新闻
+[2026-06-30 11:05:14] [INFO] [cqunews] crawler.py:237 - Found 75 candidate links from 新浪新闻
+[2026-06-30 11:05:16] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/o/2026-06-30/doc-inifeaae6674777.shtml
+[2026-06-30 11:05:18] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifeaae6707673.shtml
+[2026-06-30 11:05:20] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifeaae6701645.shtml
+[2026-06-30 11:05:21] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifczzy1634794.shtml
+[2026-06-30 11:05:23] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifcvty4923022.shtml
+[2026-06-30 11:05:25] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifcvty4893080.shtml
+[2026-06-30 11:05:27] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifczzy1643736.shtml
+[2026-06-30 11:05:30] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifcvuh6704862.shtml
+[2026-06-30 11:05:30] [INFO] [cqunews] crawler.py:319 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-06-30 11:05:30] [INFO] [cqunews] crawler.py:315 - Start crawling: 澎湃新闻
+[2026-06-30 11:05:31] [INFO] [cqunews] crawler.py:237 - Found 9 candidate links from 澎湃新闻
+[2026-06-30 11:05:32] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33472824
+[2026-06-30 11:05:33] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33467960
+[2026-06-30 11:05:35] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33477730
+[2026-06-30 11:05:36] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33439243
+[2026-06-30 11:05:38] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482675
+[2026-06-30 11:05:39] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33475393
+[2026-06-30 11:05:41] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482666
+[2026-06-30 11:05:42] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482345
+[2026-06-30 11:05:43] [INFO] [cqunews] crawler.py:319 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-06-30 11:05:43] [INFO] [cqunews] crawler.py:315 - Start crawling: 中国新闻网-滚动
+[2026-06-30 11:05:43] [INFO] [cqunews] crawler.py:237 - Found 143 candidate links from 中国新闻网-滚动
+[2026-06-30 11:05:45] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gn/2026/06-30/10649758.shtml
+[2026-06-30 11:05:46] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/2026/06-30/10649778.shtml
+[2026-06-30 11:05:48] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10649772.shtml
+[2026-06-30 11:05:49] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/tp/hd2011/2026/06-30/1196370.shtml
+[2026-06-30 11:05:51] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gj/2026/06-30/10649769.shtml
+[2026-06-30 11:05:53] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10649775.shtml
+[2026-06-30 11:05:54] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gj/shipin/2026/06-30/news1059915.shtml
+[2026-06-30 11:05:56] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10649770.shtml
+[2026-06-30 11:05:56] [INFO] [cqunews] crawler.py:319 - Crawl done: 中国新闻网-滚动 — 7 items, 0 errors
+[2026-06-30 11:41:09] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-06-30T11:41:09.780052
+[2026-06-30 11:41:09] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-时政
+[2026-06-30 11:41:10] [INFO] [cqunews] crawler.py:237 - Found 88 candidate links from 新华网-时政
+[2026-06-30 11:41:11] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 11:41:13] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 11:41:15] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 11:41:18] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 11:41:20] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 11:41:23] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/2026lhjskls/index.html
+[2026-06-30 11:41:25] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-06-30 11:41:27] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/20260629/129c67899ce34053b1f89a1333eba226/c.html
+[2026-06-30 11:41:28] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-时政 — 7 items, 0 errors
+[2026-06-30 11:41:28] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-科技
+[2026-06-30 11:41:28] [INFO] [cqunews] crawler.py:237 - Found 38 candidate links from 新华网-科技
+[2026-06-30 11:41:30] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-06-30 11:41:32] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-06-30 11:41:34] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-06-30 11:41:36] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-06-30 11:41:38] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-06-30 11:41:41] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-06-30 11:41:43] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-06-30 11:41:44] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-06-30 11:41:45] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-06-30 11:41:45] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-国际
+[2026-06-30 11:41:45] [INFO] [cqunews] crawler.py:237 - Found 94 candidate links from 新华网-国际
+[2026-06-30 11:41:46] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-06-30 11:41:50] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-06-30 11:41:51] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-06-30 11:41:53] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-06-30 11:41:55] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-06-30 11:41:57] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-06-30 11:41:58] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-06-30 11:41:59] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260625/45341251187b4f638ce2cdb87dab7551/c.html
+[2026-06-30 11:41:59] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-06-30 11:41:59] [INFO] [cqunews] crawler.py:315 - Start crawling: 新浪新闻
+[2026-06-30 11:42:03] [INFO] [cqunews] crawler.py:237 - Found 76 candidate links from 新浪新闻
+[2026-06-30 11:42:05] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/o/2026-06-30/doc-inifeaae6674777.shtml
+[2026-06-30 11:42:09] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifeaae6707673.shtml
+[2026-06-30 11:42:13] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifeaae6701645.shtml
+[2026-06-30 11:42:17] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifczzy1634794.shtml
+[2026-06-30 11:42:21] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifcvty4923022.shtml
+[2026-06-30 11:42:26] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifcvty4893080.shtml
+[2026-06-30 11:42:30] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifeaah3473687.shtml
+[2026-06-30 11:42:32] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifczzy1643736.shtml
+[2026-06-30 11:42:33] [INFO] [cqunews] crawler.py:319 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-06-30 11:42:33] [INFO] [cqunews] crawler.py:315 - Start crawling: 澎湃新闻
+[2026-06-30 11:42:33] [INFO] [cqunews] crawler.py:237 - Found 8 candidate links from 澎湃新闻
+[2026-06-30 11:42:34] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33472824
+[2026-06-30 11:42:35] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33467960
+[2026-06-30 11:42:37] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33477730
+[2026-06-30 11:42:39] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33439243
+[2026-06-30 11:42:41] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482675
+[2026-06-30 11:42:43] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33475393
+[2026-06-30 11:42:44] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483080
+[2026-06-30 11:42:46] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482496
+[2026-06-30 11:42:46] [INFO] [cqunews] crawler.py:319 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-06-30 11:42:46] [INFO] [cqunews] crawler.py:315 - Start crawling: 中国新闻网-滚动
+[2026-06-30 11:42:49] [INFO] [cqunews] crawler.py:237 - Found 140 candidate links from 中国新闻网-滚动
+[2026-06-30 11:42:50] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059943.shtml
+[2026-06-30 11:42:51] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059942.shtml
+[2026-06-30 11:42:53] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059941.shtml
+[2026-06-30 11:42:55] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059940.shtml
+[2026-06-30 11:42:56] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059939.shtml
+[2026-06-30 11:42:58] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059938.shtml
+[2026-06-30 12:12:59] [DEBUG] [cqunews] crawler.py:220 - Fetch article failed https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059938.shtml: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+[2026-06-30 12:13:00] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059937.shtml
+[2026-06-30 12:13:02] [DEBUG] [cqunews] crawler.py:220 - Fetch article failed https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059937.shtml: ('Connection aborted.', ConnectionAbortedError(10053, '你的主机中的软件中止了一个已建立的连接。', None, 10053, None))
+[2026-06-30 12:13:03] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/txy/2026/06-30/10649820.shtml
+[2026-06-30 12:13:07] [DEBUG] [cqunews] crawler.py:220 - Fetch article failed https://www.chinanews.com.cn/txy/2026/06-30/10649820.shtml: ('Connection aborted.', ConnectionResetError(10054, '远程主机强迫关闭了一个现有的连接。', None, 10054, None))
+[2026-06-30 12:13:07] [INFO] [cqunews] crawler.py:319 - Crawl done: 中国新闻网-滚动 — 5 items, 0 errors
+[2026-06-30 14:35:15] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-06-30T14:35:15.747481
+[2026-06-30 14:35:15] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-时政
+[2026-06-30 14:35:16] [INFO] [cqunews] crawler.py:237 - Found 88 candidate links from 新华网-时政
+[2026-06-30 14:35:17] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 14:35:18] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 14:35:20] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 14:35:24] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 14:35:26] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 14:35:27] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/2026lhjskls/index.html
+[2026-06-30 14:35:29] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-06-30 14:35:31] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/20260629/129c67899ce34053b1f89a1333eba226/c.html
+[2026-06-30 14:35:32] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-时政 — 7 items, 0 errors
+[2026-06-30 14:35:32] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-科技
+[2026-06-30 14:35:32] [INFO] [cqunews] crawler.py:237 - Found 38 candidate links from 新华网-科技
+[2026-06-30 14:35:33] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-06-30 14:35:35] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-06-30 14:35:37] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-06-30 14:35:39] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-06-30 14:35:41] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-06-30 14:35:44] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-06-30 14:35:47] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-06-30 14:35:49] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-06-30 14:35:49] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-06-30 14:35:49] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-国际
+[2026-06-30 14:35:50] [INFO] [cqunews] crawler.py:237 - Found 94 candidate links from 新华网-国际
+[2026-06-30 14:35:51] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-06-30 14:35:55] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-06-30 14:35:57] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-06-30 14:35:58] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-06-30 14:36:01] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-06-30 14:36:02] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-06-30 14:36:04] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-06-30 14:36:05] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-06-30 14:36:06] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-06-30 14:36:06] [INFO] [cqunews] crawler.py:315 - Start crawling: 新浪新闻
+[2026-06-30 14:36:12] [INFO] [cqunews] crawler.py:237 - Found 78 candidate links from 新浪新闻
+[2026-06-30 14:36:13] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/o/2026-06-30/doc-inifeaae6674777.shtml
+[2026-06-30 14:36:16] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifeaae6707673.shtml
+[2026-06-30 14:36:18] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifeaae6701645.shtml
+[2026-06-30 14:36:20] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifczzy1634794.shtml
+[2026-06-30 14:36:22] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifcvty4923022.shtml
+[2026-06-30 14:36:23] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifcvty4893080.shtml
+[2026-06-30 14:36:25] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifehiw1666024.shtml
+[2026-06-30 14:36:27] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/w/2026-06-30/doc-inifehiu4891039.shtml
+[2026-06-30 14:36:31] [INFO] [cqunews] crawler.py:319 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-06-30 14:36:31] [INFO] [cqunews] crawler.py:315 - Start crawling: 澎湃新闻
+[2026-06-30 14:36:32] [INFO] [cqunews] crawler.py:237 - Found 9 candidate links from 澎湃新闻
+[2026-06-30 14:36:33] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33333684
+[2026-06-30 14:36:34] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482861
+[2026-06-30 14:36:36] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33478587
+[2026-06-30 14:36:37] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33472824
+[2026-06-30 14:36:38] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482907
+[2026-06-30 14:36:40] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483464
+[2026-06-30 14:36:41] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483457
+[2026-06-30 14:36:43] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482688
+[2026-06-30 14:36:43] [INFO] [cqunews] crawler.py:319 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-06-30 14:36:43] [INFO] [cqunews] crawler.py:315 - Start crawling: 中国新闻网-滚动
+[2026-06-30 14:36:44] [INFO] [cqunews] crawler.py:237 - Found 144 candidate links from 中国新闻网-滚动
+[2026-06-30 14:36:45] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/ty/2026/06-30/10649912.shtml
+[2026-06-30 14:36:47] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/jk/2026/06-30/10649910.shtml
+[2026-06-30 14:36:49] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10649907.shtml
+[2026-06-30 14:36:50] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10649894.shtml
+[2026-06-30 14:36:52] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10649896.shtml
+[2026-06-30 14:36:54] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gj/2026/06-30/10649898.shtml
+[2026-06-30 14:36:56] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/tp/hd2011/2026/06-30/1196386.shtml
+[2026-06-30 14:36:58] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gj/2026/06-30/10649905.shtml
+[2026-06-30 14:36:59] [INFO] [cqunews] crawler.py:319 - Crawl done: 中国新闻网-滚动 — 7 items, 0 errors
+[2026-06-30 15:04:33] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-06-30T15:04:33.428368
+[2026-06-30 15:04:33] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-时政
+[2026-06-30 15:04:33] [INFO] [cqunews] crawler.py:237 - Found 88 candidate links from 新华网-时政
+[2026-06-30 15:04:34] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 15:04:36] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 15:04:37] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 15:04:40] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 15:04:41] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 15:04:42] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/zt/2026lhjskls/index.html
+[2026-06-30 15:04:44] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-06-30 15:04:45] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/politics/20260629/129c67899ce34053b1f89a1333eba226/c.html
+[2026-06-30 15:04:45] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-时政 — 7 items, 0 errors
+[2026-06-30 15:04:45] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-科技
+[2026-06-30 15:04:45] [INFO] [cqunews] crawler.py:237 - Found 38 candidate links from 新华网-科技
+[2026-06-30 15:04:47] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-06-30 15:04:49] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-06-30 15:04:51] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-06-30 15:04:52] [DEBUG] [cqunews] crawler.py:199 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-06-30 15:04:54] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-06-30 15:04:56] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-06-30 15:04:58] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-06-30 15:05:00] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-06-30 15:05:00] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-06-30 15:05:00] [INFO] [cqunews] crawler.py:315 - Start crawling: 新华网-国际
+[2026-06-30 15:05:00] [INFO] [cqunews] crawler.py:237 - Found 94 candidate links from 新华网-国际
+[2026-06-30 15:05:01] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-06-30 15:05:03] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-06-30 15:05:05] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-06-30 15:05:06] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-06-30 15:05:07] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-06-30 15:05:09] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-06-30 15:05:10] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-06-30 15:05:12] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-06-30 15:05:12] [INFO] [cqunews] crawler.py:319 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-06-30 15:05:12] [INFO] [cqunews] crawler.py:315 - Start crawling: 新浪新闻
+[2026-06-30 15:05:12] [INFO] [cqunews] crawler.py:237 - Found 81 candidate links from 新浪新闻
+[2026-06-30 15:05:14] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/o/2026-06-30/doc-inifeaae6674777.shtml
+[2026-06-30 15:05:16] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifenrs4781937.shtml
+[2026-06-30 15:05:18] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifenry6641816.shtml
+[2026-06-30 15:05:20] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifensa3419800.shtml
+[2026-06-30 15:05:22] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifeaae6701645.shtml
+[2026-06-30 15:05:24] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifeaah3473687.shtml
+[2026-06-30 15:05:26] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifczzy1634794.shtml
+[2026-06-30 15:05:28] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://news.sina.com.cn/c/2026-06-30/doc-inifehiu4883173.shtml
+[2026-06-30 15:05:28] [INFO] [cqunews] crawler.py:319 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-06-30 15:05:28] [INFO] [cqunews] crawler.py:315 - Start crawling: 澎湃新闻
+[2026-06-30 15:05:29] [INFO] [cqunews] crawler.py:237 - Found 9 candidate links from 澎湃新闻
+[2026-06-30 15:05:30] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483219
+[2026-06-30 15:05:31] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482861
+[2026-06-30 15:05:33] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33478587
+[2026-06-30 15:05:34] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33472824
+[2026-06-30 15:05:35] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482907
+[2026-06-30 15:05:37] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483464
+[2026-06-30 15:05:38] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483457
+[2026-06-30 15:05:39] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33333684
+[2026-06-30 15:05:39] [INFO] [cqunews] crawler.py:319 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-06-30 15:05:39] [INFO] [cqunews] crawler.py:315 - Start crawling: 中国新闻网-滚动
+[2026-06-30 15:05:40] [INFO] [cqunews] crawler.py:237 - Found 145 candidate links from 中国新闻网-滚动
+[2026-06-30 15:05:41] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/hr/2026/06-30/10649920.shtml
+[2026-06-30 15:05:43] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/hr/2026/06-30/10649916.shtml
+[2026-06-30 15:05:45] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/dwq/2026/06-30/10649914.shtml
+[2026-06-30 15:05:47] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10649924.shtml
+[2026-06-30 15:05:48] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10649922.shtml
+[2026-06-30 15:05:49] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/cul/2026/06-30/10649931.shtml
+[2026-06-30 15:05:51] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/gj/2026/06-30/10649908.shtml
+[2026-06-30 15:05:53] [DEBUG] [cqunews] crawler.py:199 - Fetching article: https://www.chinanews.com.cn/sh/shipin/cns-d/2026/06-30/news1059969.shtml
+[2026-06-30 15:05:53] [INFO] [cqunews] crawler.py:319 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-06-30 16:34:45] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-06-30 16:34:46] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 16:34:46] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-06-30 16:34:46] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 16:35:24] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-06-30 16:35:24] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 16:35:24] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-06-30 16:35:24] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 16:35:41] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.16ms)
+[2026-06-30 16:36:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/stats -> 200 (7.20ms)
+[2026-06-30 16:36:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/categories -> 200 (1.79ms)
+[2026-06-30 16:40:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.63ms)
+[2026-06-30 16:40:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.58ms)
+[2026-06-30 16:40:52] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.28ms)
+[2026-06-30 16:41:16] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (21.50ms)
+[2026-06-30 16:41:16] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (34.27ms)
+[2026-06-30 16:41:16] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (19.93ms)
+[2026-06-30 16:41:20] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.76ms)
+[2026-06-30 16:41:22] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (26.30ms)
+[2026-06-30 16:41:26] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (12.27ms)
+[2026-06-30 16:41:28] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.15ms)
+[2026-06-30 16:41:29] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (17.16ms)
+[2026-06-30 16:41:30] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (14.90ms)
+[2026-06-30 16:41:31] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.16ms)
+[2026-06-30 16:41:33] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (36.49ms)
+[2026-06-30 16:41:36] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.06ms)
+[2026-06-30 16:41:39] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (28.14ms)
+[2026-06-30 16:41:41] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (0.91ms)
+[2026-06-30 16:41:43] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (17.58ms)
+[2026-06-30 16:41:55] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-06-30T16:41:55.774649
+[2026-06-30 16:41:55] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-时政
+[2026-06-30 16:41:56] [INFO] [cqunews] crawler.py:279 - Found 88 candidate links from 新华网-时政
+[2026-06-30 16:41:57] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-06-30 16:42:00] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-06-30 16:42:02] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-06-30 16:42:04] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/specials.html
+[2026-06-30 16:42:05] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-06-30 16:42:07] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/2026lhjskls/index.html
+[2026-06-30 16:42:09] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-06-30 16:42:11] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/20260629/129c67899ce34053b1f89a1333eba226/c.html
+[2026-06-30 16:42:12] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-时政 — 7 items, 0 errors
+[2026-06-30 16:42:12] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-科技
+[2026-06-30 16:42:13] [INFO] [cqunews] crawler.py:279 - Found 38 candidate links from 新华网-科技
+[2026-06-30 16:42:14] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-06-30 16:42:16] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-06-30 16:42:18] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-06-30 16:42:19] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-06-30 16:42:21] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-06-30 16:42:23] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-06-30 16:42:24] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-06-30 16:42:26] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-06-30 16:42:27] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-06-30 16:42:27] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-国际
+[2026-06-30 16:42:28] [INFO] [cqunews] crawler.py:279 - Found 96 candidate links from 新华网-国际
+[2026-06-30 16:42:29] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-06-30 16:42:31] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-06-30 16:42:33] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-06-30 16:42:34] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-06-30 16:42:36] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-06-30 16:42:37] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-06-30 16:42:39] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-06-30 16:42:40] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-06-30 16:42:41] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-06-30 16:42:41] [INFO] [cqunews] crawler.py:357 - Start crawling: 新浪新闻
+[2026-06-30 16:42:42] [INFO] [cqunews] crawler.py:279 - Found 84 candidate links from 新浪新闻
+[2026-06-30 16:42:44] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/o/2026-06-30/doc-inifeaae6674777.shtml
+[2026-06-30 16:42:46] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/xl/2026-06-30/doc-inifenru1612531.shtml
+[2026-06-30 16:42:47] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifenry6731419.shtml
+[2026-06-30 16:42:49] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifenru1635066.shtml
+[2026-06-30 16:42:51] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-06-30/doc-inifensa3509467.shtml
+[2026-06-30 16:42:53] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/o/2026-06-30/doc-inifenru1596199.shtml
+[2026-06-30 16:42:56] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/o/2026-06-30/doc-inifenru1587815.shtml
+[2026-06-30 16:42:58] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/s/2026-06-30/doc-inifenrs4775313.shtml
+[2026-06-30 16:42:59] [INFO] [cqunews] crawler.py:361 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-06-30 16:42:59] [INFO] [cqunews] crawler.py:357 - Start crawling: 澎湃新闻
+[2026-06-30 16:42:59] [INFO] [cqunews] crawler.py:279 - Found 9 candidate links from 澎湃新闻
+[2026-06-30 16:43:00] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33484571
+[2026-06-30 16:43:02] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33484344
+[2026-06-30 16:43:04] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33482861
+[2026-06-30 16:43:06] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483457
+[2026-06-30 16:43:08] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33474619
+[2026-06-30 16:43:10] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33484308
+[2026-06-30 16:43:12] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33484560
+[2026-06-30 16:43:13] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483654
+[2026-06-30 16:43:14] [INFO] [cqunews] crawler.py:361 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-06-30 16:43:14] [INFO] [cqunews] crawler.py:357 - Start crawling: 中国新闻网-滚动
+[2026-06-30 16:43:15] [INFO] [cqunews] crawler.py:279 - Found 146 candidate links from 中国新闻网-滚动
+[2026-06-30 16:43:17] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/dwq/2026/06-30/10650012.shtml
+[2026-06-30 16:43:19] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/06-30/10650027.shtml
+[2026-06-30 16:43:22] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gj/2026/06-30/10650021.shtml
+[2026-06-30 16:43:24] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059991.shtml
+[2026-06-30 16:43:26] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/06-30/10650002.shtml
+[2026-06-30 16:43:28] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/cj/2026/06-30/10650000.shtml
+[2026-06-30 16:43:30] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/06-30/news1059990.shtml
+[2026-06-30 16:43:32] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/sh/2026/06-30/10649975.shtml
+[2026-06-30 16:43:34] [INFO] [cqunews] crawler.py:361 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-06-30 16:43:34] [INFO] [cqunews] main.py:60 - |G3| POST /api/crawl/run -> 200 (98268.86ms)
+[2026-06-30 16:43:34] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (29.95ms)
+[2026-06-30 16:43:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.21ms)
+[2026-06-30 16:43:46] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (31.59ms)
+[2026-06-30 16:43:50] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.44ms)
+[2026-06-30 16:43:52] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (14.92ms)
+[2026-06-30 16:43:53] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (19.38ms)
+[2026-06-30 16:44:03] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.29ms)
+[2026-06-30 16:44:04] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (21.10ms)
+[2026-06-30 16:44:05] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (18.77ms)
+[2026-06-30 16:44:06] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (19.61ms)
+[2026-06-30 16:44:06] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (3.99ms)
+[2026-06-30 16:44:07] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.20ms)
+[2026-06-30 16:44:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.29ms)
+[2026-06-30 16:44:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (27.04ms)
+[2026-06-30 16:44:22] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (12.75ms)
+[2026-06-30 16:44:25] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.92ms)
+[2026-06-30 16:45:04] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.29ms)
+[2026-06-30 16:45:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (33.79ms)
+[2026-06-30 16:45:25] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.14ms)
+[2026-06-30 16:45:34] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.30ms)
+[2026-06-30 16:45:40] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (33.62ms)
+[2026-06-30 16:45:43] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.11ms)
+[2026-06-30 16:45:56] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.07ms)
+[2026-06-30 16:45:58] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.20ms)
+[2026-06-30 16:46:01] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (29.19ms)
+[2026-06-30 16:46:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.16ms)
+[2026-06-30 16:46:26] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (26.81ms)
+[2026-06-30 16:46:28] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (0.98ms)
+[2026-06-30 16:46:37] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (15.88ms)
+[2026-06-30 16:46:40] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.89ms)
+[2026-06-30 16:46:43] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (0.92ms)
+[2026-06-30 16:46:49] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.10ms)
+[2026-06-30 16:46:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (0.93ms)
+[2026-06-30 16:46:59] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.98ms)
+[2026-06-30 16:47:03] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.97ms)
+[2026-06-30 16:47:05] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (24.36ms)
+[2026-06-30 16:47:07] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (18.57ms)
+[2026-06-30 16:47:10] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.43ms)
+[2026-06-30 16:47:13] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 400 (1.19ms)
+[2026-06-30 16:47:21] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (24.65ms)
+[2026-06-30 17:15:28] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-06-30 17:15:28] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 17:15:28] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-06-30 17:15:28] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 17:15:28] [INFO] [cqunews] scheduler.py:60 - APScheduler stopped.
+[2026-06-30 17:15:28] [INFO] [cqunews] main.py:29 - Shutdown complete.
+[2026-06-30 17:16:17] [ERROR] [cqunews] main.py:81 - Unhandled exception on POST /api/auth/register: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_utils.py", line 76, in collapse_excgroups
+  |     yield
+  |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 186, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 811, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 165, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 185, in __call__
+    |     with collapse_excgroups():
+    |          ^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\PythonInterpreter\Python312\Lib\contextlib.py", line 158, in __exit__
+    |     self.gen.throw(value)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_utils.py", line 82, in collapse_excgroups
+    |     raise exc
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 187, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\main.py", line 58, in request_logging_middleware
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    |     raise app_exc
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 735, in app
+    |     await route.handle(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 288, in handle
+    |     await self.app(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 76, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 73, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\fastapi\routing.py", line 301, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\fastapi\routing.py", line 214, in run_endpoint_function
+    |     return await run_in_threadpool(dependant.call, **values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 39, in run_in_threadpool
+    |     return await anyio.to_thread.run_sync(func, *args)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    |     return await get_async_backend().run_sync_in_worker_thread(
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2596, in run_sync_in_worker_thread
+    |     return await future
+    |            ^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1029, in run
+    |     result = context.run(func, *args)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\settings_router.py", line 217, in register
+    |     if score < 1:
+    |            ^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\auth.py", line 169, in register_user
+    |     password_hash=hash_password(password),
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\auth.py", line 22, in hash_password
+    |     return pwd_context.hash(password)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    |     return record.hash(secret, **kwds)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    |     self.checksum = self._calc_checksum(secret)
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    |     self._stub_requires_backend()
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    |     cls.set_backend()
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    |     return owner.set_backend(name, dryrun=dryrun)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    |     return cls.set_backend(name, dryrun=dryrun)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    |     cls._set_backend(name, dryrun)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    |     super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    |     ok = loader(**kwds)
+    |          ^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    |     return mixin_cls._finalize_backend_mixin(name, dryrun)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    |     if detect_wrap_bug(IDENT_2A):
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    |     if verify(secret, bug_hash):
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    |     return consteq(self._calc_checksum(secret), chk)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    |     hash = _bcrypt.hashpw(secret, config)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    | ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 185, in __call__
+    with collapse_excgroups():
+         ^^^^^^^^^^^^^^^^^^^^
+  File "D:\PythonInterpreter\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_utils.py", line 82, in collapse_excgroups
+    raise exc
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 187, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\main.py", line 58, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    raise app_exc
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\fastapi\routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\fastapi\routing.py", line 214, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 39, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2596, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\settings_router.py", line 217, in register
+    if score < 1:
+           ^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\auth.py", line 169, in register_user
+    password_hash=hash_password(password),
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\auth.py", line 22, in hash_password
+    return pwd_context.hash(password)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+         ^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+[2026-06-30 17:16:18] [INFO] [cqunews] main.py:60 - |G3| POST /api/auth/login -> 401 (131.35ms)
+[2026-06-30 17:16:52] [INFO] [cqunews] main.py:60 - |G3| GET /api/health -> 200 (1.20ms)
+[2026-06-30 17:18:07] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-06-30 17:18:07] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 17:18:07] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-06-30 17:18:07] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 17:19:16] [ERROR] [cqunews] main.py:81 - Unhandled exception on POST /api/auth/register: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+  + Exception Group Traceback (most recent call last):
+  |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_utils.py", line 76, in collapse_excgroups
+  |     yield
+  |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 186, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 811, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 165, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 185, in __call__
+    |     with collapse_excgroups():
+    |          ^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\PythonInterpreter\Python312\Lib\contextlib.py", line 158, in __exit__
+    |     self.gen.throw(value)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_utils.py", line 82, in collapse_excgroups
+    |     raise exc
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 187, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\main.py", line 58, in request_logging_middleware
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    |     raise app_exc
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 735, in app
+    |     await route.handle(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 288, in handle
+    |     await self.app(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 76, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 73, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\fastapi\routing.py", line 301, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\fastapi\routing.py", line 214, in run_endpoint_function
+    |     return await run_in_threadpool(dependant.call, **values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 39, in run_in_threadpool
+    |     return await anyio.to_thread.run_sync(func, *args)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    |     return await get_async_backend().run_sync_in_worker_thread(
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2596, in run_sync_in_worker_thread
+    |     return await future
+    |            ^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1029, in run
+    |     result = context.run(func, *args)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\settings_router.py", line 219, in register
+    |     user = register_user(
+    |            ^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\auth.py", line 169, in register_user
+    |     password_hash=hash_password(password),
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\auth.py", line 22, in hash_password
+    |     return pwd_context.hash(password)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    |     return record.hash(secret, **kwds)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    |     self.checksum = self._calc_checksum(secret)
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    |     self._stub_requires_backend()
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    |     cls.set_backend()
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    |     return owner.set_backend(name, dryrun=dryrun)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    |     return cls.set_backend(name, dryrun=dryrun)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    |     cls._set_backend(name, dryrun)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    |     super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    |     ok = loader(**kwds)
+    |          ^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    |     return mixin_cls._finalize_backend_mixin(name, dryrun)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    |     if detect_wrap_bug(IDENT_2A):
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    |     if verify(secret, bug_hash):
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    |     return consteq(self._calc_checksum(secret), chk)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    |     hash = _bcrypt.hashpw(secret, config)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    | ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 185, in __call__
+    with collapse_excgroups():
+         ^^^^^^^^^^^^^^^^^^^^
+  File "D:\PythonInterpreter\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_utils.py", line 82, in collapse_excgroups
+    raise exc
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 187, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\main.py", line 58, in request_logging_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 163, in call_next
+    raise app_exc
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 715, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 735, in app
+    await route.handle(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\fastapi\routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\fastapi\routing.py", line 214, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 39, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2596, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1029, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\settings_router.py", line 219, in register
+    user = register_user(
+           ^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\auth.py", line 169, in register_user
+    password_hash=hash_password(password),
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\app\auth.py", line 22, in hash_password
+    return pwd_context.hash(password)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+         ^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\utils\handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\backend\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+[2026-06-30 17:19:16] [INFO] [cqunews] main.py:60 - |G3| POST /api/auth/login -> 401 (145.67ms)
+[2026-06-30 17:20:32] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 17:20:32] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-06-30 17:20:32] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 17:20:32] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-06-30 17:20:32] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 17:20:32] [INFO] [cqunews] scheduler.py:60 - APScheduler stopped.
+[2026-06-30 17:20:32] [INFO] [cqunews] main.py:29 - Shutdown complete.
+[2026-06-30 17:21:36] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 17:21:36] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-06-30 17:21:36] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-06-30 17:21:36] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-06-30 17:21:36] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-06-30 17:21:36] [INFO] [cqunews] scheduler.py:60 - APScheduler stopped.
+[2026-06-30 17:21:36] [INFO] [cqunews] main.py:29 - Shutdown complete.
+[2026-06-30 17:28:01] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (34.07ms)
+[2026-06-30 17:28:01] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.10ms)
+[2026-06-30 17:28:01] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (17.87ms)
+[2026-07-01 10:06:59] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-07-01 10:06:59] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-07-01 10:06:59] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-07-01 10:06:59] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-07-01 10:07:31] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.35ms)
+[2026-07-01 10:08:01] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (2.89ms)
+[2026-07-01 10:14:44] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-07-01 10:14:44] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-07-01 10:14:44] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-07-01 10:14:44] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-07-01 10:14:44] [INFO] [cqunews] scheduler.py:60 - APScheduler stopped.
+[2026-07-01 10:14:44] [INFO] [cqunews] main.py:29 - Shutdown complete.
+[2026-07-01 10:17:40] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.13ms)
+[2026-07-01 10:17:40] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.77ms)
+[2026-07-01 10:17:41] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.43ms)
+[2026-07-01 10:17:43] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.43ms)
+[2026-07-01 10:17:45] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (2.99ms)
+[2026-07-01 10:17:52] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (15.46ms)
+[2026-07-01 10:18:02] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (3.08ms)
+[2026-07-01 10:18:05] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.20ms)
+[2026-07-01 10:19:07] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.13ms)
+[2026-07-01 10:19:07] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.23ms)
+[2026-07-01 10:19:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.59ms)
+[2026-07-01 10:19:16] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-07-01T10:19:16.270952
+[2026-07-01 10:19:16] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-时政
+[2026-07-01 10:19:16] [INFO] [cqunews] crawler.py:279 - Found 88 candidate links from 新华网-时政
+[2026-07-01 10:19:18] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-07-01 10:19:19] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-07-01 10:19:21] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/xxgcxjpdjsx/index.html
+[2026-07-01 10:19:23] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/jd105zn/index.html
+[2026-07-01 10:19:25] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-07-01 10:19:27] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-07-01 10:19:28] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-07-01 10:19:31] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/20260630/e0580dbe5a40432d865846bb396e4839/c.html
+[2026-07-01 10:19:32] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-时政 — 6 items, 0 errors
+[2026-07-01 10:19:32] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-科技
+[2026-07-01 10:19:32] [INFO] [cqunews] crawler.py:279 - Found 38 candidate links from 新华网-科技
+[2026-07-01 10:19:33] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-07-01 10:19:35] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-07-01 10:19:36] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-07-01 10:19:38] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-07-01 10:19:40] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-07-01 10:19:42] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-07-01 10:19:43] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-07-01 10:19:44] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-07-01 10:19:44] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-07-01 10:19:44] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-国际
+[2026-07-01 10:19:45] [INFO] [cqunews] crawler.py:279 - Found 95 candidate links from 新华网-国际
+[2026-07-01 10:19:47] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-07-01 10:19:48] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-07-01 10:19:50] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-07-01 10:19:52] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-07-01 10:19:54] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-07-01 10:19:56] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-07-01 10:19:57] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-07-01 10:20:00] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-07-01 10:20:01] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-07-01 10:20:01] [INFO] [cqunews] crawler.py:357 - Start crawling: 新浪新闻
+[2026-07-01 10:20:01] [INFO] [cqunews] crawler.py:279 - Found 88 candidate links from 新浪新闻
+[2026-07-01 10:20:02] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/2026-07-01/doc-iniffytk3150659.shtml
+[2026-07-01 10:20:05] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/xl/2026-07-01/doc-inifheyw4265598.shtml
+[2026-07-01 10:20:06] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/xl/2026-07-01/doc-inifheze6301796.shtml
+[2026-07-01 10:20:07] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/xl/2026-07-01/doc-inifheze6302487.shtml
+[2026-07-01 10:20:09] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-iniffysy4344535.shtml
+[2026-07-01 10:20:11] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-inifheyw4276824.shtml
+[2026-07-01 10:20:13] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-inifhezh3094233.shtml
+[2026-07-01 10:20:15] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-iniffysy4342611.shtml
+[2026-07-01 10:20:15] [INFO] [cqunews] crawler.py:361 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-07-01 10:20:15] [INFO] [cqunews] crawler.py:357 - Start crawling: 澎湃新闻
+[2026-07-01 10:20:16] [INFO] [cqunews] crawler.py:279 - Found 8 candidate links from 澎湃新闻
+[2026-07-01 10:20:17] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33478561
+[2026-07-01 10:20:19] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33444201
+[2026-07-01 10:20:21] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33490978
+[2026-07-01 10:20:23] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33488741
+[2026-07-01 10:20:25] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491804
+[2026-07-01 10:20:26] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33485818
+[2026-07-01 10:20:28] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33488167
+[2026-07-01 10:20:29] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491337
+[2026-07-01 10:20:30] [INFO] [cqunews] crawler.py:361 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-07-01 10:20:30] [INFO] [cqunews] crawler.py:357 - Start crawling: 中国新闻网-滚动
+[2026-07-01 10:20:31] [INFO] [cqunews] crawler.py:279 - Found 147 candidate links from 中国新闻网-滚动
+[2026-07-01 10:20:32] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gj/2026/07-01/10650382.shtml
+[2026-07-01 10:20:33] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/shipin/2026/07-01/news1060052.shtml
+[2026-07-01 10:20:34] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gj/2026/07-01/10650338.shtml
+[2026-07-01 10:20:36] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/cj/shipin/cns-d/2026/07-01/news1060050.shtml
+[2026-07-01 10:20:38] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/sh/shipin/cns-d/2026/07-01/news1060051.shtml
+[2026-07-01 10:20:39] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gj/2026/07-01/10650337.shtml
+[2026-07-01 10:20:41] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650413.shtml
+[2026-07-01 10:20:43] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/ga/shipin/2026/07-01/news1060049.shtml
+[2026-07-01 10:20:44] [INFO] [cqunews] crawler.py:361 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-07-01 10:20:44] [INFO] [cqunews] main.py:60 - |G3| POST /api/crawl/run -> 200 (88197.75ms)
+[2026-07-01 10:20:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (15.02ms)
+[2026-07-01 10:22:47] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (17.78ms)
+[2026-07-01 10:22:49] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.74ms)
+[2026-07-01 11:06:59] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-07-01T11:06:59.947467
+[2026-07-01 11:06:59] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-时政
+[2026-07-01 11:07:00] [INFO] [cqunews] crawler.py:279 - Found 88 candidate links from 新华网-时政
+[2026-07-01 11:07:02] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-07-01 11:07:04] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-07-01 11:07:05] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/xxgcxjpdjsx/index.html
+[2026-07-01 11:07:07] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/jd105zn/index.html
+[2026-07-01 11:07:08] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-07-01 11:07:10] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-07-01 11:07:13] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-07-01 11:07:14] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/20260630/e0580dbe5a40432d865846bb396e4839/c.html
+[2026-07-01 11:07:15] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-时政 — 6 items, 0 errors
+[2026-07-01 11:07:15] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-科技
+[2026-07-01 11:07:15] [INFO] [cqunews] crawler.py:279 - Found 38 candidate links from 新华网-科技
+[2026-07-01 11:07:17] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-07-01 11:07:18] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-07-01 11:07:20] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-07-01 11:07:22] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-07-01 11:07:23] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-07-01 11:07:24] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-07-01 11:07:26] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-07-01 11:07:27] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-07-01 11:07:27] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-07-01 11:07:27] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-国际
+[2026-07-01 11:07:27] [INFO] [cqunews] crawler.py:279 - Found 95 candidate links from 新华网-国际
+[2026-07-01 11:07:28] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-07-01 11:07:29] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-07-01 11:07:31] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-07-01 11:07:33] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-07-01 11:07:34] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-07-01 11:07:35] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-07-01 11:07:36] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-07-01 11:07:38] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-07-01 11:07:39] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-07-01 11:07:39] [INFO] [cqunews] crawler.py:357 - Start crawling: 新浪新闻
+[2026-07-01 11:07:39] [INFO] [cqunews] crawler.py:279 - Found 87 candidate links from 新浪新闻
+[2026-07-01 11:07:41] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/2026-07-01/doc-iniffytk3150659.shtml
+[2026-07-01 11:07:43] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/xl/2026-07-01/doc-inifheyw4265598.shtml
+[2026-07-01 11:07:45] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/xl/2026-07-01/doc-inifheze6301796.shtml
+[2026-07-01 11:07:46] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/xl/2026-07-01/doc-inifheze6302487.shtml
+[2026-07-01 11:07:47] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-iniffysy4344535.shtml
+[2026-07-01 11:07:48] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-inifheyw4276824.shtml
+[2026-07-01 11:07:50] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-inifhezh3094233.shtml
+[2026-07-01 11:07:52] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-iniffysy4342611.shtml
+[2026-07-01 11:07:52] [INFO] [cqunews] crawler.py:361 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-07-01 11:07:52] [INFO] [cqunews] crawler.py:357 - Start crawling: 澎湃新闻
+[2026-07-01 11:07:52] [INFO] [cqunews] crawler.py:279 - Found 9 candidate links from 澎湃新闻
+[2026-07-01 11:07:54] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491951
+[2026-07-01 11:07:56] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491804
+[2026-07-01 11:07:58] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33444201
+[2026-07-01 11:07:59] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33490978
+[2026-07-01 11:08:01] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33488741
+[2026-07-01 11:08:03] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491983
+[2026-07-01 11:08:04] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492035
+[2026-07-01 11:08:06] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33485818
+[2026-07-01 11:08:06] [INFO] [cqunews] crawler.py:361 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-07-01 11:08:06] [INFO] [cqunews] crawler.py:357 - Start crawling: 中国新闻网-滚动
+[2026-07-01 11:08:07] [INFO] [cqunews] crawler.py:279 - Found 146 candidate links from 中国新闻网-滚动
+[2026-07-01 11:08:08] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gj/2026/07-01/10650420.shtml
+[2026-07-01 11:08:10] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gj/2026/07-01/10650406.shtml
+[2026-07-01 11:08:11] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650476.shtml
+[2026-07-01 11:08:12] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650477.shtml
+[2026-07-01 11:08:14] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650475.shtml
+[2026-07-01 11:08:16] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/shipin/2026/07-01/news1060070.shtml
+[2026-07-01 11:08:18] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650474.shtml
+[2026-07-01 11:08:20] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650472.shtml
+[2026-07-01 11:08:20] [INFO] [cqunews] crawler.py:361 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-07-01 12:06:59] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-07-01T12:06:59.963982
+[2026-07-01 12:07:00] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-时政
+[2026-07-01 12:07:00] [INFO] [cqunews] crawler.py:279 - Found 88 candidate links from 新华网-时政
+[2026-07-01 12:07:01] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-07-01 12:07:03] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-07-01 12:07:05] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/xxgcxjpdjsx/index.html
+[2026-07-01 12:07:07] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/jd105zn/index.html
+[2026-07-01 12:07:09] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-07-01 12:07:11] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-07-01 12:07:13] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-07-01 12:07:15] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/20260630/e0580dbe5a40432d865846bb396e4839/c.html
+[2026-07-01 12:07:16] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-时政 — 6 items, 0 errors
+[2026-07-01 12:07:16] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-科技
+[2026-07-01 12:07:16] [INFO] [cqunews] crawler.py:279 - Found 38 candidate links from 新华网-科技
+[2026-07-01 12:07:18] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-07-01 12:07:19] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-07-01 12:07:20] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-07-01 12:07:22] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-07-01 12:07:24] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-07-01 12:07:25] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-07-01 12:07:27] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-07-01 12:07:29] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-07-01 12:07:29] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-07-01 12:07:29] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-国际
+[2026-07-01 12:07:29] [INFO] [cqunews] crawler.py:279 - Found 95 candidate links from 新华网-国际
+[2026-07-01 12:07:31] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-07-01 12:07:32] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-07-01 12:07:34] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-07-01 12:07:35] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-07-01 12:07:36] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-07-01 12:07:38] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-07-01 12:07:40] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-07-01 12:07:41] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-07-01 12:07:41] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-07-01 12:07:41] [INFO] [cqunews] crawler.py:357 - Start crawling: 新浪新闻
+[2026-07-01 12:07:42] [INFO] [cqunews] crawler.py:279 - Found 85 candidate links from 新浪新闻
+[2026-07-01 12:07:43] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/2026-07-01/doc-iniffytk3150659.shtml
+[2026-07-01 12:07:44] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmia6331491.shtml
+[2026-07-01 12:07:46] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmia6331951.shtml
+[2026-07-01 12:07:48] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmia6332017.shtml
+[2026-07-01 12:07:50] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-iniffysy4344535.shtml
+[2026-07-01 12:07:51] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-inifheyw4276824.shtml
+[2026-07-01 12:07:53] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-inifhezh3094233.shtml
+[2026-07-01 12:07:55] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-iniffysy4342611.shtml
+[2026-07-01 12:07:55] [INFO] [cqunews] crawler.py:361 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-07-01 12:07:55] [INFO] [cqunews] crawler.py:357 - Start crawling: 澎湃新闻
+[2026-07-01 12:07:56] [INFO] [cqunews] crawler.py:279 - Found 9 candidate links from 澎湃新闻
+[2026-07-01 12:07:56] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492191
+[2026-07-01 12:07:58] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491804
+[2026-07-01 12:07:59] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33485818
+[2026-07-01 12:08:01] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491337
+[2026-07-01 12:08:03] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33488741
+[2026-07-01 12:08:04] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492177
+[2026-07-01 12:08:05] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491532
+[2026-07-01 12:08:07] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492166
+[2026-07-01 12:08:07] [INFO] [cqunews] crawler.py:361 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-07-01 12:08:07] [INFO] [cqunews] crawler.py:357 - Start crawling: 中国新闻网-滚动
+[2026-07-01 12:08:08] [INFO] [cqunews] crawler.py:279 - Found 145 candidate links from 中国新闻网-滚动
+[2026-07-01 12:08:09] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/shipin/2026/07-01/news1060084.shtml
+[2026-07-01 12:08:10] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/shipin/2026/07-01/news1060083.shtml
+[2026-07-01 12:08:12] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gj/shipin/2026/07-01/news1060082.shtml
+[2026-07-01 12:08:14] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650526.shtml
+[2026-07-01 12:08:16] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/cj/2026/07-01/10650524.shtml
+[2026-07-01 12:08:17] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/tp/2026/07-01/10650520.shtml
+[2026-07-01 12:08:19] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650515.shtml
+[2026-07-01 12:08:20] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/tw/shipin/2026/07-01/news1060081.shtml
+[2026-07-01 12:08:21] [INFO] [cqunews] crawler.py:361 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-07-01 13:06:59] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-07-01T13:06:59.942097
+[2026-07-01 13:06:59] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-时政
+[2026-07-01 13:07:00] [INFO] [cqunews] crawler.py:279 - Found 88 candidate links from 新华网-时政
+[2026-07-01 13:07:01] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-07-01 13:07:03] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-07-01 13:07:04] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/xxgcxjpdjsx/index.html
+[2026-07-01 13:07:05] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/jd105zn/index.html
+[2026-07-01 13:07:07] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-07-01 13:07:09] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-07-01 13:07:11] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-07-01 13:07:13] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/politics/20260630/e0580dbe5a40432d865846bb396e4839/c.html
+[2026-07-01 13:07:13] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-时政 — 6 items, 0 errors
+[2026-07-01 13:07:13] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-科技
+[2026-07-01 13:07:13] [INFO] [cqunews] crawler.py:279 - Found 38 candidate links from 新华网-科技
+[2026-07-01 13:07:14] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-07-01 13:07:16] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-07-01 13:07:17] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-07-01 13:07:19] [DEBUG] [cqunews] crawler.py:240 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-07-01 13:07:21] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-07-01 13:07:22] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-07-01 13:07:24] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-07-01 13:07:26] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-07-01 13:07:26] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-07-01 13:07:26] [INFO] [cqunews] crawler.py:357 - Start crawling: 新华网-国际
+[2026-07-01 13:07:26] [INFO] [cqunews] crawler.py:279 - Found 95 candidate links from 新华网-国际
+[2026-07-01 13:07:27] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-07-01 13:07:29] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-07-01 13:07:30] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-07-01 13:07:32] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-07-01 13:07:34] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-07-01 13:07:36] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260625/6a3123015b59418d921d22a1bc3cff39/c.html
+[2026-07-01 13:07:37] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-07-01 13:07:38] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.news.cn/world/20260628/1f1ea7fc4428488ab46ae4e45a0b349c/c.html
+[2026-07-01 13:07:38] [INFO] [cqunews] crawler.py:361 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-07-01 13:07:39] [INFO] [cqunews] crawler.py:357 - Start crawling: 新浪新闻
+[2026-07-01 13:07:39] [INFO] [cqunews] crawler.py:279 - Found 87 candidate links from 新浪新闻
+[2026-07-01 13:07:40] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/c/2026-07-01/doc-iniffytk3150659.shtml
+[2026-07-01 13:07:42] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmia6331491.shtml
+[2026-07-01 13:07:43] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmhu4306270.shtml
+[2026-07-01 13:07:44] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmia6382668.shtml
+[2026-07-01 13:07:46] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmhu4307184.shtml
+[2026-07-01 13:07:48] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmhw1083724.shtml
+[2026-07-01 13:07:49] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhmhw1084578.shtml
+[2026-07-01 13:07:51] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://news.sina.com.cn/w/2026-07-01/doc-iniffysy4344535.shtml
+[2026-07-01 13:07:52] [INFO] [cqunews] crawler.py:361 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-07-01 13:07:52] [INFO] [cqunews] crawler.py:357 - Start crawling: 澎湃新闻
+[2026-07-01 13:07:52] [INFO] [cqunews] crawler.py:279 - Found 9 candidate links from 澎湃新闻
+[2026-07-01 13:07:54] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492191
+[2026-07-01 13:07:56] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491804
+[2026-07-01 13:07:57] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33485818
+[2026-07-01 13:07:58] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491337
+[2026-07-01 13:08:00] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33488741
+[2026-07-01 13:08:01] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492414
+[2026-07-01 13:08:02] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491532
+[2026-07-01 13:08:03] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492166
+[2026-07-01 13:08:03] [INFO] [cqunews] crawler.py:361 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-07-01 13:08:03] [INFO] [cqunews] crawler.py:357 - Start crawling: 中国新闻网-滚动
+[2026-07-01 13:08:04] [INFO] [cqunews] crawler.py:279 - Found 145 candidate links from 中国新闻网-滚动
+[2026-07-01 13:08:04] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/tp/hd2011/2026/07-01/1196508.shtml
+[2026-07-01 13:08:06] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/shipin/cns-d/2026/07-01/news1060090.shtml
+[2026-07-01 13:08:08] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/shipin/cns-d/2026/07-01/news1060091.shtml
+[2026-07-01 13:08:09] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/cj/2026/07-01/10650543.shtml
+[2026-07-01 13:08:10] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/dwq/2026/07-01/10650533.shtml
+[2026-07-01 13:08:11] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650541.shtml
+[2026-07-01 13:08:12] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-01/10650540.shtml
+[2026-07-01 13:08:13] [DEBUG] [cqunews] crawler.py:240 - Fetching article: https://www.chinanews.com.cn/gn/shipin/2026/07-01/news1060089.shtml
+[2026-07-01 13:08:14] [INFO] [cqunews] crawler.py:361 - Crawl done: 中国新闻网-滚动 — 7 items, 0 errors
+[2026-07-01 16:49:43] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-07-01 16:49:43] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-07-01 16:49:43] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-07-01 16:49:43] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-07-01 16:51:00] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-07-01 16:51:00] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-07-01 16:51:00] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-07-01 16:51:00] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-07-01 16:51:00] [INFO] [cqunews] scheduler.py:60 - APScheduler stopped.
+[2026-07-01 16:51:00] [INFO] [cqunews] main.py:29 - Shutdown complete.
+[2026-07-01 16:51:56] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-07-01 16:51:56] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-07-01 16:51:56] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-07-01 16:51:56] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-07-01 16:57:37] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (21.92ms)
+[2026-07-01 16:57:37] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.83ms)
+[2026-07-01 16:57:38] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.29ms)
+[2026-07-01 16:57:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.56ms)
+[2026-07-01 16:57:46] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.94ms)
+[2026-07-01 16:57:48] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.41ms)
+[2026-07-01 16:57:50] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.15ms)
+[2026-07-01 17:51:56] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-07-01T17:51:56.157839
+[2026-07-01 17:51:56] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-时政
+[2026-07-01 17:51:56] [INFO] [cqunews] crawler.py:317 - Found 88 candidate links from 新华网-时政
+[2026-07-01 17:51:57] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-07-01 17:51:59] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-07-01 17:52:01] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/xxgcxjpdjsx/index.html
+[2026-07-01 17:52:02] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/jd105zn/index.html
+[2026-07-01 17:52:04] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-07-01 17:52:06] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-07-01 17:52:08] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-07-01 17:52:09] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/politics/20260630/e0580dbe5a40432d865846bb396e4839/c.html
+[2026-07-01 17:52:09] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-时政 — 6 items, 0 errors
+[2026-07-01 17:52:09] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-科技
+[2026-07-01 17:52:10] [INFO] [cqunews] crawler.py:317 - Found 38 candidate links from 新华网-科技
+[2026-07-01 17:52:11] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-07-01 17:52:12] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-07-01 17:52:13] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-07-01 17:52:15] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-07-01 17:52:17] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-07-01 17:52:19] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-07-01 17:52:20] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-07-01 17:52:21] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-07-01 17:52:21] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-07-01 17:52:21] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-国际
+[2026-07-01 17:52:21] [INFO] [cqunews] crawler.py:317 - Found 94 candidate links from 新华网-国际
+[2026-07-01 17:52:23] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-07-01 17:52:25] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-07-01 17:52:27] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-07-01 17:52:28] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260701/0695ff791d404722951d766a6d8090c4/c.html
+[2026-07-01 17:52:29] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-07-01 17:52:31] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-07-01 17:52:33] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260701/216be0440512446b8eb30fd94263b25d/c.html
+[2026-07-01 17:52:34] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-07-01 17:52:34] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-07-01 17:52:34] [INFO] [cqunews] crawler.py:395 - Start crawling: 新浪新闻
+[2026-07-01 17:52:35] [INFO] [cqunews] crawler.py:317 - Found 96 candidate links from 新浪新闻
+[2026-07-01 17:52:36] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/c/2026-07-01/doc-iniffytk3150659.shtml
+[2026-07-01 17:52:38] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhrqy6366805.shtml
+[2026-07-01 17:52:40] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhrra3142448.shtml
+[2026-07-01 17:52:42] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhrqu1047379.shtml
+[2026-07-01 17:52:43] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhrqu1047338.shtml
+[2026-07-01 17:52:45] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhrqy6374573.shtml
+[2026-07-01 17:52:46] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhrqs4271482.shtml
+[2026-07-01 17:52:48] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-01/doc-inifhrqy6377833.shtml
+[2026-07-01 17:52:48] [INFO] [cqunews] crawler.py:399 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-07-01 17:52:48] [INFO] [cqunews] crawler.py:395 - Start crawling: 澎湃新闻
+[2026-07-01 17:52:48] [INFO] [cqunews] crawler.py:317 - Found 8 candidate links from 澎湃新闻
+[2026-07-01 17:52:49] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33493816
+[2026-07-01 17:52:51] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33494345
+[2026-07-01 17:52:52] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33483165
+[2026-07-01 17:52:54] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492494
+[2026-07-01 17:52:55] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33493240
+[2026-07-01 17:52:57] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33493834
+[2026-07-01 17:52:58] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492169
+[2026-07-01 17:53:00] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33491537
+[2026-07-01 17:53:00] [INFO] [cqunews] crawler.py:399 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-07-01 17:53:00] [INFO] [cqunews] crawler.py:395 - Start crawling: 中国新闻网-滚动
+[2026-07-01 17:53:00] [INFO] [cqunews] crawler.py:317 - Found 143 candidate links from 中国新闻网-滚动
+[2026-07-01 17:53:02] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/tp/2026/07-01/10650731.shtml
+[2026-07-01 17:53:04] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/cj/2026/07-01/10650762.shtml
+[2026-07-01 17:53:06] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/cul/shipin/2026/07-01/news1060142.shtml
+[2026-07-01 17:53:08] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/life/2026/07-01/10650744.shtml
+[2026-07-01 17:53:10] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/07-01/news1060141.shtml
+[2026-07-01 17:53:11] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/ty/2026/07-01/10650743.shtml
+[2026-07-01 17:53:13] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/ga/shipin/cns-d/2026/07-01/news1060140.shtml
+[2026-07-01 17:53:14] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/shipin/cns/2026/07-01/news1060139.shtml
+[2026-07-01 17:53:15] [INFO] [cqunews] crawler.py:399 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-07-02 09:13:25] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-07-02 09:13:25] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-07-02 09:13:25] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-07-02 09:13:25] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-07-02 09:14:31] [INFO] [cqunews] main.py:21 - Initializing database...
+[2026-07-02 09:14:31] [INFO] [cqunews] database.py:20 - Database initialized: D:\YvonG\2024-2027\AI程序设计实训\2026暑假\代码下载\CQUNEWS-6.29\cqunews.db
+[2026-07-02 09:14:31] [INFO] [cqunews] main.py:23 - Starting APScheduler...
+[2026-07-02 09:14:31] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-07-02 09:19:45] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (24.49ms)
+[2026-07-02 09:19:45] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (14.55ms)
+[2026-07-02 09:19:45] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.41ms)
+[2026-07-02 09:25:56] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.65ms)
+[2026-07-02 09:25:57] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (12.01ms)
+[2026-07-02 09:26:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.33ms)
+[2026-07-02 09:26:45] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.46ms)
+[2026-07-02 09:27:25] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (15.43ms)
+[2026-07-02 09:27:26] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.98ms)
+[2026-07-02 09:27:38] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.77ms)
+[2026-07-02 09:27:38] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.99ms)
+[2026-07-02 09:27:39] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.28ms)
+[2026-07-02 09:30:54] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.32ms)
+[2026-07-02 09:30:54] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.42ms)
+[2026-07-02 09:30:54] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.76ms)
+[2026-07-02 09:31:01] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.98ms)
+[2026-07-02 09:31:03] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.16ms)
+[2026-07-02 09:31:03] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.69ms)
+[2026-07-02 09:31:05] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.90ms)
+[2026-07-02 09:31:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.27ms)
+[2026-07-02 09:31:09] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.26ms)
+[2026-07-02 09:31:16] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.72ms)
+[2026-07-02 09:31:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.59ms)
+[2026-07-02 09:31:18] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.82ms)
+[2026-07-02 09:31:19] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.63ms)
+[2026-07-02 09:31:20] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.68ms)
+[2026-07-02 09:31:30] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (14.75ms)
+[2026-07-02 09:31:31] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.84ms)
+[2026-07-02 09:31:42] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.08ms)
+[2026-07-02 09:31:48] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.90ms)
+[2026-07-02 09:31:50] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.11ms)
+[2026-07-02 09:31:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.56ms)
+[2026-07-02 09:32:25] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.08ms)
+[2026-07-02 09:32:37] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.83ms)
+[2026-07-02 09:33:07] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.81ms)
+[2026-07-02 09:33:14] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.76ms)
+[2026-07-02 09:33:18] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.02ms)
+[2026-07-02 09:33:28] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.24ms)
+[2026-07-02 09:33:29] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.30ms)
+[2026-07-02 09:33:36] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.64ms)
+[2026-07-02 09:35:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.03ms)
+[2026-07-02 09:46:50] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.46ms)
+[2026-07-02 09:46:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.58ms)
+[2026-07-02 09:47:12] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.94ms)
+[2026-07-02 09:47:12] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.11ms)
+[2026-07-02 09:47:13] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.58ms)
+[2026-07-02 09:48:06] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.26ms)
+[2026-07-02 09:48:07] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.21ms)
+[2026-07-02 09:50:40] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.86ms)
+[2026-07-02 09:50:41] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (3.45ms)
+[2026-07-02 09:56:16] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.74ms)
+[2026-07-02 09:56:16] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.28ms)
+[2026-07-02 09:56:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.61ms)
+[2026-07-02 09:56:49] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (26.95ms)
+[2026-07-02 09:56:49] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (30.16ms)
+[2026-07-02 09:56:49] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.45ms)
+[2026-07-02 09:58:43] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.39ms)
+[2026-07-02 09:58:43] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.25ms)
+[2026-07-02 09:58:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.99ms)
+[2026-07-02 09:59:10] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (14.91ms)
+[2026-07-02 09:59:13] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.97ms)
+[2026-07-02 09:59:15] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.67ms)
+[2026-07-02 09:59:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.24ms)
+[2026-07-02 09:59:19] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.84ms)
+[2026-07-02 09:59:20] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.39ms)
+[2026-07-02 09:59:23] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.96ms)
+[2026-07-02 09:59:24] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.43ms)
+[2026-07-02 09:59:25] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.15ms)
+[2026-07-02 09:59:28] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.06ms)
+[2026-07-02 10:10:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (73.66ms)
+[2026-07-02 10:10:10] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.56ms)
+[2026-07-02 10:14:31] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-07-02T10:14:31.917368
+[2026-07-02 10:14:31] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-时政
+[2026-07-02 10:14:32] [INFO] [cqunews] crawler.py:317 - Found 88 candidate links from 新华网-时政
+[2026-07-02 10:14:33] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-07-02 10:14:34] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-07-02 10:14:36] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/xxgcxjpdjsx/index.html
+[2026-07-02 10:14:37] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/jd105zn/index.html
+[2026-07-02 10:14:40] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-07-02 10:14:41] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-07-02 10:14:42] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-07-02 10:14:44] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/politics/20260630/e0580dbe5a40432d865846bb396e4839/c.html
+[2026-07-02 10:14:45] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-时政 — 6 items, 0 errors
+[2026-07-02 10:14:45] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-科技
+[2026-07-02 10:14:45] [INFO] [cqunews] crawler.py:317 - Found 38 candidate links from 新华网-科技
+[2026-07-02 10:14:47] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-07-02 10:14:49] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-07-02 10:14:50] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-07-02 10:14:52] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-07-02 10:14:53] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-07-02 10:14:55] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-07-02 10:14:56] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-07-02 10:14:59] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-07-02 10:14:59] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-07-02 10:14:59] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-国际
+[2026-07-02 10:14:59] [INFO] [cqunews] crawler.py:317 - Found 92 candidate links from 新华网-国际
+[2026-07-02 10:15:00] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-07-02 10:15:02] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-07-02 10:15:03] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-07-02 10:15:04] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260701/0695ff791d404722951d766a6d8090c4/c.html
+[2026-07-02 10:15:06] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260629/280f50d3cf4345a2bd54f3f058555a27/c.html
+[2026-07-02 10:15:07] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260629/7a7651b9d88a430b957d5f98f13fdedd/c.html
+[2026-07-02 10:15:09] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260701/216be0440512446b8eb30fd94263b25d/c.html
+[2026-07-02 10:15:11] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260630/49331b62c9a94db4adcbb0a04ef79eed/c.html
+[2026-07-02 10:15:11] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-07-02 10:15:11] [INFO] [cqunews] crawler.py:395 - Start crawling: 新浪新闻
+[2026-07-02 10:15:12] [INFO] [cqunews] crawler.py:317 - Found 85 candidate links from 新浪新闻
+[2026-07-02 10:15:14] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/2026-07-01/doc-inifihnu2944540.shtml
+[2026-07-02 10:15:15] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqfw0349398.shtml
+[2026-07-02 10:15:16] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqha5862899.shtml
+[2026-07-02 10:15:17] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqha5865813.shtml
+[2026-07-02 10:15:19] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqhe2641962.shtml
+[2026-07-02 10:15:21] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqha5866297.shtml
+[2026-07-02 10:15:23] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqhe2642440.shtml
+[2026-07-02 10:15:24] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/c/2026-07-02/doc-inifkixw3656357.shtml
+[2026-07-02 10:15:24] [INFO] [cqunews] crawler.py:399 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-07-02 10:15:24] [INFO] [cqunews] crawler.py:395 - Start crawling: 澎湃新闻
+[2026-07-02 10:15:25] [INFO] [cqunews] crawler.py:317 - Found 8 candidate links from 澎湃新闻
+[2026-07-02 10:15:26] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33485216
+[2026-07-02 10:15:28] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33495254
+[2026-07-02 10:15:30] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33467961
+[2026-07-02 10:15:31] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33500531
+[2026-07-02 10:15:33] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33495747
+[2026-07-02 10:15:34] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33488479
+[2026-07-02 10:15:36] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33492010
+[2026-07-02 10:15:37] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33500733
+[2026-07-02 10:15:38] [INFO] [cqunews] crawler.py:399 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-07-02 10:15:38] [INFO] [cqunews] crawler.py:395 - Start crawling: 中国新闻网-滚动
+[2026-07-02 10:15:38] [INFO] [cqunews] crawler.py:317 - Found 143 candidate links from 中国新闻网-滚动
+[2026-07-02 10:15:40] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/hr/shipin/2026/07-02/news1060208.shtml
+[2026-07-02 10:15:42] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/cj/2026/07-02/10651121.shtml
+[2026-07-02 10:15:44] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/hr/2026/07-02/10651141.shtml
+[2026-07-02 10:15:46] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/cj/2026/07-02/10651137.shtml
+[2026-07-02 10:15:48] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/cj/2026/07-02/10651139.shtml
+[2026-07-02 10:15:49] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/cj/2026/07-02/10651118.shtml
+[2026-07-02 10:15:51] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/gj/2026/07-02/10651124.shtml
+[2026-07-02 10:15:53] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/cul/2026/07-02/10651113.shtml
+[2026-07-02 10:15:53] [INFO] [cqunews] crawler.py:399 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-07-02 10:24:48] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.05ms)
+[2026-07-02 10:24:49] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.55ms)
+[2026-07-02 10:25:31] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.03ms)
+[2026-07-02 10:25:31] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.24ms)
+[2026-07-02 10:25:32] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.49ms)
+[2026-07-02 10:26:56] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.20ms)
+[2026-07-02 10:26:57] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (12.77ms)
+[2026-07-02 10:27:30] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.33ms)
+[2026-07-02 10:27:30] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.37ms)
+[2026-07-02 10:27:31] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (3.93ms)
+[2026-07-02 10:29:58] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.83ms)
+[2026-07-02 10:29:58] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.94ms)
+[2026-07-02 10:29:58] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.61ms)
+[2026-07-02 10:30:25] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.10ms)
+[2026-07-02 10:30:25] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (15.57ms)
+[2026-07-02 10:30:25] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.18ms)
+[2026-07-02 10:48:58] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.45ms)
+[2026-07-02 10:48:58] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.11ms)
+[2026-07-02 10:48:59] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.22ms)
+[2026-07-02 10:49:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.18ms)
+[2026-07-02 10:49:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.17ms)
+[2026-07-02 10:49:18] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.30ms)
+[2026-07-02 10:50:03] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (17.58ms)
+[2026-07-02 10:50:04] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.84ms)
+[2026-07-02 10:50:28] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.17ms)
+[2026-07-02 10:50:28] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.84ms)
+[2026-07-02 10:50:29] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.71ms)
+[2026-07-02 10:51:17] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.83ms)
+[2026-07-02 10:51:18] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.63ms)
+[2026-07-02 10:51:27] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.24ms)
+[2026-07-02 10:51:27] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.76ms)
+[2026-07-02 10:51:28] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.67ms)
+[2026-07-02 10:54:27] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.69ms)
+[2026-07-02 10:54:28] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.90ms)
+[2026-07-02 10:54:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (15.25ms)
+[2026-07-02 10:54:52] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.31ms)
+[2026-07-02 10:56:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.30ms)
+[2026-07-02 10:56:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.41ms)
+[2026-07-02 10:56:08] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.35ms)
+[2026-07-02 11:14:31] [INFO] [cqunews] scheduler.py:26 - Scheduled crawl task triggered at 2026-07-02T11:14:31.919401
+[2026-07-02 11:14:31] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-时政
+[2026-07-02 11:14:32] [INFO] [cqunews] crawler.py:317 - Found 88 candidate links from 新华网-时政
+[2026-07-02 11:14:33] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/comments/20220728/b8859a78ad1743aeba8fdeadff3651bb/c.html
+[2026-07-02 11:14:35] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/comments/20220507/633c2f34e0744bddac65f88387f168f8/c.html
+[2026-07-02 11:14:37] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/xxgcxjpdjsx/index.html
+[2026-07-02 11:14:38] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/jd105zn/index.html
+[2026-07-02 11:14:39] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/swwxlztfbh/index.html
+[2026-07-02 11:14:41] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/zt/slhjxzqzjg/index.html
+[2026-07-02 11:14:42] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/politics/xbmfjg/index.htm
+[2026-07-02 11:14:44] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/politics/20260630/e0580dbe5a40432d865846bb396e4839/c.html
+[2026-07-02 11:14:45] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-时政 — 6 items, 0 errors
+[2026-07-02 11:14:45] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-科技
+[2026-07-02 11:14:45] [INFO] [cqunews] crawler.py:317 - Found 38 candidate links from 新华网-科技
+[2026-07-02 11:14:47] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260626/f04dac05e0f642a9b7f885553e444487/c.html
+[2026-07-02 11:14:49] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260625/7f20c2362395425396e25d2cdbf0c99d/c.html
+[2026-07-02 11:14:51] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260624/ac1c3f67e0a44bf2a3fdbf2a064497ab/c.html
+[2026-07-02 11:14:53] [DEBUG] [cqunews] crawler.py:278 - Fetching article: http://www.news.cn/tech/20260623/5b31ac98e20f4d3baa2238c8f0ee1467/c.html
+[2026-07-02 11:14:54] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260616/cdf202d615204b1ba149901236b79677/c.html
+[2026-07-02 11:14:55] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260611/259acb08b7304fb084411619d58485d5/c.html
+[2026-07-02 11:14:56] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260611/cf7cbbaa3d7d4b51ace7777f327bb5b8/c.html
+[2026-07-02 11:14:58] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/tech/20260605/38943f923b8542bdb696ed9baa30437f/c.html
+[2026-07-02 11:14:58] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-科技 — 2 items, 0 errors
+[2026-07-02 11:14:58] [INFO] [cqunews] crawler.py:395 - Start crawling: 新华网-国际
+[2026-07-02 11:14:58] [INFO] [cqunews] crawler.py:317 - Found 92 candidate links from 新华网-国际
+[2026-07-02 11:14:59] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/20260629/6e77676e1dc640a78b8167006def7680/c.html
+[2026-07-02 11:15:01] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260621/d8df0948a8594eb5ad3b9dd0975c45fa/c.html
+[2026-07-02 11:15:03] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/20260618/dd242eef79ba40ed91f7fd59ce90cada/c.html
+[2026-07-02 11:15:04] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260702/b958b1935f0843f3b268c742ded401a7/c.html
+[2026-07-02 11:15:05] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260702/06a11b380db94501b89a94b2c720a722/c.html
+[2026-07-02 11:15:07] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260701/0695ff791d404722951d766a6d8090c4/c.html
+[2026-07-02 11:15:09] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260702/4d92c2fbdca747fd8a85591ca8566491/c.html
+[2026-07-02 11:15:10] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.news.cn/world/20260701/216be0440512446b8eb30fd94263b25d/c.html
+[2026-07-02 11:15:11] [INFO] [cqunews] crawler.py:399 - Crawl done: 新华网-国际 — 3 items, 0 errors
+[2026-07-02 11:15:11] [INFO] [cqunews] crawler.py:395 - Start crawling: 新浪新闻
+[2026-07-02 11:15:11] [INFO] [cqunews] crawler.py:317 - Found 80 candidate links from 新浪新闻
+[2026-07-02 11:15:12] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/2026-07-01/doc-inifihnu2944540.shtml
+[2026-07-02 11:15:13] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqfw0349398.shtml
+[2026-07-02 11:15:15] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqha5862899.shtml
+[2026-07-02 11:15:16] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqha5865813.shtml
+[2026-07-02 11:15:18] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqhe2641962.shtml
+[2026-07-02 11:15:19] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/gov/xlxw/2026-07-02/doc-inifkqha5866297.shtml
+[2026-07-02 11:15:21] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/c/2026-07-02/doc-inifkixw3656357.shtml
+[2026-07-02 11:15:23] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://news.sina.com.cn/w/2026-07-02/doc-inifinuq6160793.shtml
+[2026-07-02 11:15:23] [INFO] [cqunews] crawler.py:399 - Crawl done: 新浪新闻 — 0 items, 0 errors
+[2026-07-02 11:15:23] [INFO] [cqunews] crawler.py:395 - Start crawling: 澎湃新闻
+[2026-07-02 11:15:23] [INFO] [cqunews] crawler.py:317 - Found 8 candidate links from 澎湃新闻
+[2026-07-02 11:15:24] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33485216
+[2026-07-02 11:15:26] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33494309
+[2026-07-02 11:15:27] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33495254
+[2026-07-02 11:15:29] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33467961
+[2026-07-02 11:15:31] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33501293
+[2026-07-02 11:15:32] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33501201
+[2026-07-02 11:15:33] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33501376
+[2026-07-02 11:15:36] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.thepaper.cn/newsDetail_forward_33500989
+[2026-07-02 11:15:36] [INFO] [cqunews] crawler.py:399 - Crawl done: 澎湃新闻 — 8 items, 0 errors
+[2026-07-02 11:15:36] [INFO] [cqunews] crawler.py:395 - Start crawling: 中国新闻网-滚动
+[2026-07-02 11:15:36] [INFO] [cqunews] crawler.py:317 - Found 144 candidate links from 中国新闻网-滚动
+[2026-07-02 11:15:37] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/sh/2026/07-02/10651217.shtml
+[2026-07-02 11:15:38] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/ty/2026/07-02/10651206.shtml
+[2026-07-02 11:15:40] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/gj/2026/07-02/10651205.shtml
+[2026-07-02 11:15:42] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/sh/shipin/2026/07-02/news1060220.shtml
+[2026-07-02 11:15:44] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/gj/2026/07-02/10651191.shtml
+[2026-07-02 11:15:46] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/sh/2026/07-02/10651207.shtml
+[2026-07-02 11:15:47] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-02/10651177.shtml
+[2026-07-02 11:15:49] [DEBUG] [cqunews] crawler.py:278 - Fetching article: https://www.chinanews.com.cn/gn/2026/07-02/10651202.shtml
+[2026-07-02 11:15:49] [INFO] [cqunews] crawler.py:399 - Crawl done: 中国新闻网-滚动 — 8 items, 0 errors
+[2026-07-02 11:19:49] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.15ms)
+[2026-07-02 11:19:50] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.49ms)
+[2026-07-02 11:20:14] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.56ms)
+[2026-07-02 11:20:14] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.65ms)
+[2026-07-02 11:20:15] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.69ms)
+[2026-07-02 11:20:36] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.07ms)
+[2026-07-02 11:20:37] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.99ms)
+[2026-07-02 11:20:48] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.11ms)
+[2026-07-02 11:20:49] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.59ms)
+[2026-07-02 11:21:10] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.11ms)
+[2026-07-02 11:21:11] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.32ms)
+[2026-07-02 11:21:18] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.11ms)
+[2026-07-02 11:21:19] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.42ms)
+[2026-07-02 11:21:30] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.43ms)
+[2026-07-02 11:21:31] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.36ms)
+[2026-07-02 11:21:50] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (4.41ms)
+[2026-07-02 11:21:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.22ms)
+[2026-07-02 11:22:53] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.63ms)
+[2026-07-02 11:22:54] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.51ms)
+[2026-07-02 11:29:27] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.29ms)
+[2026-07-02 11:29:27] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.02ms)
+[2026-07-02 11:29:27] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (11.88ms)
+[2026-07-02 11:29:50] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.80ms)
+[2026-07-02 11:29:50] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.29ms)
+[2026-07-02 11:29:51] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (16.09ms)
+[2026-07-02 11:30:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.00ms)
+[2026-07-02 11:30:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.69ms)
+[2026-07-02 11:30:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (10.68ms)
+[2026-07-02 11:41:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (6.41ms)
+[2026-07-02 11:41:44] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (5.34ms)
+[2026-07-02 11:41:45] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.53ms)
+[2026-07-02 11:42:02] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (7.47ms)
+[2026-07-02 11:42:02] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.82ms)
+[2026-07-02 11:42:03] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (23.42ms)
+[2026-07-02 11:53:59] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (9.73ms)
+[2026-07-02 11:53:59] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (8.27ms)
+[2026-07-02 11:53:59] [INFO] [cqunews] main.py:60 - |G3| GET /api/news -> 200 (13.27ms)
