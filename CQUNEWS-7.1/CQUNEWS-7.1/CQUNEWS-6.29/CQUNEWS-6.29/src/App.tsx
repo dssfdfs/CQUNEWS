@@ -16,11 +16,14 @@ import { Analytics } from '@/components/Analytics';
 import { Settings } from '@/components/Settings';
 import { useStore } from '@/store/useStore';
 import { generateSummary, generateTitles, verifyQuality } from '@/api/deepseek';
+import { useEffects } from '@/hooks/useEffects';
 
 function Dashboard() {
-  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, loadHistory } = useStore();
+  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, loadHistory, settings } = useStore();
   const [activeNav, setActiveNav] = useState('summary');
   const [error, setError] = useState('');
+  
+  useEffects();
 
   useEffect(() => {
     loadHistory();
@@ -43,7 +46,7 @@ function Dashboard() {
         setTitles(titles);
         
         setStep(4);
-        const quality = await verifyQuality(content);
+        const quality = await verifyQuality(content, summary, titles);
         setQuality(quality);
         
         setStep(5);
@@ -114,7 +117,7 @@ function Dashboard() {
       
       <div className="flex-1 overflow-y-auto">
         {activeNav === 'summary' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className={`bg-white border-b border-gray-200 ${settings.glassEffectEnabled ? 'glass-effect' : ''}`}>
             <div className="max-w-7xl mx-auto px-6 py-4">
               <div className="flex items-center gap-4">
                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
@@ -167,7 +170,7 @@ function Dashboard() {
         )}
         
         {activeNav === 'home' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className={`bg-white border-b border-gray-200 ${settings.glassEffectEnabled ? 'glass-effect' : ''}`}>
             <div className="max-w-7xl mx-auto px-6 py-4">
               <h1 className="text-xl font-bold text-gray-800">AI 新闻助手</h1>
             </div>
@@ -175,7 +178,7 @@ function Dashboard() {
         )}
         
         {activeNav === 'news' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className={`bg-white border-b border-gray-200 ${settings.glassEffectEnabled ? 'glass-effect' : ''}`}>
             <div className="max-w-7xl mx-auto px-6 py-4">
               <h1 className="text-xl font-bold text-gray-800">今日新闻速览</h1>
             </div>
@@ -183,7 +186,7 @@ function Dashboard() {
         )}
         
         {activeNav === 'history' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className={`bg-white border-b border-gray-200 ${settings.glassEffectEnabled ? 'glass-effect' : ''}`}>
             <div className="max-w-7xl mx-auto px-6 py-4">
               <h1 className="text-xl font-bold text-gray-800">个人历史</h1>
             </div>
@@ -191,7 +194,7 @@ function Dashboard() {
         )}
         
         {activeNav === 'analytics' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className={`bg-white border-b border-gray-200 ${settings.glassEffectEnabled ? 'glass-effect' : ''}`}>
             <div className="max-w-7xl mx-auto px-6 py-4">
               <h1 className="text-xl font-bold text-gray-800">数据分析</h1>
             </div>
@@ -199,14 +202,16 @@ function Dashboard() {
         )}
         
         {activeNav === 'settings' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className={`bg-white border-b border-gray-200 ${settings.glassEffectEnabled ? 'glass-effect' : ''}`}>
             <div className="max-w-7xl mx-auto px-6 py-4">
               <h1 className="text-xl font-bold text-gray-800">设置中心</h1>
             </div>
           </div>
         )}
         
-        {renderContent()}
+        <div className={settings.animationEnabled ? 'animate-fade-in' : ''}>
+          {renderContent()}
+        </div>
       </div>
     </div>
   );

@@ -45,6 +45,8 @@ interface SettingsState {
   soundNotification: boolean;
   qualityNotification: boolean;
   storageQuota: number;
+  animationEnabled: boolean;
+  glassEffectEnabled: boolean;
 }
 
 interface NewsState {
@@ -147,6 +149,8 @@ interface NewsState {
   setSoundNotification: (enabled: boolean) => void;
   setQualityNotification: (enabled: boolean) => void;
   setStorageQuota: (quota: number) => void;
+  setAnimationEnabled: (enabled: boolean) => void;
+  setGlassEffectEnabled: (enabled: boolean) => void;
   updateSettings: (settings: Partial<SettingsState>) => void;
   loadSettings: () => Promise<void>;
   saveSettings: () => Promise<boolean>;
@@ -184,6 +188,8 @@ export const useStore = create<NewsState>((set) => ({
     soundNotification: false,
     qualityNotification: true,
     storageQuota: 524288000,
+    animationEnabled: true,
+    glassEffectEnabled: false,
   },
   settingsLoading: false,
   settingsError: null,
@@ -346,6 +352,14 @@ export const useStore = create<NewsState>((set) => ({
     settings: { ...state.settings, storageQuota: quota },
   })),
   
+  setAnimationEnabled: (enabled: boolean) => set((state) => ({
+    settings: { ...state.settings, animationEnabled: enabled },
+  })),
+  
+  setGlassEffectEnabled: (enabled: boolean) => set((state) => ({
+    settings: { ...state.settings, glassEffectEnabled: enabled },
+  })),
+  
   updateSettings: (newSettings) => set((state) => ({
     settings: { ...state.settings, ...newSettings },
   })),
@@ -367,6 +381,8 @@ export const useStore = create<NewsState>((set) => ({
         soundNotification: result.sound_notification || false,
         qualityNotification: result.quality_notification || false,
         storageQuota: result.storage_quota || 524288000,
+        animationEnabled: result.animation_enabled !== undefined ? result.animation_enabled : true,
+        glassEffectEnabled: result.glass_effect_enabled !== undefined ? result.glass_effect_enabled : false,
       };
       
       set({ settings: newSettings, settingsLoading: false });
@@ -405,6 +421,8 @@ export const useStore = create<NewsState>((set) => ({
         sound_notification: currentState.settings.soundNotification,
         quality_notification: currentState.settings.qualityNotification,
         storage_quota: currentState.settings.storageQuota,
+        animation_enabled: currentState.settings.animationEnabled,
+        glass_effect_enabled: currentState.settings.glassEffectEnabled,
       });
       
       localStorage.setItem('theme', currentState.settings.theme);

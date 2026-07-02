@@ -5,6 +5,7 @@ CQUNews 后端服务
 - 用户认证（登录、注册、登出）
 - 新闻智能处理（摘要、标题、实体识别、事实校验）
 - 历史记录管理
+- 新闻爬虫
 """
 
 import http.server
@@ -14,12 +15,17 @@ import uuid
 import re
 import random
 import string
+import time
+import traceback
 from datetime import datetime
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urljoin
+
+import requests
+from bs4 import BeautifulSoup
 
 # DeepSeek API配置
 DEEPSEEK_CONFIG = {
-    'api_key': 'sk-119719312ad74acaa2181442fdc9a31b',
+    'api_key': 'sk-ca2a253625df40619c2967ef23a4b87d',
     'base_url': 'https://api.deepseek.com',
     'model': 'deepseek-chat',
     'timeout': 60
@@ -96,6 +102,8 @@ def init_db():
             sound_notification INTEGER DEFAULT 0,
             quality_notification INTEGER DEFAULT 1,
             storage_quota INTEGER DEFAULT 524288000,
+            animation_enabled INTEGER DEFAULT 1,
+            glass_effect_enabled INTEGER DEFAULT 0,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT DEFAULT CURRENT_TIMESTAMP
         )""")
@@ -104,6 +112,64 @@ def init_db():
             c.execute("ALTER TABLE user_settings ADD COLUMN storage_quota INTEGER DEFAULT 524288000")
         except:
             pass
+        try:
+            c.execute("ALTER TABLE user_settings ADD COLUMN animation_enabled INTEGER DEFAULT 1")
+        except:
+            pass
+        try:
+            c.execute("ALTER TABLE user_settings ADD COLUMN glass_effect_enabled INTEGER DEFAULT 0")
+        except:
+            pass
+        # 创建新闻表
+        c.execute("""CREATE TABLE IF NOT EXISTS news (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            summary TEXT,
+            content TEXT,
+            category TEXT,
+            source TEXT,
+            original_url TEXT UNIQUE,
+            published_at TEXT,
+            views INTEGER DEFAULT 0,
+            is_trending INTEGER DEFAULT 0,
+            crawl_status INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )""")
+        
+        # 创建爬虫源表
+        c.execute("""CREATE TABLE IF NOT EXISTS crawlsource (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            url TEXT NOT NULL,
+            category TEXT,
+            enabled INTEGER DEFAULT 1,
+            last_crawl_at TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(name, url)
+        )""")
+        
+        # 创建爬虫日志表
+        c.execute("""CREATE TABLE IF NOT EXISTS crawllog (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source_id INTEGER,
+            source_name TEXT,
+            status TEXT NOT NULL,
+            total INTEGER DEFAULT 0,
+            success INTEGER DEFAULT 0,
+            failed INTEGER DEFAULT 0,
+            error_msg TEXT,
+            duration_ms INTEGER,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )""")
+        
+        # 插入默认新闻源
+        c.execute("INSERT OR IGNORE INTO crawlsource (name, url, category) VALUES ('新华网-时政', 'http://www.news.cn/politics/', '时政')")
+        c.execute("INSERT OR IGNORE INTO crawlsource (name, url, category) VALUES ('新华网-科技', 'http://www.news.cn/tech/', '科技')")
+        c.execute("INSERT OR IGNORE INTO crawlsource (name, url, category) VALUES ('新华网-国际', 'http://www.news.cn/world/', '国际')")
+        c.execute("INSERT OR IGNORE INTO crawlsource (name, url, category) VALUES ('新浪新闻', 'https://news.sina.com.cn/', '综合')")
+        c.execute("INSERT OR IGNORE INTO crawlsource (name, url, category) VALUES ('澎湃新闻', 'https://www.thepaper.cn/', '综合')")
+        
         # 插入默认管理员账号
         c.execute("INSERT OR IGNORE INTO user (username, password, mobile) VALUES ('admin', 'admin123', '13800138000')")
         conn.commit()
@@ -118,14 +184,25 @@ def generate_verification_code(length=4):
     """
     return ''.join(random.choices(string.digits, k=length))
 
-def call_deepseek(prompt):
+def call_deepseek(prompt, api_key=None, api_url=None):
     """
     调用DeepSeek API
     """
     import urllib.request
-    headers = {'Authorization': f'Bearer {DEEPSEEK_CONFIG["api_key"]}', 'Content-Type': 'application/json'}
+    
+    use_api_key = api_key if api_key and api_key.strip() else DEEPSEEK_CONFIG['api_key']
+    
+    use_api_url = api_url if api_url and api_url.strip() else DEEPSEEK_CONFIG['base_url']
+    
+    if not use_api_url.startswith('http://') and not use_api_url.startswith('https://'):
+        use_api_url = 'https://' + use_api_url
+    
+    if '/chat/completions' not in use_api_url:
+        use_api_url = use_api_url.rstrip('/') + '/chat/completions'
+    
+    headers = {'Authorization': f'Bearer {use_api_key}', 'Content-Type': 'application/json'}
     body = json.dumps({'model': DEEPSEEK_CONFIG['model'], 'messages': [{'role': 'user', 'content': prompt}]}).encode()
-    req = urllib.request.Request(f'{DEEPSEEK_CONFIG["base_url"]}/chat/completions', data=body, headers=headers, method='POST')
+    req = urllib.request.Request(use_api_url, data=body, headers=headers, method='POST')
     try:
         with urllib.request.urlopen(req, timeout=DEEPSEEK_CONFIG['timeout']) as resp:
             data = json.loads(resp.read())
@@ -133,6 +210,316 @@ def call_deepseek(prompt):
     except Exception as e:
         print(f"API error: {e}")
         return ""
+
+
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+]
+
+
+def _crawl_session():
+    s = requests.Session()
+    headers = {
+        "User-Agent": random.choice(USER_AGENTS),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+    }
+    s.headers.update(headers)
+    return s
+
+
+def _extract_published_at(text):
+    if not text:
+        return None
+    patterns = [
+        r"(20\d{2})[-/年](\d{1,2})[-/月](\d{1,2})[日 ]?(\d{1,2})[:：]?(\d{1,2})?",
+        r"(20\d{2})(\d{2})(\d{2})(\d{2})(\d{2})?",
+    ]
+    for p in patterns:
+        m = re.search(p, text)
+        if m:
+            try:
+                g = m.groups()
+                if len(g) == 5 and g[4] is not None:
+                    return f"{g[0]}-{int(g[1]):02d}-{int(g[2]):02d} {int(g[3]):02d}:{int(g[4]):02d}:00"
+                if len(g) == 4:
+                    return f"{g[0]}-{int(g[1]):02d}-{int(g[2]):02d} {int(g[3]):02d}:00:00"
+            except Exception:
+                continue
+    return None
+
+
+def _clean_html(html):
+    soup = BeautifulSoup(html, "lxml")
+    for tag in soup(["script", "style", "noscript", "iframe", "form", "aside"]):
+        tag.decompose()
+    for tag in soup.select(".ad, .ads, .sidebar, .related, .recommend, .footer, .header, nav, .nav"):
+        tag.decompose()
+    title = ""
+    if soup.title and soup.title.string:
+        title = soup.title.string.strip().split("-")[0].split("|")[0].strip()
+    article = (
+        soup.find("article")
+        or soup.find(class_=re.compile(r"article|content|news", re.I))
+        or soup
+    )
+    text = article.get_text(separator="\n", strip=True)
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    content = "\n".join(lines)
+    summary = content[:120] if content else ""
+    published = None
+    time_tag = soup.find("span", class_=re.compile(r"time|date|pub", re.I)) or soup.find(
+        "meta", attrs={"property": "article:published_time"}
+    )
+    if time_tag:
+        if time_tag.name == "meta":
+            published = _extract_published_at(time_tag.get("content", ""))
+        else:
+            published = _extract_published_at(time_tag.get_text())
+    if not published:
+        published = _extract_published_at(soup.get_text()[:2000])
+    return title, summary, content, published
+
+
+def _decode_response(resp):
+    raw = resp.content
+    encodings = []
+    if resp.encoding:
+        encodings.append(resp.encoding)
+    if resp.apparent_encoding:
+        encodings.append(resp.apparent_encoding)
+    encodings.extend(["utf-8", "gb18030", "gbk", "gb2312", "big5", "latin-1"])
+    seen = set()
+    for enc in encodings:
+        if not enc:
+            continue
+        enc = enc.lower()
+        if enc in seen:
+            continue
+        seen.add(enc)
+        try:
+            decoded = raw.decode(enc)
+        except (UnicodeDecodeError, LookupError):
+            continue
+        if "\ufffd" in decoded:
+            continue
+        if re.search(r"[\u4e00-\u9fff]", decoded):
+            return decoded
+        if enc in ("utf-8", "latin-1"):
+            return decoded
+    return raw.decode("utf-8", errors="replace")
+
+
+def _fetch_list_page(session, url):
+    try:
+        resp = session.get(url, timeout=20)
+        if resp.status_code == 403:
+            print(f"Blocked (403) by {url}")
+            return None
+        if resp.status_code != 200:
+            print(f"Non-200 status {resp.status_code} for {url}")
+            return None
+        return _decode_response(resp)
+    except requests.RequestException as e:
+        print(f"Fetch list failed {url}: {e}")
+        return None
+
+
+def _extract_links(html, base_url):
+    soup = BeautifulSoup(html, "lxml")
+    seen = set()
+    items = []
+    for a in soup.select("a[href]"):
+        href = a.get("href", "").strip()
+        text = a.get_text(strip=True)
+        if not href or not text or len(text) < 6:
+            continue
+        if any(k in text.lower() for k in ["更多", "下一页", "上一页", "首页", "末页", "登录", "注册"]):
+            continue
+        if href.startswith("javascript:") or href.startswith("#") or href.startswith("mailto:"):
+            continue
+        abs_url = urljoin(base_url, href)
+        parsed = urlparse(abs_url)
+        if parsed.scheme not in ("http", "https"):
+            continue
+        if parsed.netloc != urlparse(base_url).netloc:
+            continue
+        if len(href) > 80:
+            continue
+        if not re.search(r"\d", abs_url) and not re.search(r"\.html?$", abs_url):
+            continue
+        if re.search(r"/(index|list|more|search|tag|video|special|zt)/?$", abs_url):
+            continue
+        if abs_url in seen:
+            continue
+        seen.add(abs_url)
+        items.append((text, abs_url))
+    return items
+
+
+def _classify_category(title, summary, content, default=""):
+    text = f"{title} {summary} {content[:500]}".lower()
+
+    rules = [
+        ("财经", ["财经", "金融", "经济", "股市", "基金", "债券", "银行", "央行", "货币", "通胀",
+                  "GDP", "投资", "理财", "股票", "A股", "港股", "美股", "证券", "期货", "外汇",
+                  "房地产", "楼市", "房价", "产业", "经济增长", "贸易", "商业", "公司"]),
+        ("体育", ["体育", "足球", "篮球", "NBA", "CBA", "奥运会", "奥运", "世界杯", "锦标赛",
+                  "冠军", "联赛", "球员", "球队", "比赛", "赛事"]),
+        ("娱乐", ["娱乐", "明星", "电影", "电视剧", "综艺", "演员", "歌手", "偶像",
+                  "粉丝", "演唱会", "专辑", "票房", "热播", "网剧"]),
+        ("健康", ["健康", "医疗", "医药", "医院", "医生", "疾病", "病毒", "疫苗", "药品",
+                  "手术", "治疗", "保健", "养生", "疫情", "传染病"]),
+        ("科技", ["科技", "技术", "AI", "人工智能", "芯片", "半导体", "计算机", "互联网",
+                  "5G", "6G", "智能手机", "机器人", "自动驾驶", "新能源", "航天"]),
+        ("时政", ["时政", "政治", "政府", "国务院", "人大", "政协", "党", "中央",
+                  "主席", "总理", "政策", "法规", "立法"]),
+        ("国际", ["国际", "全球", "外国", "美国", "俄罗斯", "欧洲", "欧盟", "日本", "韩国",
+                  "联合国", "外交", "大使", "出访", "峰会"]),
+    ]
+
+    for cat, keywords in rules:
+        for kw in keywords:
+            if kw.lower() in text:
+                return cat
+
+    if default:
+        return default
+    return "综合"
+
+
+def fetch_article(session, url, source_name, category):
+    try:
+        print(f"Fetching article: {url}")
+        resp = session.get(url, timeout=20)
+        if resp.status_code != 200:
+            print(f"Non-200 {resp.status_code} for {url}")
+            return None
+        text = _decode_response(resp)
+        title, summary, content, published = _clean_html(text)
+        if not title or len(content) < 40:
+            return None
+        classified = _classify_category(title, summary, content, category)
+        return {
+            'title': title[:200],
+            'url': url,
+            'summary': summary,
+            'content': content[:8000],
+            'published_at': published,
+            'source': source_name,
+            'category': classified,
+            'views': random.randint(50, 20000),
+            'is_trending': random.random() < 0.2,
+        }
+    except requests.RequestException as e:
+        print(f"Fetch article failed {url}: {e}")
+        return None
+
+
+def crawl_source(source_name, source_url, category, max_articles=8):
+    result = {'source_name': source_name, 'items': [], 'errors': []}
+    started = time.time()
+    session = _crawl_session()
+    try:
+        html = _fetch_list_page(session, source_url)
+        if not html:
+            result['errors'].append(f"failed to fetch list page: {source_url}")
+            return result
+        links = _extract_links(html, source_url)
+        if not links:
+            result['errors'].append("no article links parsed from list page")
+            return result
+        print(f"Found {len(links)} candidate links from {source_name}")
+        for title_text, abs_url in links[:max_articles]:
+            time.sleep(random.uniform(0.8, 2.0))
+            item = fetch_article(session, abs_url, source_name, category or "")
+            if item is not None:
+                result['items'].append(item)
+            if len(result['items']) >= max_articles:
+                break
+    except Exception as e:
+        print(f"Crawl source {source_name} crashed: {e}\n{traceback.format_exc()}")
+        result['errors'].append(str(e))
+
+    duration_ms = int((time.time() - started) * 1000)
+    _persist_crawl(source_name, source_url, category, result, duration_ms)
+    return result
+
+
+def _persist_crawl(source_name, source_url, category, result, duration_ms):
+    now = datetime.now().isoformat()
+    success = 0
+    failed = len(result['errors'])
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        for item in result['items']:
+            c.execute("SELECT id FROM news WHERE original_url = ?", (item['url'],))
+            exists = c.fetchone()
+            if exists:
+                continue
+            
+            c.execute("""INSERT INTO news 
+                (title, summary, content, category, source, original_url, published_at, views, is_trending, crawl_status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (item['title'], item['summary'], item['content'], item['category'], 
+                 item['source'], item['url'], item['published_at'] or now, 
+                 item['views'], 1 if item['is_trending'] else 0, 1, now, now))
+            success += 1
+        
+        conn.commit()
+        
+        c.execute("SELECT id FROM crawlsource WHERE name = ? AND url = ?", (source_name, source_url))
+        source_id = c.fetchone()
+        source_id = source_id[0] if source_id else None
+        
+        c.execute("""INSERT INTO crawllog 
+            (source_id, source_name, status, total, success, failed, error_msg, duration_ms, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (source_id, source_name, 
+             "success" if not result['errors'] else "partial",
+             len(result['items']) + failed, success, failed,
+             "; ".join(result['errors'])[:2000] if result['errors'] else None,
+             duration_ms, now))
+        
+        if source_id:
+            c.execute("UPDATE crawlsource SET last_crawl_at = ? WHERE id = ?", (now, source_id))
+        
+        conn.commit()
+    except Exception as e:
+        print(f"Persist crawl failed: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+
+def run_crawl(max_articles_per_source=8):
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT id, name, url, category FROM crawlsource WHERE enabled = 1")
+    sources = c.fetchall()
+    conn.close()
+    
+    results = []
+    for src in sources:
+        source_id, source_name, source_url, category = src
+        print(f"Start crawling: {source_name}")
+        try:
+            r = crawl_source(source_name, source_url, category, max_articles=max_articles_per_source)
+            results.append(r)
+            print(f"Crawl done: {source_name} — {len(r['items'])} items, {len(r['errors'])} errors")
+        except Exception as e:
+            print(f"Unhandled crawl error for {source_name}: {e}")
+    return results
 
 def do_summary(content, stype):
     """
@@ -275,6 +662,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     'sound_notification': bool(s_dict.get('sound_notification', 0)),
                     'quality_notification': bool(s_dict.get('quality_notification', 1)),
                     'storage_quota': s_dict.get('storage_quota', 524288000),
+                    'animation_enabled': bool(s_dict.get('animation_enabled', 1)),
+                    'glass_effect_enabled': bool(s_dict.get('glass_effect_enabled', 0)),
                 })
             else:
                 self.send_json({
@@ -286,6 +675,277 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     'quality_notification': True,
                     'storage_quota': 524288000,
                 })
+        elif path == '/api/news':
+            # 获取新闻列表
+            page = int(params.get('page', ['1'])[0])
+            page_size = int(params.get('page_size', ['10'])[0])
+            category = params.get('category', [''])[0]
+            source = params.get('source', [''])[0]
+            keyword = params.get('keyword', [''])[0]
+            trending_only = params.get('trending_only', ['false'])[0].lower() == 'true'
+            
+            offset = (page - 1) * page_size
+            conn = get_db_connection()
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+            
+            query = "SELECT * FROM news"
+            conditions = []
+            params_list = []
+            
+            if category:
+                conditions.append("category = ?")
+                params_list.append(category)
+            if source:
+                conditions.append("source = ?")
+                params_list.append(source)
+            if trending_only:
+                conditions.append("is_trending = 1")
+            if keyword:
+                conditions.append("(title LIKE ? OR summary LIKE ?)")
+                params_list.append(f'%{keyword}%')
+                params_list.append(f'%{keyword}%')
+            
+            if conditions:
+                query += " WHERE " + " AND ".join(conditions)
+            
+            count_query = "SELECT COUNT(*) as total FROM news"
+            if conditions:
+                count_query += " WHERE " + " AND ".join(conditions)
+            
+            c.execute(count_query, params_list)
+            total = c.fetchone()['total']
+            
+            query += " ORDER BY id DESC LIMIT ? OFFSET ?"
+            params_list.extend([page_size, offset])
+            
+            c.execute(query, params_list)
+            rows = c.fetchall()
+            
+            items = []
+            for r in rows:
+                r_dict = dict(r)
+                items.append({
+                    'id': r_dict['id'],
+                    'title': r_dict.get('title', ''),
+                    'summary': r_dict.get('summary', ''),
+                    'content': r_dict.get('content', ''),
+                    'category': r_dict.get('category', ''),
+                    'source': r_dict.get('source', ''),
+                    'original_url': r_dict.get('original_url', ''),
+                    'published_at': r_dict.get('published_at', ''),
+                    'views': r_dict.get('views', 0),
+                    'is_trending': bool(r_dict.get('is_trending', 0)),
+                    'created_at': r_dict.get('created_at', ''),
+                })
+            
+            conn.close()
+            self.send_json({
+                'total': total,
+                'page': page,
+                'page_size': page_size,
+                'items': items,
+            })
+            
+        elif path.startswith('/api/news/'):
+            # 获取新闻详情
+            try:
+                news_id = int(path.split('/')[-1])
+                conn = get_db_connection()
+                conn.row_factory = sqlite3.Row
+                c = conn.cursor()
+                c.execute("SELECT * FROM news WHERE id = ?", (news_id,))
+                news = c.fetchone()
+                conn.close()
+                
+                if news:
+                    n_dict = dict(news)
+                    self.send_json({
+                        'id': n_dict['id'],
+                        'title': n_dict.get('title', ''),
+                        'summary': n_dict.get('summary', ''),
+                        'content': n_dict.get('content', ''),
+                        'category': n_dict.get('category', ''),
+                        'source': n_dict.get('source', ''),
+                        'original_url': n_dict.get('original_url', ''),
+                        'published_at': n_dict.get('published_at', ''),
+                        'views': n_dict.get('views', 0),
+                        'is_trending': bool(n_dict.get('is_trending', 0)),
+                        'created_at': n_dict.get('created_at', ''),
+                    })
+                else:
+                    self.send_json({'code': 404, 'message': 'News not found'}, 404)
+            except ValueError:
+                self.send_json({'code': 400, 'message': '无效ID'}, 400)
+        
+        elif path == '/api/categories':
+            # 获取分类列表
+            conn = get_db_connection()
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+            c.execute("SELECT DISTINCT category FROM news WHERE category IS NOT NULL AND category != '' ORDER BY category")
+            rows = c.fetchall()
+            conn.close()
+            categories = [r['category'] for r in rows]
+            self.send_json({'categories': categories})
+        
+        elif path == '/api/sources':
+            # 获取新闻源列表
+            conn = get_db_connection()
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+            c.execute("SELECT * FROM crawlsource ORDER BY id ASC")
+            rows = c.fetchall()
+            conn.close()
+            sources = []
+            for r in rows:
+                r_dict = dict(r)
+                sources.append({
+                    'id': r_dict['id'],
+                    'name': r_dict.get('name', ''),
+                    'url': r_dict.get('url', ''),
+                    'category': r_dict.get('category', ''),
+                    'enabled': r_dict.get('enabled', 1),
+                    'last_crawl_at': r_dict.get('last_crawl_at', ''),
+                })
+            self.send_json(sources)
+        
+        elif path == '/api/stats':
+            # 获取统计数据
+            conn = get_db_connection()
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+            
+            c.execute("SELECT COUNT(*) as total FROM news")
+            total_news = c.fetchone()['total']
+            
+            c.execute("SELECT COUNT(*) as trending FROM news WHERE is_trending = 1")
+            trending_news = c.fetchone()['trending']
+            
+            c.execute("SELECT COUNT(*) as sources FROM crawlsource")
+            source_count = c.fetchone()['sources']
+            
+            c.execute("SELECT COUNT(*) as logs FROM crawllog")
+            crawl_runs = c.fetchone()['logs']
+            
+            c.execute("SELECT * FROM news ORDER BY id DESC LIMIT 1")
+            latest = c.fetchone()
+            
+            latest_news = None
+            if latest:
+                l_dict = dict(latest)
+                latest_news = {
+                    'id': l_dict['id'],
+                    'title': l_dict.get('title', ''),
+                    'summary': l_dict.get('summary', ''),
+                    'content': l_dict.get('content', ''),
+                    'category': l_dict.get('category', ''),
+                    'source': l_dict.get('source', ''),
+                    'original_url': l_dict.get('original_url', ''),
+                    'published_at': l_dict.get('published_at', ''),
+                    'views': l_dict.get('views', 0),
+                    'is_trending': bool(l_dict.get('is_trending', 0)),
+                    'created_at': l_dict.get('created_at', ''),
+                }
+            
+            conn.close()
+            self.send_json({
+                'total_news': total_news,
+                'trending_news': trending_news,
+                'sources': source_count,
+                'crawl_runs': crawl_runs,
+                'latest_news': latest_news,
+            })
+        
+        elif path == '/api/crawl/run':
+            # 执行新闻爬取
+            try:
+                results = run_crawl(max_articles_per_source=8)
+                total_items = sum(len(r['items']) for r in results)
+                total_errors = sum(len(r['errors']) for r in results)
+                self.send_json({
+                    'triggered': True,
+                    'message': f'爬取完成，共获取 {total_items} 条新闻，{total_errors} 个错误',
+                    'started_at': datetime.now().isoformat(),
+                    'results': results,
+                })
+            except Exception as e:
+                print(f"Crawl error: {e}")
+                self.send_json({
+                    'triggered': False,
+                    'message': f'爬取失败: {str(e)}',
+                    'started_at': datetime.now().isoformat(),
+                }, 500)
+        
+        elif path == '/api/db/export':
+            # 导出数据库为 SQL 文件
+            try:
+                conn = sqlite3.connect(DB_PATH)
+                sql_content = ""
+                for line in conn.iterdump():
+                    sql_content += line + "\n"
+                conn.close()
+                
+                export_path = f"cqunews_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.sql"
+                with open(export_path, 'w', encoding='utf-8') as f:
+                    f.write(sql_content)
+                
+                self.send_json({
+                    'code': 200,
+                    'message': '数据库导出成功',
+                    'file_name': export_path,
+                    'size': len(sql_content),
+                })
+            except Exception as e:
+                print(f"DB export error: {e}")
+                self.send_json({'code': 500, 'message': f'导出失败: {str(e)}'}, 500)
+        
+        elif path == '/api/process':
+            # 通用 API 处理接口
+            uid = verify_token(self.headers)
+            if not uid:
+                self.send_json({'code': 401, 'message': '未登录'}, 401)
+                return
+            
+            messages = data.get('messages', [])
+            api_key = data.get('api_key', '')
+            api_url = data.get('api_url', '')
+            
+            if not messages:
+                self.send_json({'code': 400, 'message': '消息列表不能为空'}, 400)
+                return
+            
+            prompt = '\n'.join([f"{m['role']}: {m['content']}" for m in messages])
+            
+            response_text = call_deepseek(prompt, api_key=api_key, api_url=api_url)
+            
+            if not response_text:
+                self.send_json({
+                    'choices': [{
+                        'message': {
+                            'content': '抱歉，无法生成响应。请检查 API 配置或稍后重试。'
+                        }
+                    }],
+                    'usage': {
+                        'prompt_tokens': 0,
+                        'completion_tokens': 0,
+                        'total_tokens': 0,
+                    }
+                })
+            else:
+                self.send_json({
+                    'choices': [{
+                        'message': {
+                            'content': response_text
+                        }
+                    }],
+                    'usage': {
+                        'prompt_tokens': len(prompt),
+                        'completion_tokens': len(response_text),
+                        'total_tokens': len(prompt) + len(response_text),
+                    }
+                })
+        
         elif path.startswith('/api/history/list') or path == '/api/history/':
             # 获取历史记录列表
             uid = verify_token(self.headers)
@@ -502,15 +1162,17 @@ class Handler(http.server.BaseHTTPRequestHandler):
             sound_notification = 1 if data.get('sound_notification', False) else 0
             quality_notification = 1 if data.get('quality_notification', False) else 0
             storage_quota = data.get('storage_quota', 524288000)
+            animation_enabled = 1 if data.get('animation_enabled', True) else 0
+            glass_effect_enabled = 1 if data.get('glass_effect_enabled', False) else 0
             
             conn = get_db_connection()
             c = conn.cursor()
             
             try:
                 c.execute("""INSERT OR REPLACE INTO user_settings 
-                    (user_id, theme, font_size, language, email_notification, sound_notification, quality_notification, storage_quota, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
-                    (uid, theme, font_size, language, email_notification, sound_notification, quality_notification, storage_quota, datetime.now().isoformat()))
+                    (user_id, theme, font_size, language, email_notification, sound_notification, quality_notification, storage_quota, animation_enabled, glass_effect_enabled, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
+                    (uid, theme, font_size, language, email_notification, sound_notification, quality_notification, storage_quota, animation_enabled, glass_effect_enabled, datetime.now().isoformat()))
                 conn.commit()
                 conn.close()
                 self.send_json({'code': 200, 'message': '设置保存成功'})

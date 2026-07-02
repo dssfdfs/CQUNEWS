@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useStore } from '@/store/useStore';
-import { User, Bell, Shield, Palette, Globe, HardDrive, Save, RefreshCw, HelpCircle, ChevronRight, Info, Sun, Moon, Monitor, AlertCircle, CheckCircle, Upload, FolderOpen, Trash2 } from 'lucide-react';
+import { User, Bell, Shield, Palette, Globe, HardDrive, Save, RefreshCw, HelpCircle, ChevronRight, Info, Sun, Moon, Monitor, AlertCircle, CheckCircle, Upload, FolderOpen, Trash2, Database, Download, Zap, Eye, EyeOff, Volume2, Mail } from 'lucide-react';
 import { changePassword } from '@/api/deepseek';
 
 interface SettingSection {
@@ -12,11 +12,12 @@ interface SettingSection {
 
 const sections: SettingSection[] = [
   { id: 'profile', title: '个人信息', icon: User, description: '管理您的个人资料和头像' },
-  { id: 'notification', title: '通知设置', icon: Bell, description: '配置消息通知偏好' },
   { id: 'security', title: '安全与隐私', icon: Shield, description: '管理账户安全和隐私' },
   { id: 'appearance', title: '外观设置', icon: Palette, description: '自定义界面主题和字体' },
+  { id: 'notification', title: '通知设置', icon: Bell, description: '配置消息通知偏好' },
   { id: 'language', title: '语言设置', icon: Globe, description: '选择应用显示语言' },
   { id: 'storage', title: '存储空间', icon: HardDrive, description: '管理存储空间与位置' },
+  { id: 'data', title: '数据管理', icon: Database, description: '数据备份、导出与恢复' },
 ];
 
 type ThemeType = 'light' | 'dark' | 'system';
@@ -26,6 +27,7 @@ export function Settings() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'success' | 'error' | null>(null);
   const [saveMessage, setSaveMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   
   const [email, setEmail] = useState('');
   const [bio, setBio] = useState('');
@@ -47,6 +49,8 @@ export function Settings() {
     setSoundNotification, 
     setQualityNotification, 
     setStorageQuota,
+    setAnimationEnabled,
+    setGlassEffectEnabled,
     saveSettings,
     loadSettings,
     settingsLoading,
@@ -194,6 +198,32 @@ export function Settings() {
     }
   };
 
+  const handleExportData = async () => {
+    try {
+      const response = await fetch('/api/db/export', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      const data = await response.json();
+      if (data.code === 200) {
+        setSaveStatus('success');
+        setSaveMessage('数据库导出成功');
+      } else {
+        setSaveStatus('error');
+        setSaveMessage(data.message || '导出失败');
+      }
+    } catch (err: any) {
+      setSaveStatus('error');
+      setSaveMessage(err.message || '导出失败');
+    }
+    setTimeout(() => {
+      setSaveStatus(null);
+      setSaveMessage('');
+    }, 3000);
+  };
+
   const ToggleSwitch = ({ enabled, onChange }: { enabled: boolean; onChange: (enabled: boolean) => void }) => (
     <label className="relative inline-flex items-center cursor-pointer">
       <input 
@@ -202,7 +232,7 @@ export function Settings() {
         onChange={(e) => onChange(e.target.checked)}
         className="sr-only peer" 
       />
-      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+      <div className="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
     </label>
   );
 
@@ -244,7 +274,7 @@ export function Settings() {
           <div className="space-y-6">
             <div className="flex items-center gap-6">
               <div className="relative">
-                <div className="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
+                <div className="w-24 h-24 rounded-full flex items-center justify-center overflow-hidden bg-gray-200 dark:bg-gray-700">
                   {currentUser?.avatar ? (
                     <img src={currentUser.avatar} alt="头像" className="w-full h-full object-cover" />
                   ) : (
@@ -253,7 +283,7 @@ export function Settings() {
                 </div>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center hover:bg-primary-700 transition-colors"
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center hover:bg-primary-700 active:bg-primary-800 transition-colors"
                 >
                   <Upload className="w-4 h-4" />
                 </button>
@@ -267,7 +297,7 @@ export function Settings() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{currentUser?.username || '用户'}</h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">支持 JPG、PNG 格式，大小不超过 2MB</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">支持 JPG、PNG 格式，大小不超过 2MB</p>
                 <button 
                   onClick={() => fileInputRef.current?.click()}
                   className="btn-secondary mt-3"
@@ -311,44 +341,6 @@ export function Settings() {
           </div>
         );
 
-      case 'notification':
-        return (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div>
-                <h4 className="font-medium text-gray-800 dark:text-gray-100">邮件通知</h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400">当有新的处理结果时发送邮件通知</p>
-              </div>
-              <ToggleSwitch 
-                enabled={settings.emailNotification} 
-                onChange={setEmailNotification} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div>
-                <h4 className="font-medium text-gray-800 dark:text-gray-100">声音提示</h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400">处理完成时播放提示音</p>
-              </div>
-              <ToggleSwitch 
-                enabled={settings.soundNotification} 
-                onChange={setSoundNotification} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div>
-                <h4 className="font-medium text-gray-800 dark:text-gray-100">摘要质量通知</h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400">当摘要质量低于阈值时通知</p>
-              </div>
-              <ToggleSwitch 
-                enabled={settings.qualityNotification} 
-                onChange={setQualityNotification} 
-              />
-            </div>
-          </div>
-        );
-
       case 'security':
         return (
           <div className="space-y-6">
@@ -357,18 +349,27 @@ export function Settings() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">原密码</label>
-                  <input 
-                    type="password" 
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    placeholder="请输入原密码" 
-                    className="input-field" 
-                  />
+                  <div className="relative">
+                    <input 
+                      type={showPassword ? 'text' : 'password'} 
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="请输入原密码" 
+                      className="input-field pr-10" 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">新密码</label>
                   <input 
-                    type="password" 
+                    type={showPassword ? 'text' : 'password'} 
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="请输入新密码" 
@@ -378,7 +379,7 @@ export function Settings() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">确认密码</label>
                   <input 
-                    type="password" 
+                    type={showPassword ? 'text' : 'password'} 
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="请再次输入新密码" 
@@ -448,13 +449,97 @@ export function Settings() {
                 max="18" 
                 value={settings.fontSize}
                 onChange={(e) => setFontSize(parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary-600" 
+                className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-primary-600 bg-gray-200 dark:bg-gray-700" 
               />
               <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-2">
                 <span>小号</span>
                 <span className="font-medium text-gray-700 dark:text-gray-300">{settings.fontSize}px</span>
                 <span>大号</span>
               </div>
+            </div>
+            
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h4 className="font-medium text-gray-800 dark:text-gray-100 mb-4">界面效果</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Zap className="w-5 h-5 text-yellow-500" />
+                    <div>
+                      <h5 className="font-medium text-gray-800 dark:text-gray-100">动画效果</h5>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">界面切换动画</p>
+                    </div>
+                  </div>
+                  <ToggleSwitch enabled={settings.animationEnabled} onChange={setAnimationEnabled} />
+                </div>
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Eye className="w-5 h-5 text-blue-500" />
+                    <div>
+                      <h5 className="font-medium text-gray-800 dark:text-gray-100">毛玻璃效果</h5>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">卡片模糊背景</p>
+                    </div>
+                  </div>
+                  <ToggleSwitch enabled={settings.glassEffectEnabled} onChange={setGlassEffectEnabled} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'notification':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-blue-500" />
+                <div>
+                  <h4 className="font-medium text-gray-800 dark:text-gray-100">邮件通知</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">当有新的处理结果时发送邮件通知</p>
+                </div>
+              </div>
+              <ToggleSwitch 
+                enabled={settings.emailNotification} 
+                onChange={setEmailNotification} 
+              />
+            </div>
+            
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Volume2 className="w-5 h-5 text-green-500" />
+                <div>
+                  <h4 className="font-medium text-gray-800 dark:text-gray-100">声音提示</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">处理完成时播放提示音</p>
+                </div>
+              </div>
+              <ToggleSwitch 
+                enabled={settings.soundNotification} 
+                onChange={setSoundNotification} 
+              />
+            </div>
+            
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-orange-500" />
+                <div>
+                  <h4 className="font-medium text-gray-800 dark:text-gray-100">摘要质量通知</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">当摘要质量低于阈值时通知</p>
+                </div>
+              </div>
+              <ToggleSwitch 
+                enabled={settings.qualityNotification} 
+                onChange={setQualityNotification} 
+              />
+            </div>
+            
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Bell className="w-5 h-5 text-purple-500" />
+                <div>
+                  <h4 className="font-medium text-gray-800 dark:text-gray-100">新闻更新通知</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">当有新新闻时推送通知</p>
+                </div>
+              </div>
+              <ToggleSwitch enabled={true} onChange={() => {}} />
             </div>
           </div>
         );
@@ -477,6 +562,16 @@ export function Settings() {
             </div>
             
             <p className="text-sm text-gray-500 dark:text-gray-400">语言设置将在下次登录时生效</p>
+            
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700">
+              <div className="flex items-start gap-3">
+                <Info className="w-5 h-5 text-blue-600 mt-0.5" />
+                <div>
+                  <h5 className="font-medium text-blue-800 dark:text-blue-200">多语言支持</h5>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">应用支持多种语言，您可以根据需要进行切换。</p>
+                </div>
+              </div>
+            </div>
           </div>
         );
 
@@ -551,7 +646,7 @@ export function Settings() {
                     <p className="text-xs text-gray-500 dark:text-gray-400">./data/cqunews.db</p>
                   </div>
                 </div>
-                <button className="text-sm text-primary-600 hover:text-primary-700">
+                <button className="text-sm text-primary-600 hover:text-primary-700 dark:hover:text-primary-400">
                   打开目录
                 </button>
               </div>
@@ -568,11 +663,62 @@ export function Settings() {
                 清除历史
               </button>
             </div>
+          </div>
+        );
+
+      case 'data':
+        return (
+          <div className="space-y-6">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Database className="w-5 h-5 text-blue-500" />
+                  <div>
+                    <h4 className="font-medium text-gray-800 dark:text-gray-100">数据库状态</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">本地 SQLite 数据库</p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
+                  正常
+                </span>
+              </div>
+            </div>
             
-            <button className="btn-outline w-full flex items-center justify-center gap-2">
-              <FolderOpen className="w-4 h-4" />
-              导出所有数据
-            </button>
+            <div className="space-y-4">
+              <h4 className="font-medium text-gray-800 dark:text-gray-100">数据管理</h4>
+              
+              <button 
+                onClick={handleExportData}
+                className="w-full btn-secondary flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                导出数据库 (.sql)
+              </button>
+              
+              <button className="w-full btn-secondary flex items-center justify-center gap-2">
+                <RefreshCw className="w-4 h-4" />
+                备份数据
+              </button>
+              
+              <button className="w-full btn-outline flex items-center justify-center gap-2">
+                <Upload className="w-4 h-4" />
+                导入数据
+              </button>
+            </div>
+            
+            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg border border-yellow-200 dark:border-yellow-700">
+              <div className="flex items-start gap-3">
+                <Info className="w-5 h-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <h5 className="font-medium text-yellow-800 dark:text-yellow-200">数据备份建议</h5>
+                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+                    <li>定期导出数据库文件进行备份</li>
+                    <li>备份文件建议存放在安全位置</li>
+                    <li>导入数据前请确保应用已关闭</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         );
 
@@ -658,7 +804,7 @@ export function Settings() {
                   {sections.find((s) => s.id === activeSection)?.description}
                 </p>
               </div>
-              {(activeSection !== 'security') && (
+              {(activeSection !== 'security' && activeSection !== 'data') && (
                 <button 
                   onClick={handleSave} 
                   disabled={isSaving}
