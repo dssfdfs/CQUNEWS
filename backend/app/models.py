@@ -20,6 +20,11 @@ class News(SQLModel, table=True):
     views: int = Field(default=0)
     is_trending: int = Field(default=0)
     crawl_status: int = Field(default=0)
+    quality_score: int = Field(default=0)
+    review_status: str = Field(default="pending", max_length=16, index=True)
+    review_note: Optional[str] = Field(default=None, max_length=500)
+    reviewed_by: Optional[int] = Field(default=None)
+    reviewed_at: Optional[str] = Field(default=None)
     created_at: Optional[str] = Field(default=None)
     updated_at: Optional[str] = Field(default=None)
 
@@ -177,3 +182,48 @@ class ExportJob(SQLModel, table=True):
     expires_at: Optional[str] = Field(default=None)
     created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
     completed_at: Optional[str] = Field(default=None)
+
+
+class AdminUser(SQLModel, table=True):
+    __tabname__ = "admin_user"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(max_length=64, unique=True, index=True)
+    email: str = Field(max_length=128, unique=True, index=True)
+    hashed_password: str = Field(max_length=255)
+    is_superuser: bool = Field(default=False)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class UserBehavior(SQLModel, table=True):
+    __tabname__ = "user_behavior"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    action_type: str = Field(max_length=32, index=True)
+    target_id: Optional[int] = Field(default=None, index=True)
+    extra_data: Optional[str] = Field(default=None)
+    timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class SystemConfig(SQLModel, table=True):
+    __tabname__ = "system_config"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    key: str = Field(max_length=128, unique=True, index=True)
+    value: str = Field(default="")
+    description: Optional[str] = Field(default=None, max_length=500)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class Feedback(SQLModel, table=True):
+    __tabname__ = "feedback"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    content: str = Field()
+    contact_info: Optional[str] = Field(default=None, max_length=255)
+    status: str = Field(default="pending", max_length=16)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())

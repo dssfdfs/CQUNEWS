@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Sidebar } from '@/components/Sidebar';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { PublicRoute } from '@/components/PublicRoute';
+import { AdminRoute } from '@/components/AdminRoute';
 import { Login } from '@/components/Login';
 import { Register } from '@/components/Register';
 import { HomePage } from '@/components/HomePage';
@@ -14,11 +15,19 @@ import { NewsPreview } from '@/components/NewsPreview';
 import { History } from '@/components/History';
 import { Analytics } from '@/components/Analytics';
 import { Settings } from '@/components/Settings';
+import { AdminLoginPage } from '@/pages/AdminLoginPage';
+import { AdminDashboard } from '@/pages/AdminDashboard';
+import { AdminUserManagement } from '@/pages/AdminUserManagement';
+import { AdminFeedbackManagement } from '@/pages/AdminFeedbackManagement';
+import { AdminSettings } from '@/pages/AdminSettings';
+import { ContentModerationPage } from '@/pages/ContentModerationPage';
+import { LogsPage } from '@/pages/LogsPage';
+import { Toast } from '@/components/Toast';
 import { useStore } from '@/store/useStore';
 import { generateSummary, generateTitles, verifyQuality } from '@/api/deepseek';
 
 function Dashboard() {
-  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language } = useStore();
+  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language, recordBehavior } = useStore();
   const [activeNav, setActiveNav] = useState('summary');
   const [error, setError] = useState('');
 
@@ -32,6 +41,8 @@ function Dashboard() {
       const apiConfig = apiConfigs[model];
       
       try {
+        const startTime = Date.now();
+        
         setStep(2);
         const summary = await generateSummary(content, summaryType, language, apiConfig, customPrompt);
         setSummary(summary);
@@ -46,6 +57,14 @@ function Dashboard() {
         
         setStep(5);
         addHistory({ content, summary, titles });
+        
+        const durationMs = Date.now() - startTime;
+        recordBehavior('generate', undefined, {
+          duration_ms: durationMs,
+          content_length: content.length,
+          summary_length: summary.length,
+          summary_type: summaryType,
+        });
         
       } catch (err) {
         console.error(err);
@@ -65,7 +84,7 @@ function Dashboard() {
       window.removeEventListener('generate-all', handleGenerateAll);
       window.removeEventListener('navigate-to-summary', handleNavigateToSummary);
     };
-  }, [content, setStep, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language]);
+  }, [content, setStep, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language, recordBehavior]);
 
   const handleNavClick = (item: string) => {
     setActiveNav(item);
@@ -218,6 +237,40 @@ function Dashboard() {
   );
 }
 
+function AdminApp() {
+  const [activeItem, setActiveItem] = useState('dashboard');
+
+  const handleNavClick = (item: string) => {
+    setActiveItem(item);
+  };
+
+  const renderContent = () => {
+    switch (activeItem) {
+      case 'dashboard':
+        return <AdminDashboard activeItem={activeItem} onItemClick={handleNavClick} />;
+      case 'users':
+        return <AdminUserManagement activeItem={activeItem} onItemClick={handleNavClick} />;
+      case 'content':
+        return <ContentModerationPage activeItem={activeItem} onItemClick={handleNavClick} />;
+      case 'feedback':
+        return <AdminFeedbackManagement activeItem={activeItem} onItemClick={handleNavClick} />;
+      case 'logs':
+        return <LogsPage activeItem={activeItem} onItemClick={handleNavClick} />;
+      case 'settings':
+        return <AdminSettings activeItem={activeItem} onItemClick={handleNavClick} />;
+      default:
+        return <AdminDashboard activeItem={activeItem} onItemClick={handleNavClick} />;
+    }
+  };
+
+  return (
+    <>
+      {renderContent()}
+      <Toast />
+    </>
+  );
+}
+
 function App() {
   return (
     <Router>
@@ -236,6 +289,20 @@ function App() {
             <PublicRoute>
               <Register />
             </PublicRoute>
+          }
+        />
+        <Route
+          path="/admin/login"
+          element={
+            <AdminLoginPage />
+          }
+        />
+        <Route
+          path="/admin/*"
+          element={
+            <AdminRoute>
+              <AdminApp />
+            </AdminRoute>
           }
         />
         <Route
