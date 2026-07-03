@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field
 
+from .database import engine, get_session
 from .logger import logger
 
 
@@ -129,6 +130,58 @@ class ProcessRequestWithConfig(ProcessRequest):
     api_url: Optional[str] = Field(None, description="API地址")
 
 
+def get_user_api_config(user_id: int) -> dict | None:
+    from .models import UserApiConfig, AIService
+    from sqlmodel import select
+    
+    try:
+        with Session(engine) as db:
+            config = db.exec(
+                select(UserApiConfig)
+                .where(UserApiConfig.user_id == user_id)
+                .where(UserApiConfig.enabled == 1)
+                .where(UserApiConfig.is_default == 1)
+            ).first()
+            
+            if not config:
+                config = db.exec(
+                    select(UserApiConfig)
+                    .where(UserApiConfig.user_id == user_id)
+                    .where(UserApiConfig.enabled == 1)
+                    .order_by(UserApiConfig.id.desc())
+                ).first()
+            
+            if not config:
+                return None
+            
+            service = db.get(AIService, config.service_id)
+            if not service:
+                return None
+            
+            return {
+                "api_key": config.api_key,
+                "api_url": config.api_url or service.api_url,
+                "model_name": config.model_name or service.default_model,
+                "service_name": service.name,
+            }
+    except Exception as e:
+        logger.error("Failed to get user API config: %s", e)
+        return None
+
+
+def get_system_default_api_key() -> str:
+    from .models import SystemConfig
+    from sqlmodel import select
+    
+    try:
+        with Session(engine) as db:
+            config = db.exec(select(SystemConfig).where(SystemConfig.key == "default_api_key")).first()
+            return config.value if config else ""
+    except Exception as e:
+        logger.error("Failed to get system default API key: %s", e)
+        return ""
+
+
 @router.post("/process")
 async def process_ai_request(
     request: Request,
@@ -138,12 +191,39 @@ async def process_ai_request(
     if not config:
         raise HTTPException(status_code=400, detail=f"不支持的模型: {req.model}")
 
-    target_url = config["url"] if not req.api_url or req.api_url == '/api/process' else req.api_url
-    target_api_key = config["default_key"] if not req.api_key else req.api_key
+    user_id = None
+    auth_header = request.headers.get("authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:]
+        try:
+            from .auth import decode_token
+            payload = decode_token(token)
+            user_id = payload.get("sub")
+        except:
+            pass
+
+    target_url = config["url"]
+    target_api_key = config["default_key"]
     target_model = config["model_name"]
 
+    if user_id:
+        user_config = get_user_api_config(int(user_id))
+        if user_config:
+            target_url = user_config["api_url"]
+            target_api_key = user_config["api_key"]
+            target_model = user_config["model_name"]
+
+    if req.api_url and req.api_url != '/api/process':
+        target_url = req.api_url
+    if req.api_key:
+        target_api_key = req.api_key
+
     if not target_api_key:
-        raise HTTPException(status_code=400, detail="请在设置中心配置API密钥")
+        system_key = get_system_default_api_key()
+        if system_key:
+            target_api_key = system_key
+        else:
+            raise HTTPException(status_code=400, detail="请在设置中心配置API密钥")
 
     try:
         async with httpx.AsyncClient(timeout=300.0) as client:

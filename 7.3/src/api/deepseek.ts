@@ -169,3 +169,25 @@ ${summary}
     };
   }
 }
+
+export interface ChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+  confirm_password: string;
+}
+
+export async function changePassword(data: ChangePasswordRequest): Promise<void> {
+  const response = await fetch('/api/auth/change-password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+    },
+    body: JSON.stringify(data),
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || '密码修改失败');
+  }
+}

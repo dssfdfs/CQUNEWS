@@ -12,6 +12,7 @@ interface AdminState {
   isAuthenticated: boolean;
   currentUser: AdminUser | null;
   accessToken: string | null;
+  isLoading: boolean;
 
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
@@ -43,6 +44,7 @@ export const useAdminStore = create<AdminState>((set) => ({
   isAuthenticated: initialAuth,
   currentUser: initialUser,
   accessToken: initialToken,
+  isLoading: false,
 
   login: async (username: string, password: string) => {
     try {
@@ -114,6 +116,7 @@ export const useAdminStore = create<AdminState>((set) => ({
   },
 
   checkAuth: () => {
+    set({ isLoading: true });
     const token = localStorage.getItem('admin_token');
     const userStr = localStorage.getItem('admin_user');
     if (token && userStr) {
@@ -123,6 +126,7 @@ export const useAdminStore = create<AdminState>((set) => ({
           isAuthenticated: true,
           currentUser: user,
           accessToken: token,
+          isLoading: false,
         });
       } catch (e) {
         localStorage.removeItem('admin_token');
@@ -131,6 +135,7 @@ export const useAdminStore = create<AdminState>((set) => ({
           isAuthenticated: false,
           currentUser: null,
           accessToken: null,
+          isLoading: false,
         });
       }
     } else {
@@ -138,6 +143,7 @@ export const useAdminStore = create<AdminState>((set) => ({
         isAuthenticated: false,
         currentUser: null,
         accessToken: null,
+        isLoading: false,
       });
     }
   },

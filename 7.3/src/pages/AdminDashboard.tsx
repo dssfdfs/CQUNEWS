@@ -13,6 +13,7 @@ import {
   Shield,
   FileText,
   Settings,
+  Key,
   RefreshCw,
   Tag,
   Zap,
@@ -66,10 +67,10 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
           adminApi.getWordCloud(),
           adminApi.getHeatmap(),
         ]);
-        setSummary(summaryData);
-        setBehavior(behaviorData);
-        setWordCloudData(wordCloudResult.words || []);
-        setHeatmapData(heatmapResult);
+        setSummary(summaryData || null);
+        setBehavior(behaviorData || null);
+        setWordCloudData(wordCloudResult?.words || []);
+        setHeatmapData(heatmapResult?.heatmap && heatmapResult?.hours && heatmapResult?.weekdays ? heatmapResult : null);
       } catch (error) {
         console.error('Failed to fetch analytics data:', error);
       } finally {
@@ -88,10 +89,10 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
         adminApi.getWordCloud(),
         adminApi.getHeatmap(),
       ]);
-      setSummary(summaryData);
-      setBehavior(behaviorData);
-      setWordCloudData(wordCloudResult.words || []);
-      setHeatmapData(heatmapResult);
+      setSummary(summaryData || null);
+      setBehavior(behaviorData || null);
+      setWordCloudData(wordCloudResult?.words || []);
+      setHeatmapData(heatmapResult?.heatmap && heatmapResult?.hours && heatmapResult?.weekdays ? heatmapResult : null);
     } catch (error) {
       console.error('Failed to refresh data:', error);
     } finally {
@@ -105,6 +106,7 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
     { id: 'content', label: '内容审核', icon: FileText },
     { id: 'feedback', label: '反馈管理', icon: MessageSquare },
     { id: 'logs', label: '日志管理', icon: Clock },
+    { id: 'api-config', label: 'API配置', icon: Key },
     { id: 'settings', label: '系统配置', icon: Settings },
   ];
 

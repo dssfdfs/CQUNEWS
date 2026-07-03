@@ -184,10 +184,17 @@ export const adminApi = {
   },
 
   updateUserStatus: async (userId: number, status: string): Promise<UserInfo> => {
-    const response = await fetch(`/api/admin/users/${userId}/status`, {
+    const response = await fetch(`/api/admin/users/${userId}/status?status=${status}`, {
       method: 'PUT',
       headers: adminHeaders(),
-      body: JSON.stringify({ status }),
+    });
+    return response.json();
+  },
+
+  deleteUser: async (userId: number): Promise<{ success: boolean; message: string }> => {
+    const response = await fetch(`/api/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: adminHeaders(),
     });
     return response.json();
   },
@@ -318,6 +325,97 @@ export const adminApi = {
       method: 'POST',
       headers: adminHeaders(),
       body: JSON.stringify({ api_key: apiKey }),
+    });
+    return response.json();
+  },
+
+  getAIServices: async () => {
+    const response = await fetch('/api/admin/api-services', {
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  getAIService: async (serviceId: number) => {
+    const response = await fetch(`/api/admin/api-services/${serviceId}`, {
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  createAIService: async (data: { name: string; display_name: string; api_url: string; default_model: string; description?: string }) => {
+    const response = await fetch('/api/admin/api-services', {
+      method: 'POST',
+      headers: adminHeaders(),
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  updateAIService: async (serviceId: number, data: { display_name?: string; api_url?: string; default_model?: string; description?: string; enabled?: number }) => {
+    const response = await fetch(`/api/admin/api-services/${serviceId}`, {
+      method: 'PUT',
+      headers: adminHeaders(),
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  deleteAIService: async (serviceId: number) => {
+    const response = await fetch(`/api/admin/api-services/${serviceId}`, {
+      method: 'DELETE',
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  getUserApiConfigs: async (params?: { user_id?: number; service_id?: number }) => {
+    const query = new URLSearchParams();
+    if (params?.user_id) query.set('user_id', params.user_id.toString());
+    if (params?.service_id) query.set('service_id', params.service_id.toString());
+    const response = await fetch(`/api/admin/user-api-configs?${query}`, {
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  getUserApiConfig: async (configId: number) => {
+    const response = await fetch(`/api/admin/user-api-configs/${configId}`, {
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  createUserApiConfig: async (data: { user_id: number; service_id: number; api_key: string; api_url?: string; model_name?: string; is_default?: number }) => {
+    const response = await fetch('/api/admin/user-api-configs', {
+      method: 'POST',
+      headers: adminHeaders(),
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  updateUserApiConfig: async (configId: number, data: { api_key?: string; api_url?: string; model_name?: string; enabled?: number; is_default?: number }) => {
+    const response = await fetch(`/api/admin/user-api-configs/${configId}`, {
+      method: 'PUT',
+      headers: adminHeaders(),
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  deleteUserApiConfig: async (configId: number) => {
+    const response = await fetch(`/api/admin/user-api-configs/${configId}`, {
+      method: 'DELETE',
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  testUserApiConfig: async (configId: number) => {
+    const response = await fetch(`/api/admin/user-api-configs/${configId}/test`, {
+      method: 'POST',
+      headers: adminHeaders(),
     });
     return response.json();
   },

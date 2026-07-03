@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/Sidebar';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { PublicRoute } from '@/components/PublicRoute';
@@ -18,6 +18,12 @@ import { Analytics } from '@/components/Analytics';
 import { Settings } from '@/components/Settings';
 import { AdminLoginPage } from '@/pages/AdminLoginPage';
 import { AdminDashboard } from '@/pages/AdminDashboard';
+import { AdminUserManagement } from '@/pages/AdminUserManagement';
+import { AdminFeedbackManagement } from '@/pages/AdminFeedbackManagement';
+import { AdminSettings } from '@/pages/AdminSettings';
+import { AdminApiConfig } from '@/pages/AdminApiConfig';
+import { ContentModerationPage } from '@/pages/ContentModerationPage';
+import { LogsPage } from '@/pages/LogsPage';
 import { useStore } from '@/store/useStore';
 import { generateSummary, generateTitles, verifyQuality } from '@/api/deepseek';
 
@@ -214,6 +220,88 @@ function Dashboard() {
   );
 }
 
+function AdminRoutes() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const getActiveItem = () => {
+    const path = location.pathname;
+    if (path.includes('/dashboard')) return 'dashboard';
+    if (path.includes('/users')) return 'users';
+    if (path.includes('/content')) return 'content';
+    if (path.includes('/feedback')) return 'feedback';
+    if (path.includes('/logs')) return 'logs';
+    if (path.includes('/api-config')) return 'api-config';
+    if (path.includes('/settings')) return 'settings';
+    return 'dashboard';
+  };
+  
+  const handleItemClick = (item: string) => {
+    switch (item) {
+      case 'dashboard':
+        navigate('/admin/dashboard');
+        break;
+      case 'users':
+        navigate('/admin/users');
+        break;
+      case 'content':
+        navigate('/admin/content');
+        break;
+      case 'feedback':
+        navigate('/admin/feedback');
+        break;
+      case 'logs':
+        navigate('/admin/logs');
+        break;
+      case 'api-config':
+        navigate('/admin/api-config');
+        break;
+      case 'settings':
+        navigate('/admin/settings');
+        break;
+      default:
+        navigate('/admin/dashboard');
+    }
+  };
+  
+  return (
+    <Routes>
+      <Route
+        path="/dashboard"
+        element={<AdminDashboard activeItem={getActiveItem()} onItemClick={handleItemClick} />}
+      />
+      <Route
+        path="/users"
+        element={<AdminUserManagement activeItem={getActiveItem()} onItemClick={handleItemClick} />}
+      />
+      <Route
+        path="/content"
+        element={<ContentModerationPage activeItem={getActiveItem()} onItemClick={handleItemClick} />}
+      />
+      <Route
+        path="/feedback"
+        element={<AdminFeedbackManagement activeItem={getActiveItem()} onItemClick={handleItemClick} />}
+      />
+      <Route
+        path="/logs"
+        element={<LogsPage activeItem={getActiveItem()} onItemClick={handleItemClick} />}
+      />
+      <Route
+        path="/api-config"
+        element={<AdminApiConfig activeItem={getActiveItem()} onItemClick={handleItemClick} />}
+      />
+      <Route
+        path="/settings"
+        element={<AdminSettings activeItem={getActiveItem()} onItemClick={handleItemClick} />}
+      />
+      <Route
+        path="*"
+        element={<AdminDashboard activeItem="dashboard" onItemClick={handleItemClick} />}
+      />
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <Router>
@@ -246,7 +334,7 @@ function App() {
           path="/admin/*"
           element={
             <AdminRoute>
-              <AdminDashboard activeItem="dashboard" onItemClick={() => {}} />
+              <AdminRoutes />
             </AdminRoute>
           }
         />

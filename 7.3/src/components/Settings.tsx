@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useStore } from '@/store/useStore';
+import { changePassword } from '@/api/deepseek';
 import { User, Bell, Shield, Palette, Globe, HardDrive, Save, RefreshCw, HelpCircle, ChevronRight, Info, Sun, Moon, Monitor, AlertCircle, CheckCircle, Upload, FolderOpen, Trash2, Database, Download, Zap, Eye, EyeOff, Volume2, Mail } from 'lucide-react';
 
 interface SettingSection {
@@ -175,6 +176,11 @@ export function Settings() {
     setIsChangingPassword(true);
     
     try {
+      await changePassword({
+        old_password: oldPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      });
       setSaveStatus('success');
       setSaveMessage('密码修改成功');
       setOldPassword('');

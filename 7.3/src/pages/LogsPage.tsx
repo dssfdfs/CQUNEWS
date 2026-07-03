@@ -29,10 +29,12 @@ export function LogsPage({ activeItem, onItemClick }: LogsPageProps) {
     setLoading(true);
     try {
       const data = await adminApi.getLogs(search || undefined, undefined, page, pageSize);
-      setLogs(data.data);
-      setTotal(data.total);
+      setLogs(data?.data || []);
+      setTotal(data?.total || 0);
     } catch (err) {
       console.error('Failed to fetch logs:', err);
+      setLogs([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }

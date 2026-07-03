@@ -7,8 +7,9 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlmodel import Session, col, select
 
-from .database import CrawlLog, CrawlSource, News, engine
+from .database import CrawlLog, CrawlSource, News, UserActionLog, engine
 from .logger import logger
+from .models import SystemConfig
 from .scheduler import trigger_crawl_now, _job
 
 
@@ -242,3 +243,80 @@ def stats() -> dict[str, Any]:
             "crawl_runs": log_count,
             "latest_news": _to_news_out(latest) if latest else None,
         }
+
+
+class NewsSummaryResponse(BaseModel):
+    success: bool
+    summary: str
+    news_id: int
+
+
+@router.post("/news/{news_id}/summary", response_model=NewsSummaryResponse)
+async def generate_news_summary(news_id: int):
+    import httpx
+    import json
+    
+    with Session(engine) as db:
+        news = db.get(News, news_id)
+        if not news:
+            raise HTTPException(status_code=404, detail="News not found")
+        
+        if not news.content:
+            raise HTTPException(status_code=400, detail="News content is empty")
+        
+        config = db.exec(select(SystemConfig).where(SystemConfig.key == "default_api_key")).first()
+        api_key = config.value if config else ""
+        
+        if not api_key:
+            raise HTTPException(status_code=400, detail="API key not configured")
+        
+        prompt = f"""请对以下新闻内容进行总结，输出一段简洁的中文摘要（100-200字）：
+
+新闻标题：{news.title}
+
+新闻内容：{news.content[:3000]}
+
+要求：
+1. 提取核心要点
+2. 保持原意不变
+3. 语言简洁流畅
+4. 使用中文输出"""
+        
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+                    json={
+                        "model": "ep-20260702173631-5c5qs",
+                        "messages": [{"role": "user", "content": prompt}],
+                        "temperature": 0.7,
+                        "max_tokens": 500,
+                    },
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                )
+                
+                if not response.is_success:
+                    raise HTTPException(
+                        status_code=response.status_code,
+                        detail=f"API调用失败: {response.text[:200]}"
+                    )
+                
+                result = response.json()
+                summary = result["choices"][0]["message"]["content"]
+                
+                news.summary = summary
+                db.add(news)
+                db.commit()
+                
+                return NewsSummaryResponse(
+                    success=True,
+                    summary=summary,
+                    news_id=news_id,
+                )
+                
+        except httpx.RequestError as e:
+            logger.error("News summary API error: %s", e)
+            raise HTTPException(status_code=500, detail=f"网络连接失败: {str(e)}")

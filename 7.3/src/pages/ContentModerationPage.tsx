@@ -41,8 +41,8 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
     setLoading(true);
     try {
       const data = await adminApi.getContentList(statusFilter || undefined, search || undefined, page, pageSize);
-      setNewsList(data.data || []);
-      setTotal(data.total || 0);
+      setNewsList(data?.data || []);
+      setTotal(data?.total || 0);
     } catch (err) {
       console.error('Fetch news failed:', err);
       error('加载新闻列表失败');

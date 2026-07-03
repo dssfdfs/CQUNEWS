@@ -177,3 +177,72 @@ class ExportJob(SQLModel, table=True):
     expires_at: Optional[str] = Field(default=None)
     created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
     completed_at: Optional[str] = Field(default=None)
+
+
+class Admin(SQLModel, table=True):
+    __tabname__ = "admin"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(max_length=64, unique=True, index=True)
+    password_hash: str = Field(max_length=255)
+    email: Optional[str] = Field(default=None, max_length=128)
+    is_superuser: int = Field(default=1)
+    status: str = Field(default="active", max_length=16)
+    last_login_at: Optional[str] = Field(default=None)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class SystemConfig(SQLModel, table=True):
+    __tabname__ = "system_config"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    key: str = Field(max_length=128, unique=True, index=True)
+    value: str = Field(default="")
+    description: Optional[str] = Field(default=None, max_length=500)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class UserActionLog(SQLModel, table=True):
+    __tabname__ = "user_action_log"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    action_type: str = Field(max_length=64, index=True)
+    action_label: str = Field(max_length=128)
+    target_id: Optional[int] = Field(default=None)
+    action_metadata: Optional[str] = Field(default=None)
+    ip_address: Optional[str] = Field(default=None, max_length=64)
+    user_agent: Optional[str] = Field(default=None, max_length=500)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class AIService(SQLModel, table=True):
+    __tabname__ = "aiservice"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(max_length=64, unique=True, index=True)
+    display_name: str = Field(max_length=128)
+    api_url: str = Field(max_length=500)
+    default_model: str = Field(max_length=128)
+    description: Optional[str] = Field(default=None, max_length=500)
+    enabled: int = Field(default=1)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class UserApiConfig(SQLModel, table=True):
+    __tabname__ = "user_api_config"
+    model_config = {"protected_namespaces": ()}
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    service_id: int = Field(foreign_key="ai_service.id", index=True)
+    api_key: str = Field(max_length=500)
+    api_url: Optional[str] = Field(default=None, max_length=500)
+    model_name: Optional[str] = Field(default=None, max_length=128)
+    enabled: int = Field(default=1)
+    is_default: int = Field(default=0)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())

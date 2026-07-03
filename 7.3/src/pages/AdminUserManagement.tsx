@@ -10,6 +10,7 @@ import {
   LogOut,
   Shield,
   Settings,
+  Key,
   Search,
   X,
   ArrowRight,
@@ -50,13 +51,14 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
     setLoading(true);
     try {
       const data = await adminApi.getUsers(searchQuery || undefined);
-      let filteredUsers = data.users;
+      let filteredUsers = data?.users || [];
       if (statusFilter) {
         filteredUsers = filteredUsers.filter(u => u.status === statusFilter);
       }
       setUsers(filteredUsers);
     } catch (err) {
       console.error('Failed to fetch users:', err);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -128,12 +130,24 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
     }
   };
 
+  const handleDeleteUser = async (userId: number, username: string) => {
+    if (!window.confirm(`确定要删除用户 "${username}" 吗？此操作无法撤销。`)) return;
+    try {
+      await adminApi.deleteUser(userId);
+      success('用户已删除');
+      fetchUsers();
+    } catch (err) {
+      error('删除失败');
+    }
+  };
+
   const navItems = [
     { id: 'dashboard', label: '仪表盘', icon: LayoutDashboard },
     { id: 'users', label: '用户管理', icon: Users },
     { id: 'content', label: '内容审核', icon: MessageSquare },
     { id: 'feedback', label: '反馈管理', icon: MessageSquare },
     { id: 'logs', label: '日志管理', icon: Clock },
+    { id: 'api-config', label: 'API配置', icon: Key },
     { id: 'settings', label: '系统配置', icon: Settings },
   ];
 
@@ -391,13 +405,22 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
                           <span className="text-sm text-gray-600">{formatDate(user.created_at)}</span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <button
-                            onClick={() => handleUserClick(user)}
-                            className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 text-sm font-medium"
-                          >
-                            查看详情
-                            <ArrowRight className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleUserClick(user)}
+                              className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                            >
+                              <Eye className="w-4 h-4" />
+                              详情
+                            </button>
+                            <button
+                              onClick={() => handleDeleteUser(user.id, user.username)}
+                              className="flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium"
+                            >
+                              <X className="w-4 h-4" />
+                              删除
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

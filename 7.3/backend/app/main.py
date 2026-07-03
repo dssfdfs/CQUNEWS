@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from .ai_proxy import router as ai_proxy_router
+from .admin_router import router as admin_router
 from .config import settings
 from .database import init_db
 from .logger import logger
@@ -97,6 +98,7 @@ def root():
 
 app.include_router(news_router)
 app.include_router(settings_router)
+app.include_router(admin_router)
 app.include_router(ai_proxy_router)
 
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")

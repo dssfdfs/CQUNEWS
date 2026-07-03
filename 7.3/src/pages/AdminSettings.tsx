@@ -100,6 +100,7 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
     { id: 'content', label: '内容审核', icon: Activity },
     { id: 'feedback', label: '反馈管理', icon: MessageSquare },
     { id: 'logs', label: '日志管理', icon: Clock },
+    { id: 'api-config', label: 'API配置', icon: Key },
     { id: 'settings', label: '系统配置', icon: Settings },
   ];
 
