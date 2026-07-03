@@ -1,0 +1,59 @@
+[plugin:vite:react-babel] D:\我狗屁不通的编程成果\实训2\7.3\src\pages\AdminDashboard.tsx: Expected corresponding JSX closing tag for <div>. (566:8)
+  569 |       )}
+D:/我狗屁不通的编程成果/实训2/7.3/src/pages/AdminDashboard.tsx:566:8
+564|              </>
+565|            )}
+566|          </>
+   |          ^
+567|        ) : (
+568|          renderContent()
+    at constructor (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:365:19)
+    at TypeScriptParserMixin.raise (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:6616:19)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4734:14)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4710:32)
+    at TypeScriptParserMixin.jsxParseElement (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4761:17)
+    at TypeScriptParserMixin.parseExprAtom (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4771:19)
+    at TypeScriptParserMixin.parseExprSubscripts (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:11098:23)
+    at TypeScriptParserMixin.parseUpdate (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:11083:21)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:11063:23)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:9854:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10916:61)
+    at TypeScriptParserMixin.parseExprOps (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10921:23)
+    at TypeScriptParserMixin.parseMaybeConditional (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10898:23)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10848:21)
+    at D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:9792:39
+    at TypeScriptParserMixin.tryParse (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:6924:20)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:9792:18)
+    at D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10817:39
+    at TypeScriptParserMixin.allowInAnd (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:12443:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10817:17)
+    at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:12510:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:11692:28)
+    at TypeScriptParserMixin.parseExprAtom (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:11348:23)
+    at TypeScriptParserMixin.parseExprAtom (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4776:20)
+    at TypeScriptParserMixin.parseExprSubscripts (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:11098:23)
+    at TypeScriptParserMixin.parseUpdate (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:11083:21)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:11063:23)
+    at TypeScriptParserMixin.parseMaybeUnary (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:9854:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10916:61)
+    at TypeScriptParserMixin.parseExprOps (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10921:23)
+    at TypeScriptParserMixin.parseMaybeConditional (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10898:23)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10848:21)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:9803:20)
+    at D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10817:39
+    at TypeScriptParserMixin.allowInAnd (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:12443:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10817:17)
+    at TypeScriptParserMixin.parseConditional (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10908:30)
+    at TypeScriptParserMixin.parseConditional (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:9620:18)
+    at TypeScriptParserMixin.parseMaybeConditional (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10902:17)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10848:21)
+    at TypeScriptParserMixin.parseMaybeAssign (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:9803:20)
+    at TypeScriptParserMixin.parseExpressionBase (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10801:23)
+    at D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10797:39
+    at TypeScriptParserMixin.allowInAnd (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:12443:12)
+    at TypeScriptParserMixin.parseExpression (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:10797:17)
+    at TypeScriptParserMixin.jsxParseExpressionContainer (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4644:31)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4723:36)
+    at TypeScriptParserMixin.jsxParseElementAt (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4710:32)
+    at TypeScriptParserMixin.jsxParseElement (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4761:17)
+    at TypeScriptParserMixin.parseExprAtom (D:\我狗屁不通的编程成果\实训2\7.3\node_modules\@babel\parser\lib\index.js:4771:19

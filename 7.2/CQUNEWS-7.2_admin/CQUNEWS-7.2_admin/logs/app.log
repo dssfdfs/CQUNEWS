@@ -1,0 +1,6 @@
+[2026-07-01 12:30:24] [INFO] [cqunews] main.py:22 - Initializing database...
+[2026-07-01 12:30:25] [INFO] [cqunews] database.py:20 - Database initialized: D:\我狗屁不通的编程成果\实训2\cqunews-7.1\cqunews.db
+[2026-07-01 12:30:25] [INFO] [cqunews] main.py:24 - Starting APScheduler...
+[2026-07-01 12:30:25] [INFO] [cqunews] scheduler.py:50 - APScheduler started, crawl interval = 60 minutes
+[2026-07-01 12:30:36] [INFO] [cqunews] main.py:61 - |G3| GET /api/news/latest -> 400 (1.06ms)
+[2026-07-01 12:30:58] [INFO] [cqunews] main.py:61 - |G3| POST /api/upload -> 200 (0.95ms)
