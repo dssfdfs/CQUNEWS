@@ -68,33 +68,33 @@ export function QualityVerification() {
           
           return (
             <div key={item.id} className="flex flex-col items-center">
-              <div className="relative w-28 h-28">
-                <svg className="w-full h-full transform -rotate-90">
+              <div className="relative w-32 h-32 p-2">
+                <svg viewBox="0 0 120 120" className="w-full h-full transform -rotate-90">
                   <circle
-                    cx="56"
-                    cy="56"
-                    r="48"
+                    cx="60"
+                    cy="60"
+                    r="50"
                     stroke="#e5e7eb"
-                    strokeWidth="10"
+                    strokeWidth="8"
                     fill="none"
                   />
                   <circle
-                    cx="56"
-                    cy="56"
-                    r="48"
+                    cx="60"
+                    cy="60"
+                    r="50"
                     stroke="currentColor"
-                    strokeWidth="10"
+                    strokeWidth="8"
                     fill="none"
                     strokeLinecap="round"
-                    strokeDasharray={`${ringWidth * 3.02} 302`}
+                    strokeDasharray={`${ringWidth * 3.14} 314`}
                     className={item.ring}
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className={`text-2xl font-bold ${item.text}`}>
+                  <span className={`text-3xl font-bold ${item.text}`}>
                     {item.value}
                   </span>
-                  <span className="text-xs text-gray-500">{item.unit}</span>
+                  <span className="text-sm text-gray-500">{item.unit}</span>
                 </div>
               </div>
               

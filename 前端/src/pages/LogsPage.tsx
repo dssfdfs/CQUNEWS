@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { adminApi, AuditLogItem } from '@/lib/api';
+import { useAdminStore } from '@/store/adminStore';
 import {
   Search,
   Clock,
@@ -18,6 +19,7 @@ interface LogsPageProps {
 }
 
 export function LogsPage({ activeItem, onItemClick }: LogsPageProps) {
+  const { logout } = useAdminStore();
   const [logs, setLogs] = useState<AuditLogItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -90,7 +92,7 @@ export function LogsPage({ activeItem, onItemClick }: LogsPageProps) {
         </nav>
         <div className="p-4 border-t border-gray-100">
           <div
-            onClick={() => { localStorage.removeItem('admin_token'); window.location.href = '/admin/login'; }}
+            onClick={logout}
             className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-red-500 hover:bg-red-50 transition-all"
           >
             <LogOut className="w-5 h-5" />

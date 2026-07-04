@@ -1,17 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Clock, Download, Trash2, Eye, Search, Calendar, Filter, RefreshCw, Edit3, X, ChevronDown, Tag, CheckSquare, Square, Folder, BookOpen, ExternalLink } from 'lucide-react';
+import { Clock, Download, Trash2, Eye, Search, Calendar, Filter, RefreshCw, Edit3, X, ChevronDown, Tag, CheckSquare, Square, Folder } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import JSZip from 'jszip';
-
-interface BrowseHistoryItem {
-  id: string;
-  title: string;
-  source: string;
-  category: string;
-  summary: string;
-  url: string;
-  viewedAt: string;
-}
 
 const DATE_FILTERS = [
   { id: 'all', label: '全部时间' },
@@ -25,7 +15,6 @@ const HISTORY_CATEGORIES = ['全部', '国际', '时政', '科技', '财经', '�
 
 export function History() {
   const { history, removeHistory, setContent, setSummary, setTitles, setQuality, setStep, updateHistory } = useStore();
-  const [activeTab, setActiveTab] = useState<'process' | 'browse'>('process');
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState<(typeof DATE_FILTERS)[number]['id']>('all');
   const [customDate, setCustomDate] = useState('');
@@ -38,71 +27,7 @@ export function History() {
   const [editSummaryContent, setEditSummaryContent] = useState('');
   const [savedSummary, setSavedSummary] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [browseHistory, setBrowseHistory] = useState<BrowseHistoryItem[]>([]);
   const dateDropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('browse_history');
-    if (saved) {
-      setBrowseHistory(JSON.parse(saved));
-    } else {
-      const mockData: BrowseHistoryItem[] = [
-        {
-          id: '1',
-          title: 'AI技术突破：新一代大语言模型性能提升300%',
-          source: '科技日报',
-          category: '科技',
-          summary: '最新发布的大语言模型在多项基准测试中取得了突破性进展...',
-          url: '#',
-          viewedAt: new Date(Date.now() - 3600000).toISOString(),
-        },
-        {
-          id: '2',
-          title: '全球股市震荡：美联储政策转向引发市场波动',
-          source: '财经时报',
-          category: '财经',
-          summary: '美联储宣布调整货币政策后，全球股市出现剧烈震荡...',
-          url: '#',
-          viewedAt: new Date(Date.now() - 7200000).toISOString(),
-        },
-        {
-          id: '3',
-          title: '国足晋级亚洲杯八强，创造历史最佳战绩',
-          source: '体育新闻',
-          category: '体育',
-          summary: '中国国家男子足球队在亚洲杯淘汰赛中以2:1击败对手...',
-          url: '#',
-          viewedAt: new Date(Date.now() - 10800000).toISOString(),
-        },
-        {
-          id: '4',
-          title: '国务院发布新政策：进一步优化营商环境',
-          source: '新华网',
-          category: '时政',
-          summary: '国务院近日发布《关于进一步优化营商环境的若干意见》...',
-          url: '#',
-          viewedAt: new Date(Date.now() - 14400000).toISOString(),
-        },
-      ];
-      setBrowseHistory(mockData);
-      localStorage.setItem('browse_history', JSON.stringify(mockData));
-    }
-  }, []);
-
-  
-
-  const handleRemoveBrowseHistory = (id: string) => {
-    const newHistory = browseHistory.filter(item => item.id !== id);
-    setBrowseHistory(newHistory);
-    localStorage.setItem('browse_history', JSON.stringify(newHistory));
-  };
-
-  const handleClearBrowseHistory = () => {
-    if (window.confirm('确定要清空所有浏览记录吗？')) {
-      setBrowseHistory([]);
-      localStorage.removeItem('browse_history');
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -334,70 +259,35 @@ export function History() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">个人历史</h1>
-          <p className="text-gray-500 mt-1">查看和管理您的处理记录和浏览记录</p>
+          <p className="text-gray-500 mt-1">查看和管理您的处理记录</p>
         </div>
-        {activeTab === 'process' && (
-          <div className="flex items-center gap-3">
-            {selectedIds.size > 0 && (
-              <>
-                <button
-                  onClick={handleBatchDelete}
-                  className="btn-secondary flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  删除选中 ({selectedIds.size})
-                </button>
-                <button
-                  onClick={handleBatchExport}
-                  className="btn-secondary flex items-center gap-2"
-                >
-                  <Folder className="w-4 h-4" />
-                  导出选中 ({selectedIds.size})
-                </button>
-              </>
-            )}
-            <button
-              onClick={handleBatchExport}
-              className="btn-secondary flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              导出全部
-            </button>
-          </div>
-        )}
-        {activeTab === 'browse' && browseHistory.length > 0 && (
+        <div className="flex items-center gap-3">
+          {selectedIds.size > 0 && (
+            <>
+              <button
+                onClick={handleBatchDelete}
+                className="btn-secondary flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100"
+              >
+                <Trash2 className="w-4 h-4" />
+                删除选中 ({selectedIds.size})
+              </button>
+              <button
+                onClick={handleBatchExport}
+                className="btn-secondary flex items-center gap-2"
+              >
+                <Folder className="w-4 h-4" />
+                导出选中 ({selectedIds.size})
+              </button>
+            </>
+          )}
           <button
-            onClick={handleClearBrowseHistory}
-            className="btn-secondary flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100"
+            onClick={handleBatchExport}
+            className="btn-secondary flex items-center gap-2"
           >
-            <Trash2 className="w-4 h-4" />
-            清空浏览记录
+            <Download className="w-4 h-4" />
+            导出全部
           </button>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2 mb-6">
-        <button
-          onClick={() => setActiveTab('process')}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
-            activeTab === 'process'
-              ? 'bg-primary-600 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          处理记录
-        </button>
-        <button
-          onClick={() => setActiveTab('browse')}
-          className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
-            activeTab === 'browse'
-              ? 'bg-primary-600 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          <BookOpen className="w-4 h-4" />
-          浏览记录
-        </button>
+        </div>
       </div>
 
       <div className="flex items-center gap-4 mb-6 flex-wrap">
@@ -598,66 +488,6 @@ export function History() {
           </div>
         )}
       </div>
-
-      {activeTab === 'browse' && (
-        <div className="card">
-          {browseHistory.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
-              <BookOpen className="w-16 h-16 mx-auto mb-4" />
-              <p>暂无浏览记录</p>
-              <p className="text-sm mt-1">浏览新闻后，记录会保存在这里</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {browseHistory.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-6 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${getCategoryColor(item.category)}`}>
-                          {item.category}
-                        </span>
-                        <span className="text-xs text-gray-400">
-                          {item.source}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-medium text-gray-800 mb-2 hover:text-primary-600 cursor-pointer">
-                        {item.title}
-                      </h3>
-                      <p className="text-gray-500 text-sm mb-3 line-clamp-2">
-                        {item.summary}
-                      </p>
-                      <div className="flex items-center gap-4 text-sm text-gray-400">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {new Date(item.viewedAt).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        <button
-                          onClick={() => window.open(item.url, '_blank')}
-                          className="flex items-center gap-1 text-primary-600 hover:text-primary-700"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          查看原文
-                        </button>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleRemoveBrowseHistory(item.id)}
-                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors ml-4"
-                      title="删除"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
 
       {isDrawerOpen && selectedItem && (
         <>

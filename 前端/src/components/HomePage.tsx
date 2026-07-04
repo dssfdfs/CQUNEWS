@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, Clock, FileText, Sparkles, Search, Filter, ChevronRight, Star, Target } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { TrendingUp, Clock, FileText, Sparkles, Search, Filter, ChevronRight, Star, Target, Zap, RefreshCw } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 
 interface NewsItem {
@@ -11,19 +12,23 @@ interface NewsItem {
   views: number;
   isTrending: boolean;
   publishedAt: string;
+  content?: string;
 }
 
 export function HomePage() {
-  const { history } = useStore();
+  const { history, setContent, setSummary, setTitles, setQuality, setIsGenerating, setStep } = useStore();
+  const navigate = useNavigate();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedSource, setSelectedSource] = useState('all');
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [personalizedNews, setPersonalizedNews] = useState<NewsItem[]>([]);
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
 
   const categories = ['all', '科技', '财经', '体育', '娱乐', '时政', '健康', '教育', '生活'];
-
+  
   const categoryColors: Record<string, string> = {
     '科技': 'bg-blue-100 text-blue-700',
     '财经': 'bg-green-100 text-green-700',
@@ -68,138 +73,173 @@ export function HomePage() {
     const fetchNews = async () => {
       setLoading(true);
       try {
-        const mockNews: NewsItem[] = [
-          {
-            id: 1,
-            title: 'AI技术突破：新一代大语言模型性能提升300%',
-            source: '科技日报',
-            category: '科技',
-            summary: '最新发布的大语言模型在多项基准测试中取得了突破性进展，性能较上一代提升300%，同时能耗降低50%。该模型采用了全新的架构设计和训练方法。',
-            views: 12580,
-            isTrending: true,
-            publishedAt: '2024-01-15 09:30',
-          },
-          {
-            id: 2,
-            title: '全球股市震荡：美联储政策转向引发市场波动',
-            source: '财经时报',
-            category: '财经',
-            summary: '美联储宣布调整货币政策后，全球股市出现剧烈震荡。分析师认为这是市场对未来利率走向不确定性的正常反应。',
-            views: 8920,
-            isTrending: true,
-            publishedAt: '2024-01-15 08:45',
-          },
-          {
-            id: 3,
-            title: '国足晋级亚洲杯八强，创造历史最佳战绩',
-            source: '体育新闻',
-            category: '体育',
-            summary: '中国国家男子足球队在亚洲杯淘汰赛中以2:1击败对手，成功晋级八强，创造了近年来亚洲杯的最佳战绩。',
-            views: 25600,
-            isTrending: true,
-            publishedAt: '2024-01-14 22:00',
-          },
-          {
-            id: 4,
-            title: '春节档电影预售火爆，多部大片竞争激烈',
-            source: '娱乐周刊',
-            category: '娱乐',
-            summary: '2024年春节档电影预售正式开启，多部备受期待的大片同步上线，首日预售票房突破5亿元，创历史新高。',
-            views: 15300,
-            isTrending: false,
-            publishedAt: '2024-01-15 10:00',
-          },
-          {
-            id: 5,
-            title: '国务院发布新政策：进一步优化营商环境',
-            source: '新华网',
-            category: '时政',
-            summary: '国务院近日发布《关于进一步优化营商环境的若干意见》，提出了20条具体措施，旨在激发市场活力和创造力。',
-            views: 18900,
-            isTrending: false,
-            publishedAt: '2024-01-15 07:30',
-          },
-          {
-            id: 6,
-            title: '冬季流感高发期：专家提醒做好防护措施',
-            source: '健康报',
-            category: '健康',
-            summary: '随着气温下降，冬季流感进入高发期。专家提醒市民注意保暖，勤洗手，及时接种流感疫苗，做好个人防护。',
-            views: 7850,
-            isTrending: false,
-            publishedAt: '2024-01-15 11:00',
-          },
-          {
-            id: 7,
-            title: '教育部发布新规：中小学课后服务将全面升级',
-            source: '教育新闻',
-            category: '教育',
-            summary: '教育部近日发布通知，要求各地中小学进一步完善课后服务体系，丰富服务内容，提高服务质量，切实解决家长后顾之忧。',
-            views: 11200,
-            isTrending: false,
-            publishedAt: '2024-01-15 08:00',
-          },
-          {
-            id: 8,
-            title: '智能家居市场持续升温，AI助手成标配',
-            source: '科技前沿',
-            category: '科技',
-            summary: '智能家居市场持续快速增长，AI语音助手已成为智能家电的标准配置。消费者对智能化、便捷化生活的需求不断提升。',
-            views: 9450,
-            isTrending: false,
-            publishedAt: '2024-01-14 16:30',
-          },
-          {
-            id: 9,
-            title: '5G技术商用三年：改变生活的十大应用场景',
-            source: '科技日报',
-            category: '科技',
-            summary: '5G商用三年来，已经在多个领域得到广泛应用，从远程医疗到智能交通，正在深刻改变我们的生活方式。',
-            views: 14200,
-            isTrending: false,
-            publishedAt: '2024-01-14 14:00',
-          },
-          {
-            id: 10,
-            title: '数字人民币试点扩大，支付方式迎来变革',
-            source: '财经时报',
-            category: '财经',
-            summary: '数字人民币试点范围进一步扩大，越来越多的城市和场景开始支持数字人民币支付，支付方式正在发生深刻变革。',
-            views: 12800,
-            isTrending: false,
-            publishedAt: '2024-01-15 12:00',
-          },
-          {
-            id: 11,
-            title: '健康饮食新趋势：植物基食品市场快速增长',
-            source: '健康报',
-            category: '健康',
-            summary: '随着健康意识的提升，植物基食品市场正在快速增长，越来越多的消费者开始关注健康饮食和可持续发展。',
-            views: 8560,
-            isTrending: false,
-            publishedAt: '2024-01-15 09:00',
-          },
-          {
-            id: 12,
-            title: '人工智能教育应用：个性化学习成为可能',
-            source: '教育新闻',
-            category: '教育',
-            summary: '人工智能技术正在改变传统教育模式，个性化学习系统能够根据每个学生的特点提供定制化的学习方案。',
-            views: 10200,
-            isTrending: false,
-            publishedAt: '2024-01-14 18:00',
-          },
-        ];
-        setNews(mockNews);
+        const response = await fetch('/api/news?page_size=20');
+        const result = await response.json();
+        
+        let newsItems: NewsItem[] = [];
+        if (result.items && result.items.length > 0) {
+          newsItems = result.items.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            source: item.source || '未知来源',
+            category: item.category || '综合',
+            summary: item.summary || item.content || '',
+            views: item.views || 0,
+            isTrending: item.is_trending || false,
+            publishedAt: item.published_at ? new Date(item.published_at).toLocaleString('zh-CN', { 
+              year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' 
+            }) : '未知时间',
+            content: item.content || '',
+          }));
+        }
+        
+        if (newsItems.length === 0) {
+          newsItems = [
+            {
+              id: 1,
+              title: 'AI技术突破：新一代大语言模型性能提升300%',
+              source: '科技日报',
+              category: '科技',
+              summary: '最新发布的大语言模型在多项基准测试中取得了突破性进展，性能较上一代提升300%，同时能耗降低50%。该模型采用了全新的架构设计和训练方法。',
+              views: 12580,
+              isTrending: true,
+              publishedAt: '2024-01-15 09:30',
+              content: '最新发布的大语言模型在多项基准测试中取得了突破性进展，性能较上一代提升300%，同时能耗降低50%。该模型采用了全新的架构设计和训练方法，能够处理更复杂的自然语言理解任务，包括多轮对话、长文本理解和逻辑推理等。研究团队表示，这一突破将推动人工智能在各个领域的应用，从智能客服到自动驾驶，都将受益于更强大的语言理解能力。',
+            },
+            {
+              id: 2,
+              title: '全球股市震荡：美联储政策转向引发市场波动',
+              source: '财经时报',
+              category: '财经',
+              summary: '美联储宣布调整货币政策后，全球股市出现剧烈震荡。分析师认为这是市场对未来利率走向不确定性的正常反应。',
+              views: 8920,
+              isTrending: true,
+              publishedAt: '2024-01-15 08:45',
+              content: '美联储宣布调整货币政策后，全球股市出现剧烈震荡。美股三大指数均出现明显下跌，欧洲和亚洲股市也受到影响。分析师认为这是市场对未来利率走向不确定性的正常反应，投资者正在重新评估资产配置策略。',
+            },
+            {
+              id: 3,
+              title: '国足晋级亚洲杯八强，创造历史最佳战绩',
+              source: '体育新闻',
+              category: '体育',
+              summary: '中国国家男子足球队在亚洲杯淘汰赛中以2:1击败对手，成功晋级八强，创造了近年来亚洲杯的最佳战绩。',
+              views: 25600,
+              isTrending: true,
+              publishedAt: '2024-01-14 22:00',
+              content: '中国国家男子足球队在亚洲杯淘汰赛中以2:1击败对手，成功晋级八强，创造了近年来亚洲杯的最佳战绩。主教练表示，球队将继续努力，争取更好的成绩。',
+            },
+            {
+              id: 4,
+              title: '春节档电影预售火爆，多部大片竞争激烈',
+              source: '娱乐周刊',
+              category: '娱乐',
+              summary: '2024年春节档电影预售正式开启，多部备受期待的大片同步上线，首日预售票房突破5亿元，创历史新高。',
+              views: 15300,
+              isTrending: false,
+              publishedAt: '2024-01-15 10:00',
+              content: '2024年春节档电影预售正式开启，多部备受期待的大片同步上线，首日预售票房突破5亿元，创历史新高。今年春节档竞争激烈，涵盖喜剧、科幻、动作等多种类型。',
+            },
+            {
+              id: 5,
+              title: '国务院发布新政策：进一步优化营商环境',
+              source: '新华网',
+              category: '时政',
+              summary: '国务院近日发布《关于进一步优化营商环境的若干意见》，提出了20条具体措施，旨在激发市场活力和创造力。',
+              views: 18900,
+              isTrending: false,
+              publishedAt: '2024-01-15 07:30',
+              content: '国务院近日发布《关于进一步优化营商环境的若干意见》，提出了20条具体措施，旨在激发市场活力和创造力。这些措施包括简化行政审批、降低企业成本、加强知识产权保护等方面。',
+            },
+            {
+              id: 6,
+              title: '冬季流感高发期：专家提醒做好防护措施',
+              source: '健康报',
+              category: '健康',
+              summary: '随着气温下降，冬季流感进入高发期。专家提醒市民注意保暖，勤洗手，及时接种流感疫苗，做好个人防护。',
+              views: 7850,
+              isTrending: false,
+              publishedAt: '2024-01-15 11:00',
+              content: '随着气温下降，冬季流感进入高发期。专家提醒市民注意保暖，勤洗手，及时接种流感疫苗，做好个人防护。同时，保持室内通风、加强锻炼也是预防流感的有效方法。',
+            },
+            {
+              id: 7,
+              title: '教育部发布新规：中小学课后服务将全面升级',
+              source: '教育新闻',
+              category: '教育',
+              summary: '教育部近日发布通知，要求各地中小学进一步完善课后服务体系，丰富服务内容，提高服务质量，切实解决家长后顾之忧。',
+              views: 11200,
+              isTrending: false,
+              publishedAt: '2024-01-15 08:00',
+              content: '教育部近日发布通知，要求各地中小学进一步完善课后服务体系，丰富服务内容，提高服务质量，切实解决家长后顾之忧。课后服务将涵盖学业辅导、兴趣拓展、体育锻炼等多个方面。',
+            },
+            {
+              id: 8,
+              title: '智能家居市场持续升温，AI助手成标配',
+              source: '科技前沿',
+              category: '科技',
+              summary: '智能家居市场持续快速增长，AI语音助手已成为智能家电的标准配置。消费者对智能化、便捷化生活的需求不断提升。',
+              views: 9450,
+              isTrending: false,
+              publishedAt: '2024-01-14 16:30',
+              content: '智能家居市场持续快速增长，AI语音助手已成为智能家电的标准配置。消费者对智能化、便捷化生活的需求不断提升，各大厂商纷纷推出搭载AI助手的智能家电产品。',
+            },
+            {
+              id: 9,
+              title: '5G技术商用三年：改变生活的十大应用场景',
+              source: '科技日报',
+              category: '科技',
+              summary: '5G商用三年来，已经在多个领域得到广泛应用，从远程医疗到智能交通，正在深刻改变我们的生活方式。',
+              views: 14200,
+              isTrending: false,
+              publishedAt: '2024-01-14 14:00',
+              content: '5G商用三年来，已经在多个领域得到广泛应用，从远程医疗到智能交通，正在深刻改变我们的生活方式。5G技术的高带宽、低延迟特性为众多创新应用提供了可能。',
+            },
+            {
+              id: 10,
+              title: '数字人民币试点扩大，支付方式迎来变革',
+              source: '财经时报',
+              category: '财经',
+              summary: '数字人民币试点范围进一步扩大，越来越多的城市和场景开始支持数字人民币支付，支付方式正在发生深刻变革。',
+              views: 12800,
+              isTrending: false,
+              publishedAt: '2024-01-15 12:00',
+              content: '数字人民币试点范围进一步扩大，越来越多的城市和场景开始支持数字人民币支付，支付方式正在发生深刻变革。数字人民币的推广将推动支付体系的数字化升级。',
+            },
+            {
+              id: 11,
+              title: '健康饮食新趋势：植物基食品市场快速增长',
+              source: '健康报',
+              category: '健康',
+              summary: '随着健康意识的提升，植物基食品市场正在快速增长，越来越多的消费者开始关注健康饮食和可持续发展。',
+              views: 8560,
+              isTrending: false,
+              publishedAt: '2024-01-15 09:00',
+              content: '随着健康意识的提升，植物基食品市场正在快速增长，越来越多的消费者开始关注健康饮食和可持续发展。植物肉、植物奶等产品受到消费者青睐。',
+            },
+            {
+              id: 12,
+              title: '人工智能教育应用：个性化学习成为可能',
+              source: '教育新闻',
+              category: '教育',
+              summary: '人工智能技术正在改变传统教育模式，个性化学习系统能够根据每个学生的特点提供定制化的学习方案。',
+              views: 10200,
+              isTrending: false,
+              publishedAt: '2024-01-14 18:00',
+              content: '人工智能技术正在改变传统教育模式，个性化学习系统能够根据每个学生的特点提供定制化的学习方案。AI教育平台可以分析学生的学习数据，提供针对性的教学内容。',
+            },
+          ];
+        }
+        
+        setNews(newsItems);
 
         const { topCategories } = extractUserInterests();
         if (topCategories.length > 0) {
-          const personalized = mockNews.filter(item => 
+          const personalized = newsItems.filter(item => 
             topCategories.includes(item.category) && !item.isTrending
           ).slice(0, 4);
           setPersonalizedNews(personalized);
         } else {
-          setPersonalizedNews(mockNews.filter(item => !item.isTrending).slice(0, 4));
+          setPersonalizedNews(newsItems.filter(item => !item.isTrending).slice(0, 4));
         }
       } catch (error) {
         console.error('Failed to fetch news:', error);
@@ -211,16 +251,39 @@ export function HomePage() {
     fetchNews();
   }, [history]);
 
+  const sources = ['all', ...new Set(news.map(n => n.source))];
+
   const filteredNews = news.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.summary.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesSource = selectedSource === 'all' || item.source === selectedSource;
+    return matchesSearch && matchesCategory && matchesSource;
   });
 
   const trendingNews = news.filter(item => item.isTrending);
   const recentTasks = history.slice(0, 3);
   const { topCategories, topKeywords } = extractUserInterests();
+
+  const handleGenerateSummary = async (newsItem: NewsItem) => {
+    setIsGeneratingSummary(true);
+    setSelectedNews(null);
+    
+    const newsContent = newsItem.content || newsItem.summary;
+    setContent(newsContent);
+    setSummary('');
+    setTitles({ objective: '', dataHighlight: '', lightweight: '' });
+    setQuality({ credibility: 0, readability: 0, engagement: 0, relevance: 0 });
+    setStep(1);
+    setIsGenerating(false);
+    
+    navigate('/summary');
+    
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('generate-all'));
+      setIsGeneratingSummary(false);
+    }, 500);
+  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -237,7 +300,7 @@ export function HomePage() {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6 flex-wrap">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -257,6 +320,15 @@ export function HomePage() {
           >
             {categories.map(cat => (
               <option key={cat} value={cat}>{cat === 'all' ? '全部分类' : cat}</option>
+            ))}
+          </select>
+          <select
+            value={selectedSource}
+            onChange={(e) => setSelectedSource(e.target.value)}
+            className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+          >
+            {sources.map(src => (
+              <option key={src} value={src}>{src === 'all' ? '全部来源' : src}</option>
             ))}
           </select>
         </div>
@@ -451,6 +523,35 @@ export function HomePage() {
           <div className="card p-6">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-1 h-6 bg-primary-600 rounded-full" />
+              <h2 className="text-lg font-bold text-gray-800">新闻来源</h2>
+            </div>
+            
+            <div className="space-y-2">
+              {sources.filter(s => s !== 'all').slice(0, 8).map((src) => (
+                <div
+                  key={src}
+                  onClick={() => setSelectedSource(src)}
+                  className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all text-sm ${
+                    selectedSource === src ? 'bg-primary-50 border border-primary-200' : 'hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="font-medium text-gray-700">{src}</span>
+                  <span className="text-xs text-gray-400">
+                    {news.filter(n => n.source === src).length}
+                  </span>
+                </div>
+              ))}
+              {sources.length > 9 && (
+                <div className="text-center py-2 text-xs text-gray-400">
+                  还有 {sources.length - 9} 个来源...
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="card p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-6 bg-primary-600 rounded-full" />
               <h2 className="text-lg font-bold text-gray-800">最近处理</h2>
             </div>
             
@@ -527,19 +628,42 @@ export function HomePage() {
             <div className="p-6">
               <div className="prose prose-lg max-w-none">
                 <p className="text-gray-700 leading-relaxed mb-4">{selectedNews.summary}</p>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-500">
-                    完整内容请访问原网站查看。
+                {selectedNews.content && (
+                  <div className="p-4 bg-gray-50 rounded-lg mb-4">
+                    <h3 className="font-semibold text-gray-800 mb-2">完整内容</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{selectedNews.content}</p>
+                  </div>
+                )}
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-gray-600">
+                    想要进一步了解这篇新闻？点击下方按钮一键生成智能摘要和标题。
                   </p>
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-gray-100 flex justify-end">
+            <div className="p-6 border-t border-gray-100 flex justify-end gap-3">
               <button
                 onClick={() => setSelectedNews(null)}
                 className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
                 关闭
+              </button>
+              <button
+                onClick={() => handleGenerateSummary(selectedNews)}
+                disabled={isGeneratingSummary}
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isGeneratingSummary ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    正在跳转...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4" />
+                    一键生成摘要
+                  </>
+                )}
               </button>
             </div>
           </div>

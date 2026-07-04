@@ -5,7 +5,15 @@ from .logger import logger
 
 sqlite_url = f"sqlite:///{settings.DB_PATH}"
 connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args, echo=False)
+engine = create_engine(
+    sqlite_url,
+    connect_args=connect_args,
+    echo=False,
+    pool_size=20,
+    max_overflow=50,
+    pool_timeout=60,
+    pool_recycle=300
+)
 
 
 def get_session():

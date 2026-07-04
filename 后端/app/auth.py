@@ -30,25 +30,21 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 
 def check_password_strength(password: str) -> tuple[int, list[str]]:
-    """Return a score from 0-4 and a list of suggestions."""
+    """Return a score from 0-3 and a list of suggestions."""
     suggestions: list[str] = []
     score = 0
-    if len(password) >= 8:
+    if len(password) >= 6:
         score += 1
     else:
-        suggestions.append("密码长度至少为 8 位")
-    if any(ch.islower() for ch in password) and any(ch.isupper() for ch in password):
+        suggestions.append("密码长度至少为 6 位")
+    if any(ch.isalpha() for ch in password):
         score += 1
     else:
-        suggestions.append("请包含大小写字母")
+        suggestions.append("请包含至少一个字母")
     if any(ch.isdigit() for ch in password):
         score += 1
     else:
         suggestions.append("请包含至少一个数字")
-    if any(not ch.isalnum() for ch in password):
-        score += 1
-    else:
-        suggestions.append("请包含至少一个特殊字符（如 !@#$%）")
     return score, suggestions
 
 

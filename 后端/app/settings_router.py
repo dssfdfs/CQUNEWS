@@ -68,7 +68,7 @@ class ApiResponse(BaseModel):
 class RegisterRequest(BaseModel):
     username: str = Field(min_length=3, max_length=32)
     email: EmailStr
-    password: str = Field(min_length=8, max_length=128)
+    password: str = Field(min_length=6, max_length=128)
     phone: Optional[str] = None
 
 
@@ -100,7 +100,7 @@ class RefreshRequest(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     old_password: str
-    new_password: str = Field(min_length=8, max_length=128)
+    new_password: str = Field(min_length=6, max_length=128)
 
 
 class Enable2FAResponse(BaseModel):
@@ -214,7 +214,7 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_s
     if not USERNAME_RE.match(req.username):
         raise HTTPException(status_code=400, detail="用户名仅支持字母、数字、下划线和中文，长度 3-32 位")
     score, suggestions = check_password_strength(req.password)
-    if score < 1:
+    if score < 2:
         raise HTTPException(status_code=400, detail=f"密码强度不足：{';'.join(suggestions)}")
     user = register_user(
         db,

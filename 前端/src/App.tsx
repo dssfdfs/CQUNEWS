@@ -12,11 +12,11 @@ import { TitleOutput } from '@/components/TitleOutput';
 import { QualityVerification } from '@/components/QualityVerification';
 import { NewsPreview } from '@/components/NewsPreview';
 import { NewsRecommend } from '@/components/NewsRecommend';
+import { NewsDetail } from '@/components/NewsDetail';
+
 import { History } from '@/components/History';
-import { Analytics } from '@/components/Analytics';
 import { Settings } from '@/components/Settings';
 import { Toast } from '@/components/Toast';
-import { AdminLoginPage } from '@/pages/AdminLoginPage';
 import { AdminDashboard } from '@/pages/AdminDashboard';
 import { AdminUserManagement } from '@/pages/AdminUserManagement';
 import { AdminFeedbackManagement } from '@/pages/AdminFeedbackManagement';
@@ -24,11 +24,13 @@ import { AdminSettings } from '@/pages/AdminSettings';
 import { ContentModerationPage } from '@/pages/ContentModerationPage';
 import { LogsPage } from '@/pages/LogsPage';
 import { useStore } from '@/store/useStore';
+import { useAdminStore } from '@/store/adminStore';
 import { generateSummary, generateTitles, verifyQuality } from '@/api/deepseek';
 import { userApi } from '@/lib/api';
+import { getTranslation } from '@/lib/i18n';
 
 function Dashboard() {
-  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language } = useStore();
+  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language, settings } = useStore();
   const [activeNav, setActiveNav] = useState('news');
   const [error, setError] = useState('');
   const location = useLocation();
@@ -37,10 +39,24 @@ function Dashboard() {
   useEffect(() => {
     const pathParts = location.pathname.split('/');
     const page = pathParts[1] || 'news';
-    if (['news', 'summary', 'history', 'analytics', 'settings'].includes(page)) {
+    if (['news', 'summary', 'history', 'settings'].includes(page)) {
       setActiveNav(page);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const body = document.body;
+    body.classList.remove('light', 'dark');
+    
+    if (settings.theme === 'system') {
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      body.classList.add(systemDark ? 'dark' : 'light');
+    } else {
+      body.classList.add(settings.theme || 'light');
+    }
+    
+    document.documentElement.style.fontSize = `${settings.fontSize || 14}px`;
+  }, [settings.theme, settings.fontSize]);
 
   useEffect(() => {
     const handleGenerateAll = async () => {
@@ -114,8 +130,6 @@ function Dashboard() {
         return <NewsPreview />;
       case 'history':
         return <History />;
-      case 'analytics':
-        return <Analytics />;
       case 'settings':
         return <Settings />;
       default:
@@ -136,58 +150,60 @@ function Dashboard() {
     }
   };
 
+  const t = (key: string) => getTranslation(key, settings.language);
+  
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar activeItem={activeNav} onItemClick={handleNavClick} />
       
       <div className="flex-1 overflow-y-auto">
         {activeNav === 'summary' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <div className="max-w-7xl mx-auto px-6 py-4">
               <div className="flex items-center gap-4">
                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                  step >= 1 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-400'
+                  step >= 1 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'
                 }`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                    step >= 1 ? 'bg-primary-600 text-white' : 'bg-gray-300 text-gray-500'
+                    step >= 1 ? 'bg-primary-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500'
                   }`}>1</div>
-                  <span>内容输入</span>
+                  <span>{t('content_input')}</span>
                 </div>
-                <div className={`w-16 h-0.5 ${step >= 2 ? 'bg-primary-600' : 'bg-gray-200'}`}></div>
+                <div className={`w-16 h-0.5 ${step >= 2 ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                  step >= 2 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-400'
+                  step >= 2 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'
                 }`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                    step >= 2 ? 'bg-primary-600 text-white' : 'bg-gray-300 text-gray-500'
+                    step >= 2 ? 'bg-primary-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500'
                   }`}>2</div>
-                  <span>摘要生成</span>
+                  <span>{t('summary_generation')}</span>
                 </div>
-                <div className={`w-16 h-0.5 ${step >= 3 ? 'bg-primary-600' : 'bg-gray-200'}`}></div>
+                <div className={`w-16 h-0.5 ${step >= 3 ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                  step >= 3 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-400'
+                  step >= 3 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'
                 }`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                    step >= 3 ? 'bg-primary-600 text-white' : 'bg-gray-300 text-gray-500'
+                    step >= 3 ? 'bg-primary-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500'
                   }`}>3</div>
-                  <span>标题生成</span>
+                  <span>{t('title_generation')}</span>
                 </div>
-                <div className={`w-16 h-0.5 ${step >= 4 ? 'bg-primary-600' : 'bg-gray-200'}`}></div>
+                <div className={`w-16 h-0.5 ${step >= 4 ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                  step >= 4 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-400'
+                  step >= 4 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'
                 }`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                    step >= 4 ? 'bg-primary-600 text-white' : 'bg-gray-300 text-gray-500'
+                    step >= 4 ? 'bg-primary-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500'
                   }`}>4</div>
-                  <span>质量验证</span>
+                  <span>{t('quality_verification')}</span>
                 </div>
-                <div className={`w-16 h-0.5 ${step >= 5 ? 'bg-primary-600' : 'bg-gray-200'}`}></div>
+                <div className={`w-16 h-0.5 ${step >= 5 ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                  step >= 5 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-400'
+                  step >= 5 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'
                 }`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                    step >= 5 ? 'bg-primary-600 text-white' : 'bg-gray-300 text-gray-500'
+                    step >= 5 ? 'bg-primary-600 text-white' : 'bg-gray-300 dark:bg-gray-600 text-gray-500'
                   }`}>5</div>
-                  <span>完成导出</span>
+                  <span>{t('complete_export')}</span>
                 </div>
               </div>
             </div>
@@ -195,33 +211,27 @@ function Dashboard() {
         )}
         
         {activeNav === 'news' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <div className="max-w-7xl mx-auto px-6 py-4">
-              <h1 className="text-xl font-bold text-gray-800">今日新闻速览</h1>
+              <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('news_quick_view')}</h1>
             </div>
           </div>
         )}
         
         {activeNav === 'history' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <div className="max-w-7xl mx-auto px-6 py-4">
-              <h1 className="text-xl font-bold text-gray-800">个人历史</h1>
+              <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('personal_history')}</h1>
             </div>
           </div>
         )}
         
-        {activeNav === 'analytics' && (
-          <div className="bg-white border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-6 py-4">
-              <h1 className="text-xl font-bold text-gray-800">数据分析</h1>
-            </div>
-          </div>
-        )}
+        
         
         {activeNav === 'settings' && (
-          <div className="bg-white border-b border-gray-200">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <div className="max-w-7xl mx-auto px-6 py-4">
-              <h1 className="text-xl font-bold text-gray-800">设置中心</h1>
+              <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('settings_center')}</h1>
             </div>
           </div>
         )}
@@ -277,30 +287,40 @@ function AdminApp() {
   );
 }
 
-function App() {
+function AppContent() {
+  const setLogoutHandler = useAdminStore((state) => state.setLogoutHandler);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setLogoutHandler(() => {
+      navigate('/login');
+    });
+  }, [setLogoutHandler, navigate]);
+
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/login"
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
+      <Route
+          path="/news/:id"
           element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <PublicRoute>
-              <Register />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/admin/login"
-          element={
-            <AdminLoginPage />
+            <ProtectedRoute>
+              <NewsDetail />
+            </ProtectedRoute>
           }
         />
         <Route
@@ -319,7 +339,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-      </Routes>
+    </Routes>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

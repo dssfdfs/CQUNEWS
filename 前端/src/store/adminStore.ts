@@ -16,6 +16,7 @@ interface AdminState {
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   checkAuth: () => void;
+  setLogoutHandler: (handler: () => void) => void;
 }
 
 const loadAdminFromStorage = () => {
@@ -33,6 +34,8 @@ const loadAdminFromStorage = () => {
 };
 
 const { isAuthenticated: initialAuth, currentUser: initialUser, accessToken: initialToken } = loadAdminFromStorage();
+
+let logoutHandler: (() => void) | null = null;
 
 export const useAdminStore = create<AdminState>((set) => ({
   isAuthenticated: initialAuth,
@@ -80,6 +83,9 @@ export const useAdminStore = create<AdminState>((set) => ({
       currentUser: null,
       accessToken: null,
     });
+    if (logoutHandler) {
+      logoutHandler();
+    }
   },
 
   checkAuth: () => {
@@ -109,5 +115,9 @@ export const useAdminStore = create<AdminState>((set) => ({
         accessToken: null,
       });
     }
+  },
+
+  setLogoutHandler: (handler) => {
+    logoutHandler = handler;
   },
 }));

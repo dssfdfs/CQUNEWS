@@ -111,7 +111,7 @@ def list_news(
         if category:
             stmt = stmt.where(News.category == category)
         if source:
-            stmt = stmt.where(News.source == source)
+            stmt = stmt.where(col(News.source).like(f"%{source}%"))
         if trending_only:
             stmt = stmt.where(News.is_trending == 1)
         if keyword:
@@ -139,6 +139,89 @@ def get_news(news_id: int) -> NewsItemOut:
         if not news:
             raise HTTPException(status_code=404, detail="News not found")
         return _to_news_out(news)
+
+
+@router.post("/news/{news_id}/view")
+def increment_news_views(news_id: int) -> dict[str, Any]:
+    with Session(engine) as db:
+        news = db.get(News, news_id)
+        if not news:
+            raise HTTPException(status_code=404, detail="News not found")
+        news.views = (news.views or 0) + 1
+        db.commit()
+        return {"success": True, "views": news.views}
+
+
+@router.post("/news/{news_id}/summary")
+async def generate_news_summary(news_id: int) -> dict[str, Any]:
+    with Session(engine) as db:
+        news = db.get(News, news_id)
+        if not news:
+            raise HTTPException(status_code=404, detail="News not found")
+        if not news.content:
+            raise HTTPException(status_code=400, detail="新闻内容为空")
+
+        from .ai_proxy import MODEL_CONFIGS
+        config = MODEL_CONFIGS.get("DeepSeek")
+        if not config:
+            raise HTTPException(status_code=400, detail="不支持的模型")
+
+        target_url = config["url"]
+        target_api_key = config["default_key"]
+        target_model = config["model_name"]
+
+        if not target_api_key:
+            raise HTTPException(status_code=400, detail="请在设置中心配置API密钥")
+
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                system_prompt = "你是一个专业的新闻摘要助手。请根据用户提供的新闻内容，生成一份中文的标准摘要。"
+                user_prompt = f"""请对以下新闻内容进行标准摘要：
+
+{news.content}
+
+要求：
+1. 准确概括新闻的核心内容
+2. 保持客观中立的立场
+3. 语言简洁明了
+4. 使用中文"""
+
+                payload = {
+                    "model": target_model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 500,
+                }
+
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {target_api_key}",
+                }
+
+                response = await client.post(target_url, json=payload, headers=headers)
+
+                if not response.is_success:
+                    logger.warning("AI API request failed: %s %s", response.status_code, response.text)
+                    raise HTTPException(status_code=response.status_code, detail=f"API调用失败: {response.text[:200]}")
+
+                result = response.json()
+                summary = result["choices"][0]["message"]["content"]
+
+                news.summary = summary
+                db.commit()
+
+                return {"success": True, "summary": summary}
+
+        except httpx.RequestError as e:
+            logger.error("AI API request error: %s", e)
+            raise HTTPException(status_code=500, detail=f"网络连接失败: {str(e)}")
+        except Exception as e:
+            logger.error("Generate summary error: %s", e)
+            raise HTTPException(status_code=500, detail=f"生成摘要失败: {str(e)}")
 
 
 @router.get("/categories")

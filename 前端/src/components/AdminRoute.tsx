@@ -15,7 +15,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
   }, [checkAuth]);
 
   if (!isAuthenticated) {
-    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    return <Navigate to="/login?mode=admin" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

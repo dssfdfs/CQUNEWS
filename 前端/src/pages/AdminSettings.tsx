@@ -24,9 +24,7 @@ import {
   Upload,
   Trash2,
   Info,
-  AlertCircle,
   FolderOpen,
-  Zap,
 } from 'lucide-react';
 
 interface AdminSettingsProps {
@@ -65,7 +63,6 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
   const [storageQuota, setStorageQuota] = useState(500 * 1024 * 1024);
   const [cacheSize, setCacheSize] = useState(156);
   const [historySize, setHistorySize] = useState(28);
-  const [databaseSize, setDatabaseSize] = useState(12);
   const [clearingCache, setClearingCache] = useState(false);
   const [clearingHistory, setClearingHistory] = useState(false);
   const [backingUp, setBackingUp] = useState(false);

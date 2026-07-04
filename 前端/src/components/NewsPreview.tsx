@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp,
   Clock,
@@ -17,8 +18,13 @@ import {
   Volume2,
   Sparkles,
   Loader2,
+  Zap,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { fetchNews, triggerCrawl, type NewsItem } from '@/api/news';
+import { useStore } from '@/store/useStore';
+import { generateSummary } from '@/api/deepseek';
 
 const SUMMARY_CACHE_KEY = 'cqunews:ai_summaries';
 
@@ -100,11 +106,14 @@ function saveBookmarksToStorage(ids: Set<number>) {
 }
 
 export function NewsPreview() {
+  const navigate = useNavigate();
+  const { setContent, setSummary, setTitles, setQuality, setIsGenerating, setStep } = useStore();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(12);
   const [selectedCategory, setSelectedCategory] = useState<(typeof CATEGORIES)[number]>('推荐');
+  const [selectedSource, setSelectedSource] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [bookmarked, setBookmarked] = useState<Set<number>>(() => loadBookmarksFromStorage());
   const [loading, setLoading] = useState(false);
@@ -119,19 +128,44 @@ export function NewsPreview() {
   const [readingProgress, setReadingProgress] = useState(0);
   const [aiSummaryCache, setAiSummaryCache] = useState<Record<number, string>>(() => loadSummaryCache());
   const [generatingSummaryIds, setGeneratingSummaryIds] = useState<Set<number>>(new Set());
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [copySuccessVisible, setCopySuccessVisible] = useState(false);
   const latestFetchId = useRef(0);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const speechUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
 
+  const sources = [
+    { value: 'all', label: '全部来源' },
+    { value: '中国新闻网', label: '中国新闻网' },
+    { value: '澎湃新闻', label: '澎湃新闻' },
+    { value: '新华网', label: '新华网' },
+  ];
+
   const getSummaryForNews = (item: NewsItem): string => {
     if (!item) return '';
-    if (aiSummaryCache[item.id]) {
-      return aiSummaryCache[item.id];
-    }
-    if (item.summary) {
-      return item.summary;
-    }
-    return item.content ? item.content.slice(0, 150) : '';
+    return aiSummaryCache[item.id] || '';
+  };
+
+  const handleGenerateSummary = async (newsItem: NewsItem) => {
+    setIsGeneratingSummary(true);
+    setShowSummaryPanel(false);
+    setSelectedNews(null);
+    
+    const newsContent = newsItem.content || newsItem.summary || newsItem.title;
+    setContent(newsContent);
+    setSummary('');
+    setTitles({ objective: '', dataHighlight: '', lightweight: '' });
+    setQuality({ credibility: 0, readability: 0, engagement: 0, relevance: 0 });
+    setStep(1);
+    setIsGenerating(false);
+    
+    navigate('/summary');
+    
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('generate-all'));
+      setIsGeneratingSummary(false);
+    }, 500);
   };
 
   const hasAIEnhancedSummary = (item: NewsItem): boolean => {
@@ -159,7 +193,7 @@ export function NewsPreview() {
     };
   }, []);
 
-  const loadNews = async (p = 1, cat = selectedCategory, kw = searchQuery) => {
+  const loadNews = async (p = 1, cat = selectedCategory, kw = searchQuery, src = selectedSource) => {
     setLoading(true);
     setError('');
     const fetchId = ++latestFetchId.current;
@@ -174,8 +208,9 @@ export function NewsPreview() {
           setLoading(false);
           return;
         }
-        const params: { keyword?: string; ids?: number[] } = { ids: Array.from(bookmarked) };
+        const params: { keyword?: string; ids?: number[]; source?: string } = { ids: Array.from(bookmarked) };
         if (kw.trim()) params.keyword = kw.trim();
+        if (src !== 'all') params.source = src;
         const data = await fetchNews(p, pageSize, params);
         if (fetchId !== latestFetchId.current) return;
         setNews(data.items);
@@ -187,8 +222,9 @@ export function NewsPreview() {
       }
 
       if (cat === '推荐') {
-        const params: { trending_only?: boolean; keyword?: string } = { trending_only: true };
+        const params: { trending_only?: boolean; keyword?: string; source?: string } = { trending_only: true };
         if (kw.trim()) params.keyword = kw.trim();
+        if (src !== 'all') params.source = src;
         const data = await fetchNews(p, pageSize, params);
         if (fetchId !== latestFetchId.current) return;
         setNews(data.items);
@@ -199,9 +235,10 @@ export function NewsPreview() {
         return;
       }
 
-      const params: { category?: string; keyword?: string } = {};
+      const params: { category?: string; keyword?: string; source?: string } = {};
       if (cat !== '全部') params.category = cat;
       if (kw.trim()) params.keyword = kw.trim();
+      if (src !== 'all') params.source = src;
       const data = await fetchNews(p, pageSize, params);
       if (fetchId !== latestFetchId.current) return;
       setNews(data.items);
@@ -232,12 +269,12 @@ export function NewsPreview() {
   };
 
   useEffect(() => {
-    loadNews(1, selectedCategory, searchQuery);
+    loadNews(1, selectedCategory, searchQuery, selectedSource);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedSource]);
 
   useEffect(() => {
-    const t = setTimeout(() => loadNews(1, selectedCategory, searchQuery), 400);
+    const t = setTimeout(() => loadNews(1, selectedCategory, searchQuery, selectedSource), 400);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
@@ -373,6 +410,11 @@ export function NewsPreview() {
     if (generatingSummaryIds.has(newsId)) return;
     setGeneratingSummaryIds((prev) => new Set(prev).add(newsId));
     try {
+      const newsItem = news.find(n => n.id === newsId);
+      if (!newsItem?.content) {
+        alert('新闻内容为空，无法生成摘要');
+        return;
+      }
       const summary = await generateSummaryFromBackend(newsId);
       if (summary) {
         setAiSummaryCache((prev) => ({ ...prev, [newsId]: summary }));
@@ -384,15 +426,53 @@ export function NewsPreview() {
         if (selectedNews?.id === newsId) {
           setSelectedNews((prev) => prev ? { ...prev, summary } : null);
         }
+      } else {
+        alert('生成摘要失败，请稍后重试');
       }
-    } catch {
-      // ignore
+    } catch (error) {
+      console.error('Failed to generate summary:', error);
+      alert(`生成摘要失败: ${error instanceof Error ? error.message : '未知错误'}`);
     } finally {
       setGeneratingSummaryIds((prev) => {
         const next = new Set(prev);
         next.delete(newsId);
         return next;
       });
+    }
+  };
+
+  const handleCopySummary = async (summary: string) => {
+    if (!summary) return;
+    try {
+      await navigator.clipboard.writeText(summary);
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+      }
+      setCopySuccessVisible(true);
+      copyTimerRef.current = setTimeout(() => {
+        setCopySuccessVisible(false);
+      }, 2000);
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = summary;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        if (copyTimerRef.current) {
+          clearTimeout(copyTimerRef.current);
+        }
+        setCopySuccessVisible(true);
+        copyTimerRef.current = setTimeout(() => {
+          setCopySuccessVisible(false);
+        }, 2000);
+      } catch {
+        alert('复制失败，请手动复制');
+      } finally {
+        document.body.removeChild(textarea);
+      }
     }
   };
 
@@ -459,6 +539,15 @@ export function NewsPreview() {
           </div>
           <div className="flex items-center gap-2">
             <Filter className="w-5 h-5 text-gray-400" />
+            <select
+              value={selectedSource}
+              onChange={(e) => setSelectedSource(e.target.value)}
+              className="px-3 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white text-sm"
+            >
+              {sources.map(src => (
+                <option key={src.value} value={src.value}>{src.label}</option>
+              ))}
+            </select>
             <div className="flex gap-2 flex-wrap">
               {CATEGORIES.map((cat) => {
                 const isFav = cat === '我的收藏';
@@ -544,50 +633,27 @@ export function NewsPreview() {
                       </div>
                       <div className="flex items-center gap-1">
                         <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (showSummaryPanel && selectedNews?.id === item.id) {
-                              setShowSummaryPanel(false);
-                              setSelectedNews(null);
-                            } else {
-                              setSelectedNews(item);
-                              setShowSummaryPanel(true);
-                            }
-                          }}
-                          className={`p-1.5 rounded-lg transition-colors ${
-                            showSummaryPanel && selectedNews?.id === item.id
-                              ? 'bg-blue-100 text-blue-600'
-                              : 'bg-gray-100 text-gray-400 hover:text-blue-600'
-                          }`}
-                          title={showSummaryPanel && selectedNews?.id === item.id ? '关闭摘要' : '查看摘要'}
-                        >
-                          <FileText className="w-4 h-4" />
-                        </button>
-                        {!hasAIEnhancedSummary(item) && !item.summary && item.content && (
-                          <button
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              handleGenerateAISummary(item.id);
+                              if (showSummaryPanel && selectedNews?.id === item.id) {
+                                setShowSummaryPanel(false);
+                                setSelectedNews(null);
+                              } else {
+                                setSelectedNews(item);
+                                setShowSummaryPanel(true);
+                              }
                             }}
-                            disabled={generatingSummaryIds.has(item.id)}
                             className={`p-1.5 rounded-lg transition-colors ${
-                              generatingSummaryIds.has(item.id)
-                                ? 'bg-gray-100 text-gray-300'
-                                : 'bg-purple-50 text-purple-500 hover:bg-purple-100 hover:text-purple-600'
+                              showSummaryPanel && selectedNews?.id === item.id
+                                ? 'bg-blue-100 text-blue-600'
+                                : 'bg-gray-100 text-gray-400 hover:text-blue-600'
                             }`}
-                            title={generatingSummaryIds.has(item.id) ? '生成中...' : '生成AI摘要'}
+                            title={showSummaryPanel && selectedNews?.id === item.id ? '关闭摘要' : '查看摘要'}
                           >
-                            {generatingSummaryIds.has(item.id) ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <Sparkles className="w-4 h-4" />
-                            )}
+                            <FileText className="w-4 h-4" />
                           </button>
-                        )}
                         <button
                           type="button"
                           onClick={(e) => {
@@ -737,40 +803,59 @@ export function NewsPreview() {
               </div>
 
               <div className="pt-4 border-t border-gray-100">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm font-medium text-gray-700">摘要内容</h4>
-                  {hasAIEnhancedSummary(selectedNews) && (
-                    <span className="inline-flex items-center gap-0.5 text-xs text-purple-500">
-                      <Sparkles className="w-3 h-3" />
-                      AI 智能摘要
-                    </span>
-                  )}
-                </div>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {getSummaryForNews(selectedNews) || '暂无摘要内容'}
-                </p>
-                {!hasAIEnhancedSummary(selectedNews) && !selectedNews.summary && selectedNews.content && (
-                  <button
-                    onClick={() => handleGenerateAISummary(selectedNews.id)}
-                    disabled={generatingSummaryIds.has(selectedNews.id)}
-                    className={`mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                      generatingSummaryIds.has(selectedNews.id)
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-purple-50 text-purple-600 hover:bg-purple-100'
-                    }`}
-                  >
-                    {generatingSummaryIds.has(selectedNews.id) ? (
-                      <>
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                        生成中...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-3 h-3" />
-                        生成 AI 摘要
-                      </>
-                    )}
-                  </button>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">一键摘要</h4>
+                {getSummaryForNews(selectedNews) ? (
+                  <>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                      {getSummaryForNews(selectedNews)}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleCopySummary(getSummaryForNews(selectedNews))}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm transition-colors"
+                        title="复制摘要"
+                      >
+                        <Copy className="w-4 h-4" />
+                        复制
+                      </button>
+                      {copySuccessVisible && (
+                        <span className="inline-flex items-center gap-1 text-xs text-green-600">
+                          <Check className="w-4 h-4" />
+                          复制成功
+                        </span>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col items-center justify-center py-6">
+                      <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+                        <Sparkles className="w-7 h-7 text-purple-500" />
+                      </div>
+                      <p className="text-gray-400 text-sm mb-4">点击下方按钮生成AI智能摘要</p>
+                      <button
+                        onClick={() => handleGenerateAISummary(selectedNews.id)}
+                        disabled={generatingSummaryIds.has(selectedNews.id) || !selectedNews.content}
+                        className={`w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition ${
+                          generatingSummaryIds.has(selectedNews.id) || !selectedNews.content
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            : 'bg-purple-600 hover:bg-purple-700 text-white'
+                        }`}
+                      >
+                        {generatingSummaryIds.has(selectedNews.id) ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            生成中...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4" />
+                            一键生成摘要
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
 
@@ -784,11 +869,33 @@ export function NewsPreview() {
               )}
 
               <div className="flex items-center gap-2 mt-4">
+                <button
+                  onClick={() => handleGenerateSummary(selectedNews)}
+                  disabled={isGeneratingSummary}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                    isGeneratingSummary
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-primary-600 hover:bg-primary-700 text-white'
+                  }`}
+                >
+                  {isGeneratingSummary ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      正在跳转...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4" />
+                      一键导入文本
+                    </>
+                  )}
+                </button>
+
                 <a
                   href={selectedNews.original_url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition"
                 >
                   查看原文
                   <ExternalLink className="w-4 h-4" />

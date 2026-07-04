@@ -114,8 +114,8 @@ interface NewsState {
   setApiConfig: (model: string, config: ApiConfig) => void;
   getApiConfig: (model: string) => ApiConfig | undefined;
   
-  login: (username: string, password: string) => boolean;
-  register: (username: string, email: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
+  register: (username: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
@@ -134,14 +134,6 @@ interface NewsState {
   loadUserInfo: () => Promise<void>;
   recordBehavior: (actionType: string, targetId?: number, extraData?: Record<string, unknown>) => void;
 }
-
-interface MockUser {
-  id: string;
-  username: string;
-  email: string;
-  password: string;
-}
-
 
 
 const loadUserFromStorage = () => {
@@ -396,10 +388,31 @@ export const useStore = create<NewsState>((set, get) => ({
     try {
       const { currentUser } = get();
       if (!currentUser) return false;
-      const updatedUser = { ...currentUser, ...info };
-      set({ currentUser: updatedUser });
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      return true;
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/settings/profile', {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(info),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.code === 0 && data.data) {
+          const updatedUser = { 
+            ...currentUser, 
+            ...info,
+            bio: data.data.bio || info.bio,
+          };
+          set({ currentUser: updatedUser });
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          return true;
+        }
+      }
+      return false;
     } catch {
       return false;
     }
@@ -409,10 +422,33 @@ export const useStore = create<NewsState>((set, get) => ({
     try {
       const { currentUser } = get();
       if (!currentUser) return false;
-      const updatedUser = { ...currentUser, avatar: base64Data };
-      set({ currentUser: updatedUser });
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      return true;
+      
+      const token = localStorage.getItem('token');
+      const blob = await fetch(base64Data).then(res => res.blob());
+      const formData = new FormData();
+      formData.append('file', blob, 'avatar.png');
+      
+      const response = await fetch('/api/settings/profile/avatar', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.code === 0 && data.data?.avatar_url) {
+          const updatedUser = { 
+            ...currentUser, 
+            avatar: data.data.avatar_url 
+          };
+          set({ currentUser: updatedUser });
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          return true;
+        }
+      }
+      return false;
     } catch {
       return false;
     }
@@ -438,7 +474,12 @@ export const useStore = create<NewsState>((set, get) => ({
       });
       const data = await response.json();
       if (data.code === 0 && data.data) {
-        const user = data.data.user;
+        const userData = data.data.user;
+        const user = {
+          ...userData,
+          avatar: userData.avatar_url || userData.avatar,
+          id: String(userData.id),
+        };
         localStorage.setItem('token', data.data.access_token);
         localStorage.setItem('refresh_token', data.data.refresh_token);
         localStorage.setItem('user', JSON.stringify(user));
@@ -468,7 +509,12 @@ export const useStore = create<NewsState>((set, get) => ({
         });
         const loginData = await loginResponse.json();
         if (loginData.code === 0 && loginData.data) {
-          const user = loginData.data.user;
+          const userData = loginData.data.user;
+          const user = {
+            ...userData,
+            avatar: userData.avatar_url || userData.avatar,
+            id: String(userData.id),
+          };
           localStorage.setItem('token', loginData.data.access_token);
           localStorage.setItem('refresh_token', loginData.data.refresh_token);
           localStorage.setItem('user', JSON.stringify(user));
