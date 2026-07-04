@@ -16,7 +16,7 @@ import { History } from '@/components/History';
 import { Analytics } from '@/components/Analytics';
 import { Settings } from '@/components/Settings';
 import { Toast } from '@/components/Toast';
-import { AdminLoginPage } from '@/pages/AdminLoginPage';
+
 import { AdminDashboard } from '@/pages/AdminDashboard';
 import { AdminUserManagement } from '@/pages/AdminUserManagement';
 import { AdminFeedbackManagement } from '@/pages/AdminFeedbackManagement';
@@ -275,12 +275,7 @@ function App() {
             </PublicRoute>
           }
         />
-        <Route
-          path="/admin/login"
-          element={
-            <AdminLoginPage />
-          }
-        />
+        
         <Route
           path="/admin/*"
           element={

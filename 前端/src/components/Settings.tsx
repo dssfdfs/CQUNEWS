@@ -769,7 +769,7 @@ export function Settings() {
             
             <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
               <button
-                onClick={() => navigate('/admin/login')}
+                onClick={() => navigate('/login?mode=admin')}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-all"
               >
                 <Crown className="w-5 h-5" />

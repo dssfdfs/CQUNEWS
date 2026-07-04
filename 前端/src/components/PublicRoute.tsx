@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
 
 interface PublicRouteProps {
@@ -7,8 +7,11 @@ interface PublicRouteProps {
 
 export function PublicRoute({ children }: PublicRouteProps) {
   const isAuthenticated = useStore((state) => state.isAuthenticated);
+  const location = useLocation();
 
-  if (isAuthenticated) {
+  const isLoginPage = location.pathname === '/login';
+
+  if (isAuthenticated && !isLoginPage) {
     return <Navigate to="/" replace />;
   }
 

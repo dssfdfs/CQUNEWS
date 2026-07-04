@@ -80,6 +80,7 @@ export const useAdminStore = create<AdminState>((set) => ({
       currentUser: null,
       accessToken: null,
     });
+    window.location.href = '/login';
   },
 
   checkAuth: () => {

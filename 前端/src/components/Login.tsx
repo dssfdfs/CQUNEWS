@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
 import { useAdminStore } from '@/store/adminStore';
 import { Sparkles, Mail, Lock, Eye, EyeOff, Shield, RefreshCw } from 'lucide-react';
@@ -22,10 +22,16 @@ export function Login() {
   const [isAdminLogin, setIsAdminLogin] = useState(false);
   const [captcha, setCaptcha] = useState('');
   const [captchaInput, setCaptchaInput] = useState('');
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     setCaptcha(generateCaptcha());
-  }, []);
+    
+    const mode = searchParams.get('mode');
+    if (mode === 'admin') {
+      setIsAdminLogin(true);
+    }
+  }, [searchParams]);
 
   const navigate = useNavigate();
   const login = useStore((state) => state.login);

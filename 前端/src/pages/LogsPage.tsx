@@ -108,7 +108,7 @@ export function LogsPage({ activeItem, onItemClick }: LogsPageProps) {
         </nav>
         <div className="p-4 border-t border-gray-100">
           <div
-            onClick={() => { localStorage.removeItem('admin_token'); window.location.href = '/admin/login'; }}
+            onClick={() => { localStorage.removeItem('admin_token'); localStorage.removeItem('admin_user'); window.location.href = '/login'; }}
             className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-red-500 hover:bg-red-50 transition-all"
           >
             <LogOut className="w-5 h-5" />
