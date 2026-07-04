@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
-import { User, Bell, Shield, Palette, Globe, HardDrive, Save, RefreshCw, HelpCircle, ChevronRight, Info, Sun, Moon, Monitor, AlertCircle, CheckCircle, Upload, FolderOpen, Trash2, Database, Download, Zap, Eye, EyeOff, Volume2, Mail, Crown } from 'lucide-react';
+import { userApi } from '@/lib/api';
+import { User, Bell, Shield, Palette, Globe, Save, RefreshCw, HelpCircle, ChevronRight, Info, Sun, Moon, Monitor, AlertCircle, CheckCircle, Upload, Zap, Eye, EyeOff, Volume2, Mail, Crown, Send, MessageSquare } from 'lucide-react';
 
 interface SettingSection {
   id: string;
@@ -16,8 +17,6 @@ const sections: SettingSection[] = [
   { id: 'appearance', title: '外观设置', icon: Palette, description: '自定义界面主题和字体' },
   { id: 'notification', title: '通知设置', icon: Bell, description: '配置消息通知偏好' },
   { id: 'language', title: '语言设置', icon: Globe, description: '选择应用显示语言' },
-  { id: 'storage', title: '存储空间', icon: HardDrive, description: '管理存储空间与位置' },
-  { id: 'data', title: '数据管理', icon: Database, description: '数据备份、导出与恢复' },
 ];
 
 type ThemeType = 'light' | 'dark' | 'system';
@@ -37,6 +36,11 @@ export function Settings() {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackContent, setFeedbackContent] = useState('');
+  const [feedbackContact, setFeedbackContact] = useState('');
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -193,18 +197,35 @@ export function Settings() {
     }
   };
 
-  const handleExportData = async () => {
+  const handleSubmitFeedback = async () => {
+    if (!feedbackContent.trim()) {
+      setSaveStatus('error');
+      setSaveMessage('请输入反馈内容');
+      setTimeout(() => {
+        setSaveStatus(null);
+        setSaveMessage('');
+      }, 3000);
+      return;
+    }
+
+    setIsSubmittingFeedback(true);
     try {
+      await userApi.submitFeedback(feedbackContent.trim(), feedbackContact.trim() || undefined);
       setSaveStatus('success');
-      setSaveMessage('数据库导出成功');
+      setSaveMessage('反馈提交成功，感谢您的反馈');
+      setFeedbackContent('');
+      setFeedbackContact('');
+      setShowFeedbackModal(false);
     } catch (err: any) {
       setSaveStatus('error');
-      setSaveMessage(err.message || '导出失败');
+      setSaveMessage(err.message || '反馈提交失败');
+    } finally {
+      setIsSubmittingFeedback(false);
+      setTimeout(() => {
+        setSaveStatus(null);
+        setSaveMessage('');
+      }, 3000);
     }
-    setTimeout(() => {
-      setSaveStatus(null);
-      setSaveMessage('');
-    }, 3000);
   };
 
   const ToggleSwitch = ({ enabled, onChange }: { enabled: boolean; onChange: (enabled: boolean) => void }) => (
@@ -558,266 +579,187 @@ export function Settings() {
           </div>
         );
 
-      case 'storage':
-        return (
-          <div className="space-y-6">
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 dark:text-gray-300">本地缓存</span>
-                <span className="font-medium text-gray-800 dark:text-gray-100">156 MB</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div className="bg-primary-600 h-2 rounded-full" style={{ width: '35%' }}></div>
-              </div>
-            </div>
-            
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 dark:text-gray-300">历史记录</span>
-                <span className="font-medium text-gray-800 dark:text-gray-100">28 MB</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div className="bg-green-500 h-2 rounded-full" style={{ width: '6%' }}></div>
-              </div>
-            </div>
-            
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 dark:text-gray-300">数据库文件</span>
-                <span className="font-medium text-gray-800 dark:text-gray-100">12 MB</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '2%' }}></div>
-              </div>
-            </div>
-
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <h4 className="font-medium text-gray-800 dark:text-gray-100 mb-4">存储空间配额</h4>
-              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-gray-600 dark:text-gray-300">当前配额</span>
-                  <span className="font-medium text-gray-800 dark:text-gray-100">
-                    {(settings.storageQuota / (1024 * 1024)).toFixed(0)} MB
-                  </span>
-                </div>
-                <input 
-                  type="range" 
-                  min="50" 
-                  max="1000" 
-                  value={(settings.storageQuota / (1024 * 1024)).toFixed(0)}
-                  onChange={(e) => setStorageQuota(parseInt(e.target.value) * 1024 * 1024)}
-                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary-600" 
-                />
-                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  <span>50 MB</span>
-                  <span className="font-medium text-gray-700 dark:text-gray-300">
-                    {(settings.storageQuota / (1024 * 1024)).toFixed(0)} MB
-                  </span>
-                  <span>1000 MB</span>
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">调整您的个人存储空间上限，超出配额将无法保存新的数据</p>
-              </div>
-            </div>
-            
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <h4 className="font-medium text-gray-800 dark:text-gray-100 mb-4">存储位置</h4>
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <FolderOpen className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-100">应用数据目录</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">./data/cqunews.db</p>
-                  </div>
-                </div>
-                <button className="text-sm text-primary-600 hover:text-primary-700 dark:hover:text-primary-400">
-                  打开目录
-                </button>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <button className="btn-secondary flex items-center justify-center gap-2">
-                <RefreshCw className="w-4 h-4" />
-                清除缓存
-              </button>
-              
-              <button className="btn-outline flex items-center justify-center gap-2">
-                <Trash2 className="w-4 h-4" />
-                清除历史
-              </button>
-            </div>
-          </div>
-        );
-
-      case 'data':
-        return (
-          <div className="space-y-6">
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Database className="w-5 h-5 text-blue-500" />
-                  <div>
-                    <h4 className="font-medium text-gray-800 dark:text-gray-100">数据库状态</h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">本地 SQLite 数据库</p>
-                  </div>
-                </div>
-                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
-                  正常
-                </span>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-medium text-gray-800 dark:text-gray-100">数据管理</h4>
-              
-              <button 
-                onClick={handleExportData}
-                className="w-full btn-secondary flex items-center justify-center gap-2"
-              >
-                <Download className="w-4 h-4" />
-                导出数据库 (.sql)
-              </button>
-              
-              <button className="w-full btn-secondary flex items-center justify-center gap-2">
-                <RefreshCw className="w-4 h-4" />
-                备份数据
-              </button>
-              
-              <button className="w-full btn-outline flex items-center justify-center gap-2">
-                <Upload className="w-4 h-4" />
-                导入数据
-              </button>
-            </div>
-            
-            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg border border-yellow-200 dark:border-yellow-700">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-yellow-600 mt-0.5" />
-                <div>
-                  <h5 className="font-medium text-yellow-800 dark:text-yellow-200">数据备份建议</h5>
-                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                    <li>定期导出数据库文件进行备份</li>
-                    <li>备份文件建议存放在安全位置</li>
-                    <li>导入数据前请确保应用已关闭</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
       default:
         return null;
     }
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">设置中心</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">管理您的账户和应用偏好</p>
+    <Fragment>
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">设置中心</h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">管理您的账户和应用偏好</p>
+          </div>
+          {saveStatus && (
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+              saveStatus === 'success' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+            }`}>
+              {saveStatus === 'success' ? (
+                <CheckCircle className="w-4 h-4" />
+              ) : (
+                <AlertCircle className="w-4 h-4" />
+              )}
+              {saveMessage}
+            </div>
+          )}
         </div>
-        {saveStatus && (
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-            saveStatus === 'success' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-          }`}>
-            {saveStatus === 'success' ? (
-              <CheckCircle className="w-4 h-4" />
-            ) : (
-              <AlertCircle className="w-4 h-4" />
-            )}
-            {saveMessage}
+
+        {settingsError && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-600 dark:text-red-300 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5" />
+              <span>{settingsError}</span>
+            </div>
           </div>
         )}
+
+        <div className="grid grid-cols-4 gap-6">
+          <div className="col-span-1">
+            <div className="card p-4 sticky top-6">
+              <div className="space-y-2">
+                {sections.map((section) => {
+                  const Icon = section.icon;
+                  return (
+                    <button
+                      key={section.id}
+                      onClick={() => setActiveSection(section.id)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${
+                        activeSection === section.id
+                          ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
+                          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <div className="flex-1">
+                        <div className="font-medium">{section.title}</div>
+                        <div className="text-xs text-gray-400">{section.description}</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                <button
+                  onClick={() => navigate('/admin/login')}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-all"
+                >
+                  <Crown className="w-5 h-5" />
+                  <span className="font-medium">管理员入口</span>
+                </button>
+                
+                <button 
+                  onClick={() => setShowFeedbackModal(true)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+                >
+                  <HelpCircle className="w-5 h-5" />
+                  <span className="font-medium">帮助与反馈</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-3">
+            <div className="card p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                    {sections.find((s) => s.id === activeSection)?.title}
+                  </h2>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                    {sections.find((s) => s.id === activeSection)?.description}
+                  </p>
+                </div>
+                {(activeSection !== 'security') && (
+                  <button 
+                    onClick={handleSave} 
+                    disabled={isSaving}
+                    className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Save className="w-4 h-4" />
+                    {isSaving ? '保存中...' : '保存设置'}
+                  </button>
+                )}
+              </div>
+              
+              {settingsLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                  <span className="ml-3 text-gray-500 dark:text-gray-400">加载设置中...</span>
+                </div>
+              ) : (
+                renderSection()
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {settingsError && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-600 dark:text-red-300 rounded-lg">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5" />
-            <span>{settingsError}</span>
+      {showFeedbackModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md mx-4">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-3">
+                <MessageSquare className="w-5 h-5 text-primary-600" />
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">提交反馈</h3>
+              </div>
+              <button 
+                onClick={() => setShowFeedbackModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                <ChevronRight className="w-5 h-5 rotate-90" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">反馈内容</label>
+                <textarea 
+                  value={feedbackContent}
+                  onChange={(e) => setFeedbackContent(e.target.value)}
+                  className="input-field h-32 resize-none"
+                  placeholder="请描述您遇到的问题或建议..."
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">联系方式（选填）</label>
+                <input 
+                  type="text" 
+                  value={feedbackContact}
+                  onChange={(e) => setFeedbackContact(e.target.value)}
+                  className="input-field"
+                  placeholder="邮箱或手机号"
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setShowFeedbackModal(false)}
+                  className="flex-1 btn-secondary"
+                >
+                  取消
+                </button>
+                <button 
+                  onClick={handleSubmitFeedback}
+                  disabled={isSubmittingFeedback}
+                  className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isSubmittingFeedback ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  {isSubmittingFeedback ? '提交中...' : '提交反馈'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
-
-      <div className="grid grid-cols-4 gap-6">
-        <div className="col-span-1">
-          <div className="card p-4 sticky top-6">
-            <div className="space-y-2">
-              {sections.map((section) => {
-                const Icon = section.icon;
-                return (
-                  <button
-                    key={section.id}
-                    onClick={() => setActiveSection(section.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${
-                      activeSection === section.id
-                        ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <div className="flex-1">
-                      <div className="font-medium">{section.title}</div>
-                      <div className="text-xs text-gray-400">{section.description}</div>
-                    </div>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                );
-              })}
-            </div>
-            
-            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-              <button
-                onClick={() => navigate('/admin/login')}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-all"
-              >
-                <Crown className="w-5 h-5" />
-                <span className="font-medium">管理员入口</span>
-              </button>
-              
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
-                <HelpCircle className="w-5 h-5" />
-                <span className="font-medium">帮助与反馈</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-span-3">
-          <div className="card p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                  {sections.find((s) => s.id === activeSection)?.title}
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                  {sections.find((s) => s.id === activeSection)?.description}
-                </p>
-              </div>
-              {(activeSection !== 'security' && activeSection !== 'data') && (
-                <button 
-                  onClick={handleSave} 
-                  disabled={isSaving}
-                  className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Save className="w-4 h-4" />
-                  {isSaving ? '保存中...' : '保存设置'}
-                </button>
-              )}
-            </div>
-            
-            {settingsLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-                <span className="ml-3 text-gray-500 dark:text-gray-400">加载设置中...</span>
-              </div>
-            ) : (
-              renderSection()
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    </Fragment>
   );
 }

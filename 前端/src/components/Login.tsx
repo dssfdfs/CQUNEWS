@@ -65,19 +65,14 @@ export function Login() {
       } else {
         setError('管理员用户名或密码错误');
       }
+      setIsLoading(false);
     } else {
-      setTimeout(() => {
-        const success = login(username, password);
-        if (success) {
-          navigate('/');
-        } else {
-          setError('用户名或密码错误');
-        }
-        setIsLoading(false);
-      }, 500);
-    }
-    
-    if (!isAdminLogin) {
+      const success = await login(username, password);
+      if (success) {
+        navigate('/');
+      } else {
+        setError('用户名或密码错误');
+      }
       setIsLoading(false);
     }
   };

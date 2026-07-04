@@ -54,23 +54,10 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
       if (statusFilter) {
         filteredUsers = filteredUsers.filter(u => u.status === statusFilter);
       }
-      
-      if (filteredUsers.length === 0) {
-        setUsers([
-          { id: 1, username: 'demo', email: 'demo@example.com', phone: '13800138000', status: 'active', created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), last_login_at: new Date().toISOString(), total_actions: 128, last_active: new Date().toISOString() },
-          { id: 2, username: 'user1', email: 'user1@example.com', phone: '13800138001', status: 'active', created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), last_login_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), total_actions: 56, last_active: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
-          { id: 3, username: 'user2', email: 'user2@example.com', phone: '13800138002', status: 'active', created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), last_login_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), total_actions: 234, last_active: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
-        ]);
-      } else {
-        setUsers(filteredUsers);
-      }
+      setUsers(filteredUsers);
     } catch (err) {
       console.error('Failed to fetch users:', err);
-      setUsers([
-        { id: 1, username: 'demo', email: 'demo@example.com', phone: '13800138000', status: 'active', created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), last_login_at: new Date().toISOString(), total_actions: 128, last_active: new Date().toISOString() },
-        { id: 2, username: 'user1', email: 'user1@example.com', phone: '13800138001', status: 'active', created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), last_login_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), total_actions: 56, last_active: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
-        { id: 3, username: 'user2', email: 'user2@example.com', phone: '13800138002', status: 'active', created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), last_login_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), total_actions: 234, last_active: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
-      ]);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -86,42 +73,17 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
     document.body.style.overflow = 'hidden';
 
     try {
-      const historyData = await adminApi.getUserHistory(user.id).catch(() => ({ history: [] }));
-      const wordCloudData = await adminApi.getWordCloud(7).catch(() => ({ words: [] }));
+      const historyData = await adminApi.getUserHistory(user.id);
+      const wordCloudData = await adminApi.getWordCloud(7);
 
-      const fallbackHistory: UserHistoryItem[] = [
-        { id: 1, action_type: 'generate', action_label: '生成摘要', target_id: 1, metadata: { duration_ms: 3500 }, timestamp: new Date().toISOString() },
-        { id: 2, action_type: 'view', action_label: '查看新闻', target_id: 2, metadata: {}, timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString() },
-        { id: 3, action_type: 'generate', action_label: '生成摘要', target_id: 3, metadata: { duration_ms: 2800 }, timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() },
-        { id: 4, action_type: 'view', action_label: '查看新闻', target_id: 4, metadata: {}, timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
-        { id: 5, action_type: 'feedback', action_label: '提交反馈', target_id: null, metadata: {}, timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString() },
-      ];
-
-      const fallbackWordCloud = [
-        { text: '人工智能', value: 120, category: '科技', weight: 85 },
-        { text: '大数据', value: 95, category: '科技', weight: 72 },
-        { text: '经济发展', value: 88, category: '财经', weight: 68 },
-      ];
-
-      setUserHistory(historyData.history.length > 0 ? historyData.history : fallbackHistory);
-      setUserWordCloud(wordCloudData.words.length > 0 ? wordCloudData.words.slice(0, 3).map((t: { text: string; value: number; category: string }) => ({ ...t, weight: Math.random() * 50 + 50 })) : fallbackWordCloud);
-
-      setTokenUsage(
-        Array.from({ length: 30 }, (_, i) => ({
-          date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          tokens: Math.floor(Math.random() * 500) + 100,
-        }))
-      );
+      setUserHistory(historyData.history || []);
+      setUserWordCloud(wordCloudData.words ? wordCloudData.words.slice(0, 3).map((t: { text: string; value: number; category: string }) => ({ ...t, weight: Math.random() * 50 + 50 })) : []);
+      setTokenUsage([]);
     } catch (err) {
       console.error('Failed to fetch user details:', err);
-      setUserHistory([
-        { id: 1, action_type: 'generate', action_label: '生成摘要', target_id: 1, metadata: { duration_ms: 3500 }, timestamp: new Date().toISOString() },
-        { id: 2, action_type: 'view', action_label: '查看新闻', target_id: 2, metadata: {}, timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString() },
-      ]);
-      setUserWordCloud([
-        { text: '人工智能', value: 120, category: '科技', weight: 85 },
-        { text: '大数据', value: 95, category: '科技', weight: 72 },
-      ]);
+      setUserHistory([]);
+      setUserWordCloud([]);
+      setTokenUsage([]);
     }
   };
 

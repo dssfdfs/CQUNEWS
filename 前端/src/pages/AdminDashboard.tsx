@@ -61,46 +61,10 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
       setLoading(true);
       try {
         const [summaryData, behaviorData, wordCloudResult, heatmapResult] = await Promise.all([
-          adminApi.getAnalyticsSummary().catch(() => ({
-            total_users: 1256,
-            today_active_users: 89,
-            today_generate_count: 234,
-            pending_feedback: 12,
-          })),
-          adminApi.getUserBehavior().catch(() => ({
-            dau: Array.from({ length: 7 }, (_, i) => ({
-              name: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }),
-              value: Math.floor(Math.random() * 50) + 20,
-            })),
-            action_distribution: [
-              { name: '生成摘要', value: 45 },
-              { name: '查看新闻', value: 30 },
-              { name: '生成标题', value: 15 },
-              { name: '质量验证', value: 10 },
-            ],
-            avg_duration: 3.2,
-            duration_distribution: [],
-            total_records: 12580,
-          })),
-          adminApi.getWordCloud().catch(() => ({
-            words: [
-              { text: '人工智能', value: 120, category: '科技' },
-              { text: '大数据', value: 95, category: '科技' },
-              { text: '经济发展', value: 88, category: '财经' },
-              { text: '政策', value: 82, category: '时政' },
-              { text: '体育赛事', value: 76, category: '体育' },
-              { text: '娱乐新闻', value: 70, category: '娱乐' },
-              { text: '健康生活', value: 65, category: '健康' },
-              { text: '教育改革', value: 58, category: '教育' },
-              { text: '数字化转型', value: 52, category: '科技' },
-              { text: '消费市场', value: 48, category: '财经' },
-            ],
-          })),
-          adminApi.getHeatmap().catch(() => ({
-            heatmap: [],
-            weekdays: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-            hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
-          })),
+          adminApi.getAnalyticsSummary(),
+          adminApi.getUserBehavior(),
+          adminApi.getWordCloud(),
+          adminApi.getHeatmap(),
         ]);
         setSummary(summaryData);
         setBehavior(behaviorData);
@@ -119,46 +83,10 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
     setLoading(true);
     try {
       const [summaryData, behaviorData, wordCloudResult, heatmapResult] = await Promise.all([
-        adminApi.getAnalyticsSummary().catch(() => ({
-          total_users: 1256,
-          today_active_users: 89,
-          today_generate_count: 234,
-          pending_feedback: 12,
-        })),
-        adminApi.getUserBehavior().catch(() => ({
-          dau: Array.from({ length: 7 }, (_, i) => ({
-            name: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }),
-            value: Math.floor(Math.random() * 50) + 20,
-          })),
-          action_distribution: [
-            { name: '生成摘要', value: 45 },
-            { name: '查看新闻', value: 30 },
-            { name: '生成标题', value: 15 },
-            { name: '质量验证', value: 10 },
-          ],
-          avg_duration: 3.2,
-          duration_distribution: [],
-          total_records: 12580,
-        })),
-        adminApi.getWordCloud().catch(() => ({
-          words: [
-            { text: '人工智能', value: 120, category: '科技' },
-            { text: '大数据', value: 95, category: '科技' },
-            { text: '经济发展', value: 88, category: '财经' },
-            { text: '政策', value: 82, category: '时政' },
-            { text: '体育赛事', value: 76, category: '体育' },
-            { text: '娱乐新闻', value: 70, category: '娱乐' },
-            { text: '健康生活', value: 65, category: '健康' },
-            { text: '教育改革', value: 58, category: '教育' },
-            { text: '数字化转型', value: 52, category: '科技' },
-            { text: '消费市场', value: 48, category: '财经' },
-          ],
-        })),
-        adminApi.getHeatmap().catch(() => ({
-          heatmap: [],
-          weekdays: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-          hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
-        })),
+        adminApi.getAnalyticsSummary(),
+        adminApi.getUserBehavior(),
+        adminApi.getWordCloud(),
+        adminApi.getHeatmap(),
       ]);
       setSummary(summaryData);
       setBehavior(behaviorData);

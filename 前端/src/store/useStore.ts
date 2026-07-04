@@ -142,22 +142,7 @@ interface MockUser {
   password: string;
 }
 
-const loadUsersFromStorage = (): MockUser[] => {
-  try {
-    const usersStr = localStorage.getItem('users');
-    if (usersStr) {
-      return JSON.parse(usersStr);
-    }
-  } catch (e) {
-    console.error('Failed to load users from storage:', e);
-  }
-  return [
-    { id: '1', username: 'admin', email: 'admin@example.com', password: 'admin123' },
-    { id: '2', username: 'demo', email: 'demo@example.com', password: 'demo1234' },
-  ];
-};
 
-let mockUsers: MockUser[] = loadUsersFromStorage();
 
 const loadUserFromStorage = () => {
   try {
@@ -444,38 +429,64 @@ export const useStore = create<NewsState>((set, get) => ({
     }
   },
   
-  login: (username: string, password: string) => {
-    const user = mockUsers.find(
-      (u: MockUser) => u.username === username && u.password === password
-    );
-    if (user) {
-      set({ isAuthenticated: true, currentUser: user });
-      localStorage.setItem('user', JSON.stringify(user));
-      return true;
-    }
-    return false;
-  },
-  
-  register: (username: string, email: string, password: string) => {
-    const existingUser = mockUsers.find((u: MockUser) => u.username === username || u.email === email);
-    if (existingUser) {
+  login: async (username: string, password: string) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ account: username, password }),
+      });
+      const data = await response.json();
+      if (data.code === 0 && data.data) {
+        const user = data.data.user;
+        localStorage.setItem('token', data.data.access_token);
+        localStorage.setItem('refresh_token', data.data.refresh_token);
+        localStorage.setItem('user', JSON.stringify(user));
+        set({ isAuthenticated: true, currentUser: user });
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error('Login failed:', e);
       return false;
     }
-    const newUser: MockUser = {
-      id: Date.now().toString() + Math.random().toString(36).slice(2, 9),
-      username,
-      email,
-      password,
-    };
-    mockUsers.push(newUser);
-    localStorage.setItem('users', JSON.stringify(mockUsers));
-    set({ isAuthenticated: true, currentUser: newUser });
-    localStorage.setItem('user', JSON.stringify(newUser));
-    return true;
+  },
+  
+  register: async (username: string, email: string, password: string) => {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password }),
+      });
+      const data = await response.json();
+      if (data.code === 0 && data.data) {
+        const loginResponse = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ account: username, password }),
+        });
+        const loginData = await loginResponse.json();
+        if (loginData.code === 0 && loginData.data) {
+          const user = loginData.data.user;
+          localStorage.setItem('token', loginData.data.access_token);
+          localStorage.setItem('refresh_token', loginData.data.refresh_token);
+          localStorage.setItem('user', JSON.stringify(user));
+          set({ isAuthenticated: true, currentUser: user });
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      console.error('Register failed:', e);
+      return false;
+    }
   },
   
   logout: () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('refresh_token');
     set({ isAuthenticated: false, currentUser: null });
   },
 

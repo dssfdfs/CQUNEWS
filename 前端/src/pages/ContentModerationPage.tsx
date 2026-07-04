@@ -42,31 +42,13 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
     try {
       const data = await adminApi.getContentList(statusFilter || undefined, search || undefined, page, pageSize);
       const newsListData = data.data || [];
-      
-      if (newsListData.length === 0) {
-        setNewsList([
-          { id: 1, title: '人工智能技术突破：新一代大模型发布', source: '科技日报', category: '科技', quality_score: 92, review_status: 'pending', review_note: '', crawl_status: 1, views: 1234, created_at: new Date().toISOString(), published_at: null },
-          { id: 2, title: '2024年经济形势分析报告发布', source: '财经新闻', category: '财经', quality_score: 85, review_status: 'pending', review_note: '', crawl_status: 1, views: 856, created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), published_at: null },
-          { id: 3, title: '世界杯精彩赛事回顾', source: '体育频道', category: '体育', quality_score: 88, review_status: 'published', review_note: '', crawl_status: 1, views: 2345, created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), published_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() },
-          { id: 4, title: '最新电影上映资讯', source: '娱乐周刊', category: '娱乐', quality_score: 76, review_status: 'rejected', review_note: '内容重复', crawl_status: 1, views: 456, created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), published_at: null },
-          { id: 5, title: '教育改革新政策解读', source: '教育时报', category: '教育', quality_score: 90, review_status: 'pending', review_note: '', crawl_status: 1, views: 1567, created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), published_at: null },
-        ]);
-        setTotal(5);
-      } else {
-        setNewsList(newsListData);
-        setTotal(data.total || newsListData.length);
-      }
+      setNewsList(newsListData);
+      setTotal(data.total || newsListData.length);
     } catch (err) {
       console.error('Fetch news failed:', err);
       error('加载新闻列表失败');
-      setNewsList([
-        { id: 1, title: '人工智能技术突破：新一代大模型发布', source: '科技日报', category: '科技', quality_score: 92, review_status: 'pending', review_note: '', crawl_status: 1, views: 1234, created_at: new Date().toISOString(), published_at: null },
-        { id: 2, title: '2024年经济形势分析报告发布', source: '财经新闻', category: '财经', quality_score: 85, review_status: 'pending', review_note: '', crawl_status: 1, views: 856, created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), published_at: null },
-        { id: 3, title: '世界杯精彩赛事回顾', source: '体育频道', category: '体育', quality_score: 88, review_status: 'published', review_note: '', crawl_status: 1, views: 2345, created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), published_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() },
-        { id: 4, title: '最新电影上映资讯', source: '娱乐周刊', category: '娱乐', quality_score: 76, review_status: 'rejected', review_note: '内容重复', crawl_status: 1, views: 456, created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), published_at: null },
-        { id: 5, title: '教育改革新政策解读', source: '教育时报', category: '教育', quality_score: 90, review_status: 'pending', review_note: '', crawl_status: 1, views: 1567, created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), published_at: null },
-      ]);
-      setTotal(5);
+      setNewsList([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }

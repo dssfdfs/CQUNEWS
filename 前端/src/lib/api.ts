@@ -379,4 +379,36 @@ export const adminApi = {
     });
     return response.json();
   },
+
+  clearCache: async () => {
+    const response = await fetch('/api/admin/config/clear-cache', {
+      method: 'POST',
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  clearHistory: async () => {
+    const response = await fetch('/api/admin/config/clear-history', {
+      method: 'POST',
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  backupDatabase: async () => {
+    const response = await fetch('/api/admin/config/backup', {
+      method: 'POST',
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  importData: async () => {
+    const response = await fetch('/api/admin/config/import', {
+      method: 'POST',
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
 };

@@ -20,6 +20,13 @@ import {
   EyeOff,
   Clock,
   ChevronDown,
+  HardDrive,
+  Upload,
+  Trash2,
+  Info,
+  AlertCircle,
+  FolderOpen,
+  Zap,
 } from 'lucide-react';
 
 interface AdminSettingsProps {
@@ -54,6 +61,15 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
   const [testing, setTesting] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
+  
+  const [storageQuota, setStorageQuota] = useState(500 * 1024 * 1024);
+  const [cacheSize, setCacheSize] = useState(156);
+  const [historySize, setHistorySize] = useState(28);
+  const [databaseSize, setDatabaseSize] = useState(12);
+  const [clearingCache, setClearingCache] = useState(false);
+  const [clearingHistory, setClearingHistory] = useState(false);
+  const [backingUp, setBackingUp] = useState(false);
+  const [importingData, setImportingData] = useState(false);
 
   useEffect(() => {
     fetchApiKey(selectedModel);
@@ -129,6 +145,56 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
       error('导出失败');
     } finally {
       setExporting(false);
+    }
+  };
+
+  const handleClearCache = async () => {
+    setClearingCache(true);
+    try {
+      await adminApi.clearCache();
+      setCacheSize(0);
+      success('缓存清理成功');
+    } catch (err) {
+      error('缓存清理失败');
+    } finally {
+      setClearingCache(false);
+    }
+  };
+
+  const handleClearHistory = async () => {
+    setClearingHistory(true);
+    try {
+      await adminApi.clearHistory();
+      setHistorySize(0);
+      success('历史记录清理成功');
+    } catch (err) {
+      error('历史记录清理失败');
+    } finally {
+      setClearingHistory(false);
+    }
+  };
+
+  const handleBackup = async () => {
+    setBackingUp(true);
+    try {
+      await adminApi.backupDatabase();
+      success('数据库备份成功');
+    } catch (err) {
+      error('数据库备份失败');
+    } finally {
+      setBackingUp(false);
+    }
+  };
+
+  const handleImportData = async () => {
+    setImportingData(true);
+    try {
+      await adminApi.importData();
+      success('数据导入成功');
+    } catch (err) {
+      error('数据导入失败');
+    } finally {
+      setImportingData(false);
     }
   };
 
@@ -367,61 +433,183 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
 
             <div className="bg-white rounded-xl border border-gray-100 p-6">
               <div className="flex items-center gap-2 mb-6">
+                <HardDrive className="w-5 h-5 text-indigo-600" />
+                <h2 className="text-lg font-semibold text-gray-800">存储空间</h2>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gray-600">本地缓存</span>
+                    <span className="font-medium text-gray-800">{cacheSize} MB</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-primary-600 h-2 rounded-full" style={{ width: `${Math.min((cacheSize / storageQuota) * 100, 100)}%` }}></div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gray-600">历史记录</span>
+                    <span className="font-medium text-gray-800">{historySize} MB</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-green-500 h-2 rounded-full" style={{ width: `${Math.min((historySize / storageQuota) * 100, 100)}%` }}></div>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-200 pt-6">
+                  <h4 className="font-medium text-gray-800 mb-4">存储空间配额</h4>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-gray-600">当前配额</span>
+                      <span className="font-medium text-gray-800">
+                        {(storageQuota / (1024 * 1024)).toFixed(0)} MB
+                      </span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="50" 
+                      max="1000" 
+                      value={(storageQuota / (1024 * 1024)).toFixed(0)}
+                      onChange={(e) => setStorageQuota(parseInt(e.target.value) * 1024 * 1024)}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-600" 
+                    />
+                    <div className="flex justify-between text-sm text-gray-500 mt-2">
+                      <span>50 MB</span>
+                      <span className="font-medium text-gray-700">
+                        {(storageQuota / (1024 * 1024)).toFixed(0)} MB
+                      </span>
+                      <span>1000 MB</span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">调整系统存储空间上限，超出配额将无法保存新的数据</p>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-200 pt-6">
+                  <h4 className="font-medium text-gray-800 mb-4">存储位置</h4>
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <FolderOpen className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">应用数据目录</p>
+                        <p className="text-xs text-gray-500">./data/cqunews.db</p>
+                      </div>
+                    </div>
+                    <button className="text-sm text-primary-600 hover:text-primary-700">
+                      打开目录
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <button 
+                    onClick={handleClearCache}
+                    disabled={clearingCache}
+                    className="btn-secondary flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {clearingCache ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-4 h-4" />
+                    )}
+                    {clearingCache ? '清理中...' : '清除缓存'}
+                  </button>
+                  
+                  <button 
+                    onClick={handleClearHistory}
+                    disabled={clearingHistory}
+                    className="btn-outline flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {clearingHistory ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                    {clearingHistory ? '清除中...' : '清除历史'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl border border-gray-100 p-6">
+              <div className="flex items-center gap-2 mb-6">
                 <Database className="w-5 h-5 text-indigo-600" />
                 <h2 className="text-lg font-semibold text-gray-800">数据管理</h2>
               </div>
 
               <div className="space-y-4">
-                <button
-                  onClick={handleExportUsers}
-                  disabled={exporting}
-                  className="w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
-                      <Download className="w-6 h-6 text-indigo-600" />
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Database className="w-5 h-5 text-blue-500" />
+                      <div>
+                        <h4 className="font-medium text-gray-800">数据库状态</h4>
+                        <p className="text-sm text-gray-500">SQLite 数据库</p>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <p className="font-medium text-gray-800">导出用户数据</p>
-                      <p className="text-sm text-gray-500">下载SQLite数据库备份文件</p>
-                    </div>
+                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                      正常
+                    </span>
                   </div>
-                  {exporting ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-indigo-600"></div>
-                  ) : (
-                    <RefreshCw className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
-                  )}
-                </button>
+                </div>
 
-                <button
-                  className="w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                      <Database className="w-6 h-6 text-green-600" />
-                    </div>
-                    <div className="text-left">
-                      <p className="font-medium text-gray-800">备份数据库</p>
-                      <p className="text-sm text-gray-500">创建数据库快照备份</p>
-                    </div>
-                  </div>
-                  <RefreshCw className="w-5 h-5 text-gray-400 group-hover:text-green-600 transition-colors" />
-                </button>
+                <div className="space-y-3">
+                  <h4 className="font-medium text-gray-800">数据操作</h4>
+                  
+                  <button 
+                    onClick={handleExportUsers}
+                    disabled={exporting}
+                    className="w-full btn-secondary flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {exporting ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
+                    {exporting ? '导出中...' : '导出数据库 (.sql)'}
+                  </button>
+                  
+                  <button 
+                    onClick={handleBackup}
+                    disabled={backingUp}
+                    className="w-full btn-secondary flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {backingUp ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-4 h-4" />
+                    )}
+                    {backingUp ? '备份中...' : '备份数据'}
+                  </button>
+                  
+                  <button 
+                    onClick={handleImportData}
+                    disabled={importingData}
+                    className="w-full btn-outline flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {importingData ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Upload className="w-4 h-4" />
+                    )}
+                    {importingData ? '导入中...' : '导入数据'}
+                  </button>
+                </div>
 
-                <button
-                  className="w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                      <Activity className="w-6 h-6 text-orange-600" />
-                    </div>
-                    <div className="text-left">
-                      <p className="font-medium text-gray-800">清理缓存</p>
-                      <p className="text-sm text-gray-500">清除临时文件和缓存数据</p>
+                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="flex items-start gap-3">
+                    <Info className="w-5 h-5 text-yellow-600 mt-0.5" />
+                    <div>
+                      <h5 className="font-medium text-yellow-800">数据备份建议</h5>
+                      <ul className="text-sm text-yellow-700 mt-1">
+                        <li>定期导出数据库文件进行备份</li>
+                        <li>备份文件建议存放在安全位置</li>
+                        <li>导入数据前请确保应用已关闭</li>
+                      </ul>
                     </div>
                   </div>
-                  <RefreshCw className="w-5 h-5 text-gray-400 group-hover:text-orange-600 transition-colors" />
-                </button>
+                </div>
 
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h5 className="font-medium text-gray-700 mb-2">数据统计</h5>

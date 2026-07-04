@@ -50,15 +50,13 @@ export function Register() {
 
     setIsLoading(true);
     
-    setTimeout(() => {
-      const success = register(username, email, password);
-      if (success) {
-        navigate('/');
-      } else {
-        setError('用户名或邮箱已被注册');
-      }
-      setIsLoading(false);
-    }, 500);
+    const success = await register(username, email, password);
+    if (success) {
+      navigate('/');
+    } else {
+      setError('用户名或邮箱已被注册');
+    }
+    setIsLoading(false);
   };
 
   const passwordStrength = password.length >= 8 ? 'strong' : password.length >= 4 ? 'medium' : 'weak';

@@ -41,25 +41,10 @@ export function AdminFeedbackManagement({ activeItem, onItemClick }: AdminFeedba
       const status = statusFilter === 'all' ? undefined : statusFilter;
       const data = await adminApi.getFeedback(status);
       const feedbacksData = data.feedbacks || [];
-      
-      if (feedbacksData.length === 0) {
-        setFeedbacks([
-          { id: 1, user_id: 1, username: 'demo', email: 'demo@example.com', content: '建议增加更多新闻分类', contact_info: null, status: 'pending', created_at: new Date().toISOString() },
-          { id: 2, user_id: 2, username: 'user1', email: 'user1@example.com', content: '系统运行很流畅，体验很好！', contact_info: '13800138001', status: 'resolved', created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
-          { id: 3, user_id: 3, username: 'user2', email: 'user2@example.com', content: '希望能增加深色模式', contact_info: null, status: 'pending', created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
-          { id: 4, user_id: 1, username: 'demo', email: 'demo@example.com', content: 'AI生成摘要功能非常实用', contact_info: null, status: 'resolved', created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() },
-        ]);
-      } else {
-        setFeedbacks(feedbacksData);
-      }
+      setFeedbacks(feedbacksData);
     } catch (error) {
       console.error('Failed to fetch feedback:', error);
-      setFeedbacks([
-        { id: 1, user_id: 1, username: 'demo', email: 'demo@example.com', content: '建议增加更多新闻分类', contact_info: null, status: 'pending', created_at: new Date().toISOString() },
-        { id: 2, user_id: 2, username: 'user1', email: 'user1@example.com', content: '系统运行很流畅，体验很好！', contact_info: '13800138001', status: 'resolved', created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() },
-        { id: 3, user_id: 3, username: 'user2', email: 'user2@example.com', content: '希望能增加深色模式', contact_info: null, status: 'pending', created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
-        { id: 4, user_id: 1, username: 'demo', email: 'demo@example.com', content: 'AI生成摘要功能非常实用', contact_info: null, status: 'resolved', created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() },
-      ]);
+      setFeedbacks([]);
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/Sidebar';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { PublicRoute } from '@/components/PublicRoute';
@@ -31,6 +31,16 @@ function Dashboard() {
   const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language } = useStore();
   const [activeNav, setActiveNav] = useState('news');
   const [error, setError] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const pathParts = location.pathname.split('/');
+    const page = pathParts[1] || 'news';
+    if (['news', 'summary', 'history', 'analytics', 'settings'].includes(page)) {
+      setActiveNav(page);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleGenerateAll = async () => {
@@ -80,6 +90,7 @@ function Dashboard() {
 
   const handleNavClick = (item: string) => {
     setActiveNav(item);
+    navigate(`/${item}`);
   };
 
   const renderContent = () => {
@@ -223,9 +234,20 @@ function Dashboard() {
 
 function AdminApp() {
   const [activeItem, setActiveItem] = useState('dashboard');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const pathParts = location.pathname.split('/');
+    const page = pathParts[2] || 'dashboard';
+    if (['dashboard', 'users', 'content', 'feedback', 'logs', 'settings'].includes(page)) {
+      setActiveItem(page);
+    }
+  }, [location.pathname]);
 
   const handleNavClick = (item: string) => {
     setActiveItem(item);
+    navigate(`/admin/${item}`);
   };
 
   const renderContent = () => {

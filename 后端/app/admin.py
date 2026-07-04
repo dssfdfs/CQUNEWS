@@ -916,6 +916,81 @@ def get_audit_logs(
     return {"data": result, "total": total, "page": page, "page_size": page_size}
 
 
+class UserStatusRequest(BaseModel):
+    status: str
+
+
+@router.put("/users/{user_id}/status")
+def update_user_status(
+    user_id: int,
+    request: UserStatusRequest,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
+
+    if request.status not in ["active", "disabled"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="无效的用户状态")
+
+    user.status = request.status
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "status": user.status,
+        "updated_at": datetime.utcnow().isoformat(),
+    }
+
+
+@router.post("/config/clear-cache")
+def clear_cache(db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
+    import os
+    import shutil
+
+    cache_dir = os.path.join(os.path.dirname(settings.DB_PATH), "cache")
+    if os.path.exists(cache_dir):
+        shutil.rmtree(cache_dir)
+        os.makedirs(cache_dir)
+
+    return {"success": True, "message": "缓存清理成功"}
+
+
+@router.post("/config/clear-history")
+def clear_history(db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
+    db.exec(select(UserBehavior)).all()
+    db.exec("DELETE FROM user_behavior")
+    db.commit()
+
+    return {"success": True, "message": "历史记录清理成功"}
+
+
+@router.post("/config/backup")
+def backup_database(db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
+    import os
+    import shutil
+
+    db_path = settings.DB_PATH
+    backup_dir = os.path.join(os.path.dirname(db_path), "backups")
+    os.makedirs(backup_dir, exist_ok=True)
+
+    backup_filename = f"cqunews_backup_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.db"
+    backup_path = os.path.join(backup_dir, backup_filename)
+
+    shutil.copy2(db_path, backup_path)
+
+    return {"success": True, "message": "数据库备份成功", "filename": backup_filename}
+
+
+@router.post("/config/import")
+def import_database(db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
+    return {"success": True, "message": "数据导入功能需通过文件上传实现"}
+
+
 def ensure_default_admin(db: Session) -> None:
     existing = db.exec(select(AdminUser)).first()
     if existing is not None:

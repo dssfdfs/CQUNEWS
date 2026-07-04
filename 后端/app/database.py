@@ -8,8 +8,9 @@ connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, connect_args=connect_args, echo=False)
 
 
-def get_session() -> Session:
-    return Session(engine)
+def get_session():
+    with Session(engine) as session:
+        yield session
 
 
 def init_db() -> None:

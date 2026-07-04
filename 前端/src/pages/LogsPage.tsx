@@ -30,30 +30,12 @@ export function LogsPage({ activeItem, onItemClick }: LogsPageProps) {
     try {
       const data = await adminApi.getLogs(search || undefined, undefined, page, pageSize);
       const logsData = data.data || [];
-      
-      if (logsData.length === 0) {
-        setLogs([
-          { id: 1, user_id: 1, username: 'admin', action: 'login', target: 'admin:1', detail: '管理员登录系统', ip_address: '127.0.0.1', created_at: new Date().toISOString() },
-          { id: 2, user_id: 1, username: 'admin', action: 'approve_content', target: 'news:1', detail: '标题: 人工智能技术突破', ip_address: '127.0.0.1', created_at: new Date(Date.now() - 30 * 60 * 1000).toISOString() },
-          { id: 3, user_id: 1, username: 'admin', action: 'reject_content', target: 'news:2', detail: '标题: 测试新闻, 原因: 内容重复', ip_address: '127.0.0.1', created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() },
-          { id: 4, user_id: 1, username: 'admin', action: 'update_config', target: 'config:api_key', detail: '更新默认API密钥', ip_address: '127.0.0.1', created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
-          { id: 5, user_id: null, username: null, action: 'system_start', target: 'system', detail: '系统启动完成', ip_address: null, created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString() },
-        ]);
-        setTotal(5);
-      } else {
-        setLogs(logsData);
-        setTotal(data.total || logsData.length);
-      }
+      setLogs(logsData);
+      setTotal(data.total || logsData.length);
     } catch (err) {
       console.error('Failed to fetch logs:', err);
-      setLogs([
-        { id: 1, user_id: 1, username: 'admin', action: 'login', target: 'admin:1', detail: '管理员登录系统', ip_address: '127.0.0.1', created_at: new Date().toISOString() },
-        { id: 2, user_id: 1, username: 'admin', action: 'approve_content', target: 'news:1', detail: '标题: 人工智能技术突破', ip_address: '127.0.0.1', created_at: new Date(Date.now() - 30 * 60 * 1000).toISOString() },
-        { id: 3, user_id: 1, username: 'admin', action: 'reject_content', target: 'news:2', detail: '标题: 测试新闻, 原因: 内容重复', ip_address: '127.0.0.1', created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() },
-        { id: 4, user_id: 1, username: 'admin', action: 'update_config', target: 'config:api_key', detail: '更新默认API密钥', ip_address: '127.0.0.1', created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
-        { id: 5, user_id: null, username: null, action: 'system_start', target: 'system', detail: '系统启动完成', ip_address: null, created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString() },
-      ]);
-      setTotal(5);
+      setLogs([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }
