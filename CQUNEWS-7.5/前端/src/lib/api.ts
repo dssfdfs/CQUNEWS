@@ -354,6 +354,17 @@ export const adminApi = {
     return response.json();
   },
 
+  approveAllContent: async () => {
+    const response = await fetch('/api/admin/content/approve-all', {
+      method: 'PUT',
+      headers: adminHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('批量审核失败');
+    }
+    return response.json();
+  },
+
   getLogs: async (
     search?: string,
     action?: string,

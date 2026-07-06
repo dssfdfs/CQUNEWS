@@ -845,6 +845,34 @@ def reject_content(
     return {"id": news.id, "review_status": news.review_status, "reviewed_at": news.reviewed_at}
 
 
+@router.put("/content/approve-all")
+def approve_all_pending_content(
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    pending_news = db.exec(select(News).where(News.review_status == "pending")).all()
+    
+    approved_count = 0
+    for news in pending_news:
+        news.review_status = "published"
+        news.reviewed_by = admin.id
+        news.reviewed_at = datetime.utcnow().isoformat()
+        news.updated_at = datetime.utcnow().isoformat()
+        db.add(news)
+        approved_count += 1
+    
+    db.add(AuditLog(
+        user_id=admin.id,
+        action="approve_all_content",
+        target="news:all_pending",
+        detail=f"批量通过 {approved_count} 条待审核新闻",
+    ))
+    
+    db.commit()
+    
+    return {"approved_count": approved_count}
+
+
 @router.get("/content/{news_id}")
 def get_content_detail(
     news_id: int,

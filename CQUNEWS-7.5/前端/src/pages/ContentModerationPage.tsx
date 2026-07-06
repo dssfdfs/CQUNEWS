@@ -87,6 +87,18 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
     }
   };
 
+  const handleApproveAll = async () => {
+    if (window.confirm('确定要通过所有待审核新闻吗？此操作不可撤销。')) {
+      try {
+        const result = await adminApi.approveAllContent();
+        success(`成功通过 ${result.approved_count} 条新闻`);
+        fetchNews();
+      } catch (err) {
+        error('操作失败');
+      }
+    }
+  };
+
   const handleViewDetail = async (newsId: number) => {
     try {
       const detail = await adminApi.getContentDetail(newsId);
@@ -301,6 +313,15 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
                 </table>
 
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                  <div className="flex items-center justify-end mb-4">
+                    <button
+                      onClick={handleApproveAll}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      <Check className="w-4 h-4" />
+                      一键通过
+                    </button>
+                  </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">
                       共 {total} 条记录，当前第 {page} 页
