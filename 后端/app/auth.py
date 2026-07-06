@@ -189,6 +189,8 @@ def authenticate_user(
     ).first()
     if not user or not verify_password(password, user.password_hash):
         return None
+    if hasattr(user, 'account_status') and user.account_status != 'active':
+        raise HTTPException(status_code=403, detail="此账号已被禁用")
     return user
 
 

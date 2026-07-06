@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TrendingUp, Clock, FileText, Sparkles, Search, Filter, ChevronRight, Star, Target, Zap, RefreshCw } from 'lucide-react';
+import { TrendingUp, Clock, FileText, Sparkles, Search, Filter, ChevronRight, Star, Target, Zap, RefreshCw, Heart } from 'lucide-react';
 import { useStore } from '@/store/useStore';
+import { userApi } from '@/lib/api';
 
 interface NewsItem {
   id: number;
@@ -12,6 +13,7 @@ interface NewsItem {
   views: number;
   isTrending: boolean;
   publishedAt: string;
+  publishedAtRaw?: string;
   content?: string;
 }
 
@@ -26,6 +28,8 @@ export function HomePage() {
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [personalizedNews, setPersonalizedNews] = useState<NewsItem[]>([]);
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [favorites, setFavorites] = useState<NewsItem[]>([]);
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
 
   const categories = ['all', '科技', '财经', '体育', '娱乐', '时政', '健康', '教育', '生活'];
   
@@ -73,7 +77,7 @@ export function HomePage() {
     const fetchNews = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/news?page_size=20');
+        const response = await fetch('/api/news?page_size=20&today_only=true');
         const result = await response.json();
         
         let newsItems: NewsItem[] = [];
@@ -86,6 +90,7 @@ export function HomePage() {
             summary: item.summary || item.content || '',
             views: item.views || 0,
             isTrending: item.is_trending || false,
+            publishedAtRaw: item.published_at || '',
             publishedAt: item.published_at ? new Date(item.published_at).toLocaleString('zh-CN', { 
               year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' 
             }) : '未知时间',
@@ -248,8 +253,52 @@ export function HomePage() {
       }
     };
 
+    const fetchFavorites = async () => {
+      try {
+        const result = await userApi.getFavorites();
+        if (result.items && result.items.length > 0) {
+          const favoriteItems: NewsItem[] = result.items.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            source: item.source || '未知来源',
+            category: item.category || '综合',
+            summary: item.summary || item.content || '',
+            views: item.views || 0,
+            isTrending: item.is_trending || false,
+            publishedAtRaw: item.published_at || '',
+            publishedAt: item.published_at ? new Date(item.published_at).toLocaleString('zh-CN', { 
+              year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' 
+            }) : '未知时间',
+            content: item.content || '',
+          }));
+          setFavorites(favoriteItems);
+          setFavoriteIds(new Set(favoriteItems.map(item => item.id)));
+        }
+      } catch (error) {
+        console.error('获取收藏失败:', error);
+      }
+    };
+
     fetchNews();
+    fetchFavorites();
   }, [history]);
+
+  const handleToggleFavorite = async (newsId: number) => {
+    try {
+      await userApi.toggleFavorite(newsId);
+      setFavoriteIds(prev => {
+        const newIds = new Set(prev);
+        if (newIds.has(newsId)) {
+          newIds.delete(newsId);
+        } else {
+          newIds.add(newsId);
+        }
+        return newIds;
+      });
+    } catch (error) {
+      console.error('收藏操作失败:', error);
+    }
+  };
 
   const sources = ['all', ...new Set(news.map(n => n.source))];
 
@@ -476,8 +525,19 @@ export function HomePage() {
                             {item.publishedAt}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-400">
-                          <span className="flex items-center gap-1">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleFavorite(item.id);
+                            }}
+                            className={`p-1.5 rounded-lg transition-colors ${
+                              favoriteIds.has(item.id) ? 'text-red-500 bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                            }`}
+                          >
+                            <Heart className="w-4 h-4" />
+                          </button>
+                          <span className="flex items-center gap-1 text-gray-400">
                             <Star className="w-4 h-4" />
                             {item.views.toLocaleString()}
                           </span>
@@ -493,6 +553,43 @@ export function HomePage() {
         </div>
 
         <div className="space-y-6">
+          <div className="card p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Heart className="w-5 h-5 text-red-500" />
+              <h2 className="text-lg font-bold text-gray-800">我的收藏</h2>
+            </div>
+            
+            {favorites.length === 0 ? (
+              <div className="text-center py-6 text-gray-400">
+                <Heart className="w-10 h-10 mx-auto mb-2" />
+                <p className="text-sm">暂无收藏新闻</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {favorites.slice(0, 5).map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => setSelectedNews(item)}
+                    className="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    <p className="text-sm font-medium text-gray-700 line-clamp-2 mb-1">
+                      {item.title}
+                    </p>
+                    <p className="text-xs text-gray-400 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {item.publishedAt}
+                    </p>
+                  </div>
+                ))}
+                {favorites.length > 5 && (
+                  <div className="text-center py-2 text-xs text-gray-400">
+                    还有 {favorites.length - 5} 条收藏...
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="card p-6">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-1 h-6 bg-primary-600 rounded-full" />

@@ -22,6 +22,7 @@ class News(SQLModel, table=True):
     crawl_status: int = Field(default=0)
     quality_score: int = Field(default=0)
     review_status: str = Field(default="pending", max_length=16, index=True)
+    audit_status: int = Field(default=0)
     review_note: Optional[str] = Field(default=None, max_length=500)
     reviewed_by: Optional[int] = Field(default=None)
     reviewed_at: Optional[str] = Field(default=None)
@@ -226,4 +227,87 @@ class Feedback(SQLModel, table=True):
     content: str = Field()
     contact_info: Optional[str] = Field(default=None, max_length=255)
     status: str = Field(default="pending", max_length=16)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class UserHistory(SQLModel, table=True):
+    __tabname__ = "user_history"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    content_type: str = Field(max_length=32, index=True)
+    content: str = Field()
+    summary: str = Field()
+    titles: Optional[str] = Field(default=None)
+    quality: Optional[str] = Field(default=None)
+    model_type: Optional[str] = Field(default=None, max_length=32)
+    summary_style: Optional[str] = Field(default=None, max_length=32)
+    language: Optional[str] = Field(default=None, max_length=16)
+    custom_require: Optional[str] = Field(default=None)
+    video_fps: Optional[float] = Field(default=None)
+    category: Optional[str] = Field(default=None, max_length=100)
+    status: str = Field(default="completed", max_length=16)
+    file_path: Optional[str] = Field(default=None, max_length=500)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class UserMaterial(SQLModel, table=True):
+    __tabname__ = "user_material"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    material_type: str = Field(max_length=32, index=True)
+    file_name: Optional[str] = Field(default=None, max_length=255)
+    file_path: Optional[str] = Field(default=None, max_length=500)
+    file_size: int = Field(default=0)
+    original_url: Optional[str] = Field(default=None, max_length=1000)
+    content: Optional[str] = Field(default=None)
+    content_hash: Optional[str] = Field(default=None, max_length=64)
+    is_deleted: int = Field(default=0)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class PasswordResetToken(SQLModel, table=True):
+    __tabname__ = "password_reset_token"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    token: str = Field(max_length=255, unique=True)
+    email: str = Field(max_length=128)
+    expires_at: str = Field()
+    is_used: int = Field(default=0)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class EmailVerificationCode(SQLModel, table=True):
+    __tabname__ = "email_verification_code"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    email: str = Field(max_length=128, index=True)
+    code: str = Field(max_length=6)
+    expires_at: str = Field()
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class UserFavoriteNews(SQLModel, table=True):
+    __tabname__ = "user_favorite_news"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    news_id: int = Field(foreign_key="news.id", index=True)
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
+class NewsReviewLog(SQLModel, table=True):
+    __tabname__ = "news_review_log"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    news_id: int = Field(foreign_key="news.id", index=True)
+    reviewer_id: int = Field(foreign_key="user.id", index=True)
+    old_status: str = Field(max_length=16)
+    new_status: str = Field(max_length=16)
+    reason: Optional[str] = Field(default=None, max_length=500)
     created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())

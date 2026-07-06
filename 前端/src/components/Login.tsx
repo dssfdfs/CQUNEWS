@@ -108,7 +108,7 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-850 dark:to-gray-900">
       <div className="w-full max-w-md">
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
           <div className="text-center mb-8">
@@ -145,7 +145,11 @@ export function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
+              <div className={`px-4 py-3 rounded-lg text-sm ${
+                error.includes('已被禁用') 
+                  ? 'bg-red-100 dark:bg-red-900/50 border border-red-300 dark:border-red-600 text-red-700 dark:text-red-300' 
+                  : 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-600 dark:text-red-400'
+              }`}>
                 {error}
               </div>
             )}
@@ -222,9 +226,9 @@ export function Login() {
                 <input type="checkbox" className="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-gray-600 focus:ring-primary-500 bg-white dark:bg-gray-700" />
                 {t('remember_me')}
               </label>
-              <a href="#" className="text-sm text-primary-600 hover:text-primary-700 dark:hover:text-primary-400">
+              <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700 dark:hover:text-primary-400">
                 {t('forgot_password')}
-              </a>
+              </Link>
             </div>
 
             <button

@@ -316,6 +316,8 @@ def _persist_crawl(source: CrawlSource, result: CrawlResult, duration_ms: int) -
                     views=item.views,
                     is_trending=1 if item.is_trending else 0,
                     crawl_status=1,
+                    review_status="pending",
+                    quality_score=0,
                     created_at=now,
                     updated_at=now,
                 )

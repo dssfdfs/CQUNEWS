@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, Query, Request, UploadFile, status
@@ -29,7 +29,10 @@ from .models import (
     ExportJob,
     LoginHistory,
     Notification,
+    PasswordResetToken,
     User,
+    UserHistory,
+    UserMaterial,
     UserProfile,
     UserProfileHistory,
     UserSettings,
@@ -977,7 +980,6 @@ def cleanup_data(
     db: Session = Depends(get_session),
 ) -> ApiResponse:
     deleted = cleanup_expired_exports()
-    # Trim old login history to the last 30 days
     thirty_days_ago = (
         __import__("datetime").datetime.utcnow() - __import__("datetime").timedelta(days=30)
     ).isoformat()
@@ -990,3 +992,300 @@ def cleanup_data(
         db.delete(r)
     db.commit()
     return ApiResponse(data={"deleted_exports": deleted, "deleted_login_records": len(old_logins)})
+
+
+# =============== User History ===============
+
+
+class UserHistoryCreateRequest(BaseModel):
+    content_type: str = Field(..., pattern="^(text|file|url|video_local|video_url)$")
+    content: str = Field(...)
+    summary: str = Field(...)
+    titles: Optional[str] = None
+    quality: Optional[str] = None
+    model_type: Optional[str] = None
+    summary_style: Optional[str] = None
+    language: Optional[str] = None
+    custom_require: Optional[str] = None
+    video_fps: Optional[float] = None
+    category: Optional[str] = None
+    file_path: Optional[str] = None
+
+
+class UserHistoryResponse(BaseModel):
+    id: int
+    user_id: int
+    content_type: str
+    content: str
+    summary: str
+    titles: Optional[str] = None
+    quality: Optional[str] = None
+    model_type: Optional[str] = None
+    summary_style: Optional[str] = None
+    language: Optional[str] = None
+    custom_require: Optional[str] = None
+    video_fps: Optional[float] = None
+    category: Optional[str] = None
+    status: str
+    file_path: Optional[str] = None
+    created_at: str
+    updated_at: str
+
+
+@router.post("/history", response_model=ApiResponse)
+def create_history(
+    req: UserHistoryCreateRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    now = datetime.utcnow().isoformat()
+    history = UserHistory(
+        user_id=user.id,
+        content_type=req.content_type,
+        content=req.content,
+        summary=req.summary,
+        titles=req.titles,
+        quality=req.quality,
+        model_type=req.model_type,
+        summary_style=req.summary_style,
+        language=req.language,
+        custom_require=req.custom_require,
+        video_fps=req.video_fps,
+        category=req.category,
+        file_path=req.file_path,
+        created_at=now,
+        updated_at=now,
+    )
+    db.add(history)
+    db.commit()
+    db.refresh(history)
+    return ApiResponse(data=UserHistoryResponse(**history.model_dump()).model_dump())
+
+
+@router.get("/history", response_model=ApiResponse)
+def list_history(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    content_type: Optional[str] = None,
+    category: Optional[str] = None,
+    keyword: Optional[str] = None,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    stmt = select(UserHistory).where(UserHistory.user_id == user.id)
+    if content_type:
+        stmt = stmt.where(UserHistory.content_type == content_type)
+    if category:
+        stmt = stmt.where(UserHistory.category == category)
+    if keyword:
+        like = f"%{keyword}%"
+        stmt = stmt.where(
+            (col(UserHistory.content).like(like)) | (col(UserHistory.summary).like(like))
+        )
+    total = len(db.exec(stmt).all())
+    offset = (page - 1) * page_size
+    items = db.exec(
+        stmt.order_by(UserHistory.id.desc()).offset(offset).limit(page_size)
+    ).all()
+    return ApiResponse(
+        data={
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "items": [UserHistoryResponse(**item.model_dump()).model_dump() for item in items],
+        }
+    )
+
+
+@router.get("/history/{history_id}", response_model=ApiResponse)
+def get_history(
+    history_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    history = db.get(UserHistory, history_id)
+    if not history or history.user_id != user.id:
+        raise HTTPException(status_code=404, detail="记录不存在")
+    return ApiResponse(data=UserHistoryResponse(**history.model_dump()).model_dump())
+
+
+@router.put("/history/{history_id}", response_model=ApiResponse)
+def update_history(
+    history_id: int,
+    req: dict,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    history = db.get(UserHistory, history_id)
+    if not history or history.user_id != user.id:
+        raise HTTPException(status_code=404, detail="记录不存在")
+    for key, value in req.items():
+        if hasattr(history, key):
+            setattr(history, key, value)
+    history.updated_at = datetime.utcnow().isoformat()
+    db.commit()
+    db.refresh(history)
+    return ApiResponse(data=UserHistoryResponse(**history.model_dump()).model_dump())
+
+
+@router.delete("/history/{history_id}", response_model=ApiResponse)
+def delete_history(
+    history_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    history = db.get(UserHistory, history_id)
+    if not history or history.user_id != user.id:
+        raise HTTPException(status_code=404, detail="记录不存在")
+    db.delete(history)
+    db.commit()
+    return ApiResponse(data={"success": True})
+
+
+# =============== User Material ===============
+
+
+class UserMaterialCreateRequest(BaseModel):
+    material_type: str = Field(..., pattern="^(text|file|url|video_local|video_url)$")
+    file_name: Optional[str] = None
+    file_path: Optional[str] = None
+    file_size: int = Field(default=0)
+    original_url: Optional[str] = None
+    content: Optional[str] = None
+
+
+@router.post("/material", response_model=ApiResponse)
+def create_material(
+    req: UserMaterialCreateRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    import hashlib
+    content_hash = None
+    if req.content:
+        content_hash = hashlib.md5(req.content.encode()).hexdigest()
+    now = datetime.utcnow().isoformat()
+    material = UserMaterial(
+        user_id=user.id,
+        material_type=req.material_type,
+        file_name=req.file_name,
+        file_path=req.file_path,
+        file_size=req.file_size,
+        original_url=req.original_url,
+        content=req.content,
+        content_hash=content_hash,
+        created_at=now,
+        updated_at=now,
+    )
+    db.add(material)
+    db.commit()
+    db.refresh(material)
+    return ApiResponse(data=material.model_dump())
+
+
+@router.get("/material", response_model=ApiResponse)
+def list_materials(
+    material_type: Optional[str] = None,
+    limit: int = Query(20, ge=1, le=100),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    stmt = select(UserMaterial).where(
+        (UserMaterial.user_id == user.id) & (UserMaterial.is_deleted == 0)
+    )
+    if material_type:
+        stmt = stmt.where(UserMaterial.material_type == material_type)
+    rows = db.exec(stmt.order_by(UserMaterial.id.desc()).limit(limit)).all()
+    return ApiResponse(data=[r.model_dump() for r in rows])
+
+
+@router.get("/material/{material_id}", response_model=ApiResponse)
+def get_material(
+    material_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    material = db.get(UserMaterial, material_id)
+    if not material or material.user_id != user.id or material.is_deleted == 1:
+        raise HTTPException(status_code=404, detail="素材不存在")
+    return ApiResponse(data=material.model_dump())
+
+
+# =============== Password Reset ===============
+
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+
+class PasswordResetVerifyRequest(BaseModel):
+    token: str
+    email: EmailStr
+    new_password: str = Field(min_length=6, max_length=128)
+
+
+@router.post("/auth/forgot-password", response_model=ApiResponse)
+def forgot_password(
+    req: PasswordResetRequest,
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    from .email_utils import send_password_reset_email
+    
+    user = db.exec(select(User).where(User.email == req.email)).first()
+    if not user:
+        return ApiResponse(message="如果该邮箱已注册，我们将发送重置链接")
+    import secrets
+    token = secrets.token_urlsafe(32)
+    expires_at = (datetime.utcnow() + timedelta(hours=1)).isoformat()
+    existing_token = db.exec(
+        select(PasswordResetToken).where(PasswordResetToken.user_id == user.id)
+    ).first()
+    if existing_token:
+        db.delete(existing_token)
+    reset_token = PasswordResetToken(
+        user_id=user.id,
+        token=token,
+        email=req.email,
+        expires_at=expires_at,
+    )
+    db.add(reset_token)
+    db.commit()
+    logger.info(f"Password reset token generated for user {user.id} ({user.email})")
+    
+    email_sent = send_password_reset_email(user.email, token)
+    if email_sent:
+        return ApiResponse(message="密码重置链接已发送到您的邮箱")
+    else:
+        return ApiResponse(message="邮件发送失败，请稍后重试", code=1)
+
+
+@router.post("/auth/reset-password", response_model=ApiResponse)
+def reset_password(
+    req: PasswordResetVerifyRequest,
+    db: Session = Depends(get_session),
+) -> ApiResponse:
+    reset_token = db.exec(
+        select(PasswordResetToken).where(
+            (PasswordResetToken.token == req.token)
+            & (PasswordResetToken.email == req.email)
+            & (PasswordResetToken.is_used == 0)
+        )
+    ).first()
+    if not reset_token:
+        raise HTTPException(status_code=400, detail="无效的重置链接")
+    if datetime.utcnow().isoformat() > reset_token.expires_at:
+        raise HTTPException(status_code=400, detail="重置链接已过期")
+    score, suggestions = check_password_strength(req.new_password)
+    if score < 2:
+        raise HTTPException(
+            status_code=400,
+            detail=f"新密码强度不足：{';'.join(suggestions)}",
+        )
+    user = db.get(User, reset_token.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    user.password_hash = hash_password(req.new_password)
+    user.updated_at = datetime.utcnow().isoformat()
+    reset_token.is_used = 1
+    db.commit()
+    return ApiResponse(message="密码重置成功，请使用新密码登录")

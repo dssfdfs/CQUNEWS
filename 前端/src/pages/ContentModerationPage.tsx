@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { adminApi, NewsItem, NewsDetail } from '@/lib/api';
 import { useToastStore } from '@/store/toastStore';
+import { useAdminStore } from '@/store/adminStore';
 import {
   Search,
   Filter,
@@ -14,6 +15,9 @@ import {
   XCircle,
   ChevronLeft,
   ChevronRight,
+  LogOut,
+  CheckSquare,
+  Square,
 } from 'lucide-react';
 
 interface ContentModerationPageProps {
@@ -23,6 +27,7 @@ interface ContentModerationPageProps {
 
 export function ContentModerationPage({ activeItem, onItemClick }: ContentModerationPageProps) {
   const { success, error } = useToastStore();
+  const { logout } = useAdminStore();
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -36,6 +41,7 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [newsToReject, setNewsToReject] = useState<number | null>(null);
   const [showDetail, setShowDetail] = useState(false);
+  const [selectedNewsIds, setSelectedNewsIds] = useState<Set<number>>(new Set());
 
   const fetchNews = async () => {
     setLoading(true);
@@ -97,6 +103,65 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
     }
   };
 
+  const toggleSelectNews = (newsId: number) => {
+    setSelectedNewsIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(newsId)) {
+        newSet.delete(newsId);
+      } else {
+        newSet.add(newsId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    const pendingNews = newsList.filter(n => n.review_status === 'pending');
+    if (selectedNewsIds.size === pendingNews.length) {
+      setSelectedNewsIds(new Set());
+    } else {
+      setSelectedNewsIds(new Set(pendingNews.map(n => n.id)));
+    }
+  };
+
+  const handleBatchApprove = async () => {
+    if (selectedNewsIds.size === 0) {
+      error('请先选择要审核的新闻');
+      return;
+    }
+    try {
+      const result = await adminApi.batchReview(Array.from(selectedNewsIds), 'approve');
+      if (result.success_count !== undefined) {
+        success(`批量审核通过 ${result.success_count} 条新闻`);
+      } else {
+        success(`批量审核通过 ${selectedNewsIds.size} 条新闻`);
+      }
+      setSelectedNewsIds(new Set());
+      fetchNews();
+    } catch (err) {
+      error('批量审核失败');
+    }
+  };
+
+  const handleBatchReject = async () => {
+    if (selectedNewsIds.size === 0) {
+      error('请先选择要审核的新闻');
+      return;
+    }
+    try {
+      const result = await adminApi.batchReview(Array.from(selectedNewsIds), 'reject', '批量驳回');
+      if (result.success_count !== undefined) {
+        success(`批量驳回 ${result.success_count} 条新闻`);
+      } else {
+        success(`批量驳回 ${selectedNewsIds.size} 条新闻`);
+      }
+      setSelectedNewsIds(new Set());
+      fetchNews();
+    } catch (err) {
+      error('批量驳回失败');
+    }
+  };
+
   const statusConfig = {
     pending: { label: '待审核', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
     published: { label: '已发布', color: 'bg-green-100 text-green-700', icon: CheckCircle },
@@ -140,6 +205,15 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
             );
           })}
         </nav>
+        <div className="p-4 border-t border-gray-200">
+          <button
+            onClick={() => logout()}
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all cursor-pointer"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>退出登录</span>
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -176,6 +250,24 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
                 <Filter className="w-4 h-4" />
                 筛选
               </button>
+              {selectedNewsIds.size > 0 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleBatchApprove}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    <Check className="w-4 h-4" />
+                    批量通过 ({selectedNewsIds.size})
+                  </button>
+                  <button
+                    onClick={handleBatchReject}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                    批量驳回 ({selectedNewsIds.size})
+                  </button>
+                </div>
+              )}
             </div>
 
             {showFilter && (
@@ -222,6 +314,19 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                        <button
+                          onClick={toggleSelectAll}
+                          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700"
+                        >
+                          {selectedNewsIds.size === newsList.filter(n => n.review_status === 'pending').length && newsList.filter(n => n.review_status === 'pending').length > 0 ? (
+                            <CheckSquare className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <Square className="w-4 h-4" />
+                          )}
+                          全选
+                        </button>
+                      </th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">标题</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">来源</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">分类</th>
@@ -237,6 +342,20 @@ export function ContentModerationPage({ activeItem, onItemClick }: ContentModera
                       const statusStyle = statusConfig[news.review_status as keyof typeof statusConfig]?.color || 'bg-gray-100 text-gray-700';
                       return (
                         <tr key={news.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4">
+                            {news.review_status === 'pending' && (
+                              <button
+                                onClick={() => toggleSelectNews(news.id)}
+                                className="flex items-center gap-2"
+                              >
+                                {selectedNewsIds.has(news.id) ? (
+                                  <CheckSquare className="w-4 h-4 text-green-600" />
+                                ) : (
+                                  <Square className="w-4 h-4 text-gray-300 hover:text-gray-500" />
+                                )}
+                              </button>
+                            )}
+                          </td>
                           <td className="px-6 py-4">
                             <span className="font-medium text-gray-800 max-w-[300px] truncate block">{news.title}</span>
                           </td>

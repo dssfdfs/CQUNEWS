@@ -36,7 +36,7 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
   const [selectedUser, setSelectedUser] = useState<UserInfo | null>(null);
   const [userHistory, setUserHistory] = useState<UserHistoryItem[]>([]);
   const [userWordCloud, setUserWordCloud] = useState<Array<{ text: string; value: number; category: string; weight: number }>>([]);
-  const [tokenUsage, setTokenUsage] = useState<Array<{ date: string; tokens: number }>>([]);
+  const [summaryStats, setSummaryStats] = useState<Array<{ date: string; count: number }>>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [statusFilter, setStatusFilter] = useState('');
@@ -74,16 +74,17 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
 
     try {
       const historyData = await adminApi.getUserHistory(user.id);
-      const wordCloudData = await adminApi.getWordCloud(7);
+      const profileData = await adminApi.getUserProfile(user.id);
+      const statsData = await adminApi.getUserSummaryStats(user.id);
 
       setUserHistory(historyData.history || []);
-      setUserWordCloud(wordCloudData.words ? wordCloudData.words.slice(0, 3).map((t: { text: string; value: number; category: string }) => ({ ...t, weight: Math.random() * 50 + 50 })) : []);
-      setTokenUsage([]);
+      setUserWordCloud(profileData.tags || []);
+      setSummaryStats(statsData.data || []);
     } catch (err) {
       console.error('Failed to fetch user details:', err);
       setUserHistory([]);
       setUserWordCloud([]);
-      setTokenUsage([]);
+      setSummaryStats([]);
     }
   };
 
@@ -92,7 +93,7 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
     setSelectedUser(null);
     setUserHistory([]);
     setUserWordCloud([]);
-    setTokenUsage([]);
+    setSummaryStats([]);
     document.body.style.overflow = '';
   };
 
@@ -149,7 +150,27 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
     if (!dateStr) return '未知';
     try {
       const date = new Date(dateStr);
-      return date.toLocaleString('zh-CN');
+      if (isNaN(date.getTime())) {
+        return dateStr;
+      }
+      const now = new Date();
+      const diff = now.getTime() - date.getTime();
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      
+      if (minutes < 1) return '刚刚';
+      if (minutes < 60) return `${minutes}分钟前`;
+      if (hours < 24) return `${hours}小时前`;
+      if (days < 7) return `${days}天前`;
+      
+      return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     } catch {
       return dateStr;
     }
@@ -361,8 +382,8 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap" onClick={() => handleUserClick(user)}>
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                              <Users className="w-5 h-5 text-gray-400" />
+                            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                              {user.username ? user.username.charAt(0).toUpperCase() : 'U'}
                             </div>
                             <div>
                               <div className="font-medium text-gray-800">{user.username}</div>
@@ -477,18 +498,49 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
                     </h3>
                     {userWordCloud.length === 0 ? (
                       <div className="text-center py-8 text-gray-400">
-                        <p>暂无标签数据</p>
+                        <p>暂无用户画像数据</p>
                       </div>
                     ) : (
-                      <div className="flex flex-wrap gap-3">
-                        {userWordCloud.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium"
-                          >
-                            {tag.text} ({Math.round(tag.weight)})
-                          </span>
-                        ))}
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-sm text-gray-500 mb-2">感兴趣的新闻类别</p>
+                          <div className="flex flex-wrap gap-2">
+                            {userWordCloud.filter(t => t.type === 'category').map((tag, index) => (
+                              <span
+                                key={index}
+                                className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium"
+                              >
+                                {tag.text} ({tag.value})
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500 mb-2">喜欢的语言风格</p>
+                          <div className="flex flex-wrap gap-2">
+                            {userWordCloud.filter(t => t.type === 'language').map((tag, index) => (
+                              <span
+                                key={index}
+                                className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium"
+                              >
+                                {tag.text} ({tag.value})
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500 mb-2">偏好的摘要风格</p>
+                          <div className="flex flex-wrap gap-2">
+                            {userWordCloud.filter(t => t.type === 'style').map((tag, index) => (
+                              <span
+                                key={index}
+                                className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium"
+                              >
+                                {tag.text} ({tag.value})
+                              </span>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -496,22 +548,22 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-indigo-600" />
-                      Token 消耗趋势（近30天）
+                      七天摘要生成量
                     </h3>
-                    <div className="h-40">
+                    <div className="h-48">
                       <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={tokenUsage}>
+                        <AreaChart data={summaryStats}>
                           <defs>
-                            <linearGradient id="tokenGradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="#6366f1" stopOpacity={0.3} />
-                              <stop offset="100%" stopColor="#6366f1" stopOpacity={0.05} />
+                            <linearGradient id="summaryGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                              <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.05} />
                             </linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="date" tick={{ fontSize: 10 }} />
                           <YAxis tick={{ fontSize: 10 }} />
-                          <Tooltip />
-                          <Area type="monotone" dataKey="tokens" stroke="#6366f1" fillOpacity={1} fill="url(#tokenGradient)" />
+                          <Tooltip formatter={(value: number) => [`${value} 次`, '生成量']} />
+                          <Area type="monotone" dataKey="count" stroke="#8b5cf6" fillOpacity={1} fill="url(#summaryGradient)" />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>

@@ -25,6 +25,12 @@ interface HistoryItem {
   status: string;
   category: string;
   createdAt: Date;
+  content_type?: string;
+  model_type?: string;
+  summary_style?: string;
+  language?: string;
+  custom_require?: string;
+  video_fps?: number;
 }
 
 interface SettingsState {
@@ -284,10 +290,20 @@ export const useStore = create<NewsState>((set, get) => ({
   setSummaryType: (summaryType) => set({ summaryType }),
   setModel: (model) => set({ model }),
   setLanguage: (language) => set({ language }),
-  setInputType: (inputType) => set({ inputType }),
+  setInputType: (inputType) => {
+        set((state) => ({ 
+            inputType,
+            content: '',
+            summary: '',
+            titles: { objective: '', dataHighlight: '', lightweight: '' },
+            quality: { credibility: 0, readability: 0, engagement: 0, relevance: 0 },
+            customPrompt: '',
+            step: 1,
+        }));
+    },
   setIsGenerating: (isGenerating) => set({ isGenerating }),
   setCustomPrompt: (customPrompt) => set({ customPrompt }),
-  addHistory: (item) => {
+  addHistory: async (item) => {
     const currentState = get();
     const category = classifyContent(item.content);
     const newItem = { 
@@ -296,13 +312,44 @@ export const useStore = create<NewsState>((set, get) => ({
       createdAt: new Date(),
       quality: currentState.quality,
       status: '已完成',
-      category
+      category,
+      content_type: currentState.inputType,
+      model_type: currentState.model,
+      summary_style: currentState.summaryType,
+      language: currentState.language,
+      custom_require: currentState.customPrompt,
     };
     set((state) => {
       const newHistory = [newItem, ...state.history];
       saveHistoryToStorage(state.currentUser?.id || null, newHistory);
       return { history: newHistory };
     });
+    if (currentState.isAuthenticated && currentState.currentUser) {
+      try {
+        const token = localStorage.getItem('token');
+        await fetch('/api/history', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content_type: currentState.inputType,
+            content: item.content,
+            summary: item.summary,
+            titles: JSON.stringify(item.titles),
+            quality: JSON.stringify(currentState.quality),
+            model_type: currentState.model,
+            summary_style: currentState.summaryType,
+            language: currentState.language,
+            custom_require: currentState.customPrompt,
+            category,
+          }),
+        });
+      } catch (e) {
+        console.error('Failed to save history to backend:', e);
+      }
+    }
   },
   updateHistory: (id, updates) => {
     set((state) => {
@@ -465,6 +512,47 @@ export const useStore = create<NewsState>((set, get) => ({
     }
   },
   
+  loadHistoryFromBackend: async () => {
+    try {
+      const { currentUser } = get();
+      if (!currentUser) return;
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/history', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.code === 0 && data.data?.items) {
+          const historyItems = data.data.items.map((item: any) => ({
+            id: String(item.id),
+            content: item.content,
+            summary: item.summary,
+            titles: item.titles ? JSON.parse(item.titles) : { objective: '', dataHighlight: '', lightweight: '' },
+            quality: item.quality ? JSON.parse(item.quality) : { credibility: 0, readability: 0, engagement: 0, relevance: 0 },
+            status: item.status,
+            category: item.category || '综合',
+            createdAt: new Date(item.created_at),
+            content_type: item.content_type,
+            model_type: item.model_type,
+            summary_style: item.summary_style,
+            language: item.language,
+            custom_require: item.custom_require,
+            video_fps: item.video_fps,
+          }));
+          set({ history: historyItems });
+          saveHistoryToStorage(currentUser.id, historyItems);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load history from backend:', e);
+    }
+  },
+  
   login: async (username: string, password: string) => {
     try {
       const response = await fetch('/api/auth/login', {
@@ -484,6 +572,7 @@ export const useStore = create<NewsState>((set, get) => ({
         localStorage.setItem('refresh_token', data.data.refresh_token);
         localStorage.setItem('user', JSON.stringify(user));
         set({ isAuthenticated: true, currentUser: user });
+        await get().loadHistoryFromBackend();
         return true;
       }
       return false;
@@ -533,7 +622,24 @@ export const useStore = create<NewsState>((set, get) => ({
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('refresh_token');
-    set({ isAuthenticated: false, currentUser: null });
+    const { currentUser } = get();
+    if (currentUser?.id) {
+      localStorage.removeItem(`history_${currentUser.id}`);
+    }
+    set({ 
+      isAuthenticated: false, 
+      currentUser: null, 
+      history: [],
+      content: '',
+      summary: '',
+      titles: { objective: '', dataHighlight: '', lightweight: '' },
+      quality: { credibility: 0, readability: 0, engagement: 0, relevance: 0 },
+      customPrompt: '',
+      inputType: 'text',
+      model: 'DeepSeek',
+      summaryType: '标准摘要',
+      language: '中文',
+    });
   },
 
   recordBehavior: (actionType, targetId, extraData) => {

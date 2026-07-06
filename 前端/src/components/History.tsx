@@ -14,7 +14,7 @@ const DATE_FILTERS = [
 const HISTORY_CATEGORIES = ['全部', '国际', '时政', '科技', '财经', '体育', '娱乐', '健康', '综合'] as const;
 
 export function History() {
-  const { history, removeHistory, setContent, setSummary, setTitles, setQuality, setStep, updateHistory } = useStore();
+  const { history, removeHistory, setContent, setSummary, setTitles, setQuality, setStep, updateHistory, setInputType, setModel, setSummaryType, setLanguage, setCustomPrompt } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState<(typeof DATE_FILTERS)[number]['id']>('all');
   const [customDate, setCustomDate] = useState('');
@@ -124,16 +124,29 @@ export function History() {
 
   const handleRegenerate = () => {
     if (selectedItem) {
+      const content_type = selectedItem.content_type || 'text';
+      setInputType(content_type);
       setContent(selectedItem.content);
       setSummary('');
       setTitles({ objective: '', dataHighlight: '', lightweight: '' });
       setQuality({ credibility: 0, readability: 0, engagement: 0, relevance: 0 });
       setStep(1);
+      
+      if (selectedItem.model_type) {
+        setModel(selectedItem.model_type);
+      }
+      if (selectedItem.summary_style) {
+        setSummaryType(selectedItem.summary_style);
+      }
+      if (selectedItem.language) {
+        setLanguage(selectedItem.language);
+      }
+      if (selectedItem.custom_require) {
+        setCustomPrompt(selectedItem.custom_require);
+      }
+      
       handleCloseDrawer();
       window.dispatchEvent(new Event('navigate-to-summary'));
-      setTimeout(() => {
-        window.dispatchEvent(new Event('generate-all'));
-      }, 300);
     }
   };
 

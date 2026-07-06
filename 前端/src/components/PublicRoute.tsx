@@ -15,7 +15,8 @@ export function PublicRoute({ children }: PublicRouteProps) {
     return <>{children}</>;
   }
 
-  if (isAuthenticated && !isAdminAuthenticated) {
+  const allowedPaths = ['/forgot-password', '/register'];
+  if (isAuthenticated && !isAdminAuthenticated && !allowedPaths.includes(location.pathname)) {
     return <Navigate to="/" replace />;
   }
 

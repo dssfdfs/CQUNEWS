@@ -130,6 +130,21 @@ export async function verifyQuality(content: string, summary: string, titles: {
   engagement: number;
   relevance: number;
 }> {
+  try {
+    const response = await fetch('/api/quality-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content, summary, titles }),
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      return result;
+    }
+  } catch (err) {
+    console.error('Backend quality check failed, falling back to AI:', err);
+  }
+
   const systemPrompt = `你是一个专业的新闻内容质量评估专家。请从用户角度对新闻内容进行综合评估。`;
   
   const userPrompt = `请从用户角度对以下新闻内容、摘要和标题进行综合质量评估：

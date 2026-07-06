@@ -11,7 +11,11 @@ import {
   Bookmark,
   BookmarkCheck,
   Sparkles,
+  Loader2,
+  Copy,
+  Check,
 } from 'lucide-react';
+import { generateSummary } from '@/api/deepseek';
 
 interface NewsItem {
   id: number;
@@ -77,6 +81,9 @@ export function NewsDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [bookmarked, setBookmarked] = useState<Set<number>>(() => loadBookmarksFromStorage());
+  const [aiSummary, setAiSummary] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -187,6 +194,30 @@ export function NewsDetail() {
       }
       return next;
     });
+  };
+
+  const handleGenerateSummary = async () => {
+    if (!news || !news.content) return;
+    setIsGenerating(true);
+    try {
+      const summary = await generateSummary(news.content, '摘要', '中文');
+      setAiSummary(summary);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '生成摘要失败');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleCopySummary = async () => {
+    if (!aiSummary) return;
+    try {
+      await navigator.clipboard.writeText(aiSummary);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch {
+      // ignore
+    }
   };
 
   const handleShare = () => {
@@ -344,17 +375,66 @@ export function NewsDetail() {
           </div>
         </div>
 
-        {news.summary && (
-          <div className="px-8 py-6 bg-blue-50/50 border-b border-blue-100">
-            <div className="flex items-center gap-2 mb-3">
+        <div className="px-8 py-6 bg-blue-50/50 border-b border-blue-100">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-blue-600" />
               <h2 className="font-semibold text-gray-800">新闻摘要</h2>
             </div>
-            <p className="text-gray-700 leading-relaxed">
-              {news.summary}
-            </p>
+            {aiSummary && (
+              <button
+                onClick={handleCopySummary}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-gray-100 text-gray-600 rounded-lg text-sm transition-colors"
+                title="复制摘要"
+              >
+                {copySuccess ? (
+                  <>
+                    <Check className="w-4 h-4 text-green-500" />
+                    已复制
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    复制
+                  </>
+                )}
+              </button>
+            )}
           </div>
-        )}
+          {aiSummary ? (
+            <p className="text-gray-700 leading-relaxed">
+              {aiSummary}
+            </p>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+                <Sparkles className="w-6 h-6 text-purple-500" />
+              </div>
+              <p className="text-gray-400 text-sm mb-3">点击下方按钮生成AI智能摘要</p>
+              <button
+                onClick={handleGenerateSummary}
+                disabled={isGenerating || !news.content}
+                className={`inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition ${
+                  isGenerating || !news.content
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    生成中...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    一键生成摘要
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
 
         <div 
           className="p-8 overflow-y-auto max-h-[calc(100vh-400px)]"

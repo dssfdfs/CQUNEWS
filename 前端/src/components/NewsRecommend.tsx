@@ -310,6 +310,7 @@ export function NewsRecommend() {
   };
 
   const trendingNews = recommendations.filter(n => n.is_trending);
+  const showKnowledgeGraphButton = content.length >= 200;
 
   return (
     <div className="card p-6">
@@ -323,17 +324,19 @@ export function NewsRecommend() {
             <p className="text-sm text-gray-500">基于内容智能推荐相关新闻</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowKnowledgeGraph(!showKnowledgeGraph)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            showKnowledgeGraph 
-              ? 'bg-primary-600 text-white' 
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          <Network className="w-4 h-4" />
-          {showKnowledgeGraph ? '隐藏知识图谱' : '查看知识图谱'}
-        </button>
+        {showKnowledgeGraphButton && (
+          <button
+            onClick={() => setShowKnowledgeGraph(!showKnowledgeGraph)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              showKnowledgeGraph 
+                ? 'bg-primary-600 text-white' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            <Network className="w-4 h-4" />
+            {showKnowledgeGraph ? '隐藏知识图谱' : '查看知识图谱'}
+          </button>
+        )}
       </div>
 
       {showKnowledgeGraph && (
@@ -600,13 +603,10 @@ export function NewsRecommend() {
                         热门
                       </span>
                     </div>
-                    <h3 className="font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 mb-2">
+                    <h3 className="font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 mb-3">
                       {news.title}
                     </h3>
-                    <p className="text-sm text-gray-500 line-clamp-2">
-                      {news.summary}
-                    </p>
-                    <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-400">{news.source}</span>
                       <span className="text-xs text-gray-400 flex items-center gap-1">
                         <Star className="w-3 h-3" />
@@ -658,13 +658,10 @@ export function NewsRecommend() {
                         {formatDate(news.published_at)}
                       </span>
                     </div>
-                    <h3 className="font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 mb-1">
+                    <h3 className="font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 mb-2">
                       {news.title}
                     </h3>
-                    <p className="text-sm text-gray-500 line-clamp-2">
-                      {news.summary}
-                    </p>
-                    <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-400">{news.source}</span>
                       <div className="flex items-center gap-3">
                         <span className="text-xs text-gray-400 flex items-center gap-1">

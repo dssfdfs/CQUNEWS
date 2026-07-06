@@ -67,6 +67,15 @@ class Settings(BaseSettings):
     QWEN_API_URL: str = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
     QWEN_MODEL_NAME: str = "qwen-turbo"
 
+    SEND_EMAIL_ENABLED: bool = False
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 465
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_SENDER: str = ""
+    SMTP_USE_TLS: bool = False
+    SMTP_USE_SSL: bool = True
+
     model_config = SettingsConfigDict(
         env_file=str(BASE_DIR / ".env"),
         env_file_encoding="utf-8",

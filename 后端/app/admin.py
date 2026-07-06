@@ -6,8 +6,8 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
-from sqlmodel import Session, select
+from pydantic import BaseModel, Field
+from sqlmodel import Session, select, func
 
 from .auth import create_access_token, hash_password, verify_password
 from .config import settings
@@ -796,6 +796,7 @@ def approve_content(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="新闻不存在")
     
     news.review_status = "published"
+    news.audit_status = 1
     news.review_note = review_req.note if review_req else None
     news.reviewed_by = admin.id
     news.reviewed_at = datetime.utcnow().isoformat()
@@ -826,6 +827,7 @@ def reject_content(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="新闻不存在")
     
     news.review_status = "rejected"
+    news.audit_status = 0
     news.review_note = review_req.note
     news.reviewed_by = admin.id
     news.reviewed_at = datetime.utcnow().isoformat()
@@ -842,6 +844,64 @@ def reject_content(
     db.refresh(news)
     
     return {"id": news.id, "review_status": news.review_status, "reviewed_at": news.reviewed_at}
+
+
+class BatchReviewRequest(BaseModel):
+    news_ids: list[int] = Field(..., description="新闻ID列表")
+    action: str = Field(..., description="操作类型: approve/reject")
+    note: Optional[str] = None
+
+
+@router.put("/content/batch-review")
+def batch_review(
+    request: BatchReviewRequest,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    if not request.news_ids or len(request.news_ids) == 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="请选择要审核的新闻")
+    
+    if request.action not in ["approve", "reject"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="无效的操作类型")
+    
+    success_count = 0
+    failed_count = 0
+    
+    for news_id in request.news_ids:
+        news = db.get(News, news_id)
+        if not news:
+            failed_count += 1
+            continue
+        
+        if request.action == "approve":
+            news.review_status = "published"
+            news.audit_status = 1
+            news.review_note = request.note
+        else:
+            news.review_status = "rejected"
+            news.audit_status = 0
+            news.review_note = request.note
+        
+        news.reviewed_by = admin.id
+        news.reviewed_at = datetime.utcnow().isoformat()
+        news.updated_at = datetime.utcnow().isoformat()
+        
+        db.add(AuditLog(
+            user_id=admin.id,
+            action=f"{request.action}_content",
+            target=f"news:{news_id}",
+            detail=f"标题: {news.title}, 原因: {request.note}",
+        ))
+        
+        success_count += 1
+    
+    db.commit()
+    
+    return {
+        "success_count": success_count,
+        "failed_count": failed_count,
+        "message": f"批量审核完成，成功{success_count}条，失败{failed_count}条",
+    }
 
 
 @router.get("/content/{news_id}")
@@ -945,6 +1005,134 @@ def update_user_status(
         "status": user.status,
         "updated_at": datetime.utcnow().isoformat(),
     }
+
+
+@router.get("/users/{user_id}/summary-stats")
+def get_user_summary_stats(
+    user_id: int,
+    days: int = 7,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=days)
+    
+    result = []
+    for i in range(days):
+        current_date = (end_date - timedelta(days=days - 1 - i)).date()
+        date_str = current_date.strftime("%Y-%m-%d")
+        
+        count = db.exec(
+            select(func.count(UserBehavior.id)).where(
+                UserBehavior.user_id == user_id,
+                UserBehavior.action_type == "generate",
+                UserBehavior.timestamp.like(f"{date_str}%"),
+            )
+        ).first()[0]
+        
+        result.append({
+            "date": date_str,
+            "count": count or 0,
+        })
+    
+    return {"data": result}
+
+
+@router.get("/users/{user_id}/profile")
+def get_user_profile(
+    user_id: int,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    behaviors = db.exec(
+        select(UserBehavior).where(UserBehavior.user_id == user_id).order_by(UserBehavior.timestamp.desc())
+    ).all()
+    
+    category_counts: dict[str, int] = {}
+    language_counts: dict[str, int] = {}
+    style_counts: dict[str, int] = {}
+    
+    for behavior in behaviors:
+        if behavior.action_type == "generate" and behavior.extra_data:
+            try:
+                meta = json.loads(behavior.extra_data)
+                if meta.get("category"):
+                    category_counts[meta["category"]] = category_counts.get(meta["category"], 0) + 1
+                if meta.get("language"):
+                    language_counts[meta["language"]] = language_counts.get(meta["language"], 0) + 1
+                if meta.get("summary_style"):
+                    style_counts[meta["summary_style"]] = style_counts.get(meta["summary_style"], 0) + 1
+            except json.JSONDecodeError:
+                pass
+        
+        if behavior.action_type == "view" and behavior.target_id:
+            news = db.get(News, behavior.target_id)
+            if news and news.category:
+                category_counts[news.category] = category_counts.get(news.category, 0) + 1
+    
+    sorted_categories = sorted(category_counts.items(), key=lambda x: x[1], reverse=True)
+    sorted_languages = sorted(language_counts.items(), key=lambda x: x[1], reverse=True)
+    sorted_styles = sorted(style_counts.items(), key=lambda x: x[1], reverse=True)
+    
+    tags = []
+    for category, count in sorted_categories[:5]:
+        tags.append({
+            "text": category,
+            "value": count,
+            "type": "category",
+        })
+    
+    for lang, count in sorted_languages[:3]:
+        tags.append({
+            "text": lang,
+            "value": count,
+            "type": "language",
+        })
+    
+    for style, count in sorted_styles[:3]:
+        tags.append({
+            "text": style,
+            "value": count,
+            "type": "style",
+        })
+    
+    tags.sort(key=lambda x: x["value"], reverse=True)
+    
+    return {
+        "category_preferences": [{"name": c, "count": n} for c, n in sorted_categories],
+        "language_preferences": [{"name": l, "count": n} for l, n in sorted_languages],
+        "style_preferences": [{"name": s, "count": n} for s, n in sorted_styles],
+        "tags": tags[:10],
+    }
+
+
+@router.get("/summary-stats")
+def get_summary_stats(
+    days: int = 7,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=days)
+    
+    result = []
+    for i in range(days):
+        current_date = (end_date - timedelta(days=days - 1 - i)).date()
+        date_str = current_date.strftime("%Y-%m-%d")
+        
+        count = db.exec(
+            select(func.count(UserBehavior.id)).where(
+                UserBehavior.action_type == "generate",
+                UserBehavior.timestamp.like(f"{date_str}%"),
+            )
+        ).first()[0]
+        
+        result.append({
+            "date": date_str,
+            "count": count or 0,
+        })
+    
+    return {"data": result}
 
 
 @router.post("/config/clear-cache")

@@ -53,6 +53,10 @@ export function LogsPage({ activeItem, onItemClick }: LogsPageProps) {
     login: '登录系统',
     logout: '退出系统',
     update_config: '更新配置',
+    generate_summary: '生成摘要',
+    register: '用户注册',
+    batch_approve: '批量审核通过',
+    batch_reject: '批量审核拒绝',
   };
 
   return (

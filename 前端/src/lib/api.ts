@@ -120,6 +120,28 @@ export interface PaginatedResponse<T> {
 }
 
 export const userApi = {
+  toggleFavorite: async (newsId: number) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`/api/news/${newsId}/favorite`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    return response.json();
+  },
+
+  getFavorites: async () => {
+    const token = localStorage.getItem('token');
+    const response = await fetch('/api/news/favorites', {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    return response.json();
+  },
+
   recordBehavior: async (actionType: string, targetId?: number, extraData?: Record<string, unknown>) => {
     const token = localStorage.getItem('token');
     const response = await fetch('/api/admin/user/behavior', {
@@ -220,6 +242,25 @@ export const adminApi = {
 
   getUserHistory: async (userId: number): Promise<{ history: UserHistoryItem[] }> => {
     const response = await fetch(`/api/admin/users/${userId}/history`, {
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  getUserSummaryStats: async (userId: number, days: number = 7): Promise<{ data: Array<{ date: string; count: number }> }> => {
+    const response = await fetch(`/api/admin/users/${userId}/summary-stats?days=${days}`, {
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
+  getUserProfile: async (userId: number): Promise<{ 
+    category_preferences: Array<{ name: string; count: number }>;
+    language_preferences: Array<{ name: string; count: number }>;
+    style_preferences: Array<{ name: string; count: number }>;
+    tags: Array<{ text: string; value: number; type: string }>;
+  }> => {
+    const response = await fetch(`/api/admin/users/${userId}/profile`, {
       headers: adminHeaders(),
     });
     return response.json();
@@ -350,6 +391,15 @@ export const adminApi = {
       method: 'PUT',
       headers: adminHeaders(),
       body: JSON.stringify({ note }),
+    });
+    return response.json();
+  },
+
+  batchReview: async (newsIds: number[], action: 'approve' | 'reject', note?: string) => {
+    const response = await fetch('/api/admin/content/batch-review', {
+      method: 'PUT',
+      headers: adminHeaders(),
+      body: JSON.stringify({ news_ids: newsIds, action, note }),
     });
     return response.json();
   },

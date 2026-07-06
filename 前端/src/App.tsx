@@ -6,6 +6,7 @@ import { PublicRoute } from '@/components/PublicRoute';
 import { AdminRoute } from '@/components/AdminRoute';
 import { Login } from '@/components/Login';
 import { Register } from '@/components/Register';
+import { ForgotPassword } from '@/components/ForgotPassword';
 import { ContentInput } from '@/components/ContentInput';
 import { SummaryOutput } from '@/components/SummaryOutput';
 import { TitleOutput } from '@/components/TitleOutput';
@@ -30,11 +31,36 @@ import { userApi } from '@/lib/api';
 import { getTranslation } from '@/lib/i18n';
 
 function Dashboard() {
-  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language, settings } = useStore();
+  const { step, setStep, content, setSummary, setTitles, setQuality, setIsGenerating, addHistory, model, apiConfigs, customPrompt, summaryType, language, settings, logout } = useStore();
   const [activeNav, setActiveNav] = useState('news');
   const [error, setError] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAccountStatus = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      try {
+        const response = await fetch('/api/auth/verify-token', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const result = await response.json();
+        
+        if (result.account_status === 'disabled') {
+          logout();
+          localStorage.removeItem('token');
+          navigate('/login');
+          alert('此账号已被禁用，请联系管理员');
+        }
+      } catch (err) {
+        console.error('检查账号状态失败:', err);
+      }
+    };
+
+    checkAccountStatus();
+  }, [navigate, logout]);
 
   useEffect(() => {
     const pathParts = location.pathname.split('/');
@@ -312,6 +338,14 @@ function AppContent() {
         element={
           <PublicRoute>
             <Register />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
           </PublicRoute>
         }
       />
