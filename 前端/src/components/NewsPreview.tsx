@@ -9,7 +9,6 @@ import {
   ArrowRight,
   Search,
   Filter,
-  RefreshCw,
   AlertCircle,
   ExternalLink,
   FileText,
@@ -22,10 +21,11 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
-import { fetchNews, triggerCrawl, type NewsItem } from '@/api/news';
+import { fetchNews, type NewsItem } from '@/api/news';
 import { useStore } from '@/store/useStore';
-import { generateSummary } from '@/api/deepseek';
 import { userApi } from '@/lib/api';
+import { toast } from '@/components/Toast';
+import { playDingSound } from '@/lib/sound';
 
 const SUMMARY_CACHE_KEY = 'cqunews:ai_summaries';
 
@@ -94,7 +94,6 @@ export function NewsPreview() {
   const [searchQuery, setSearchQuery] = useState('');
   const [bookmarked, setBookmarked] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [showSummaryPanel, setShowSummaryPanel] = useState(false);
@@ -111,6 +110,8 @@ export function NewsPreview() {
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const speechUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
+  const prevTotalRef = useRef<number>(0);
+  const hasNotifiedRef = useRef<boolean>(false);
 
   const sources = [
     { value: 'all', label: '全部来源' },
@@ -133,14 +134,13 @@ export function NewsPreview() {
     setContent(newsContent);
     setSummary('');
     setTitles({ objective: '', dataHighlight: '', lightweight: '' });
-    setQuality({ credibility: 0, readability: 0, engagement: 0, relevance: 0 });
+    setQuality({ credibility: 0, readability: 0, engagement: 0 });
     setStep(1);
     setIsGenerating(false);
     
     navigate('/summary');
     
     setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('generate-all'));
       setIsGeneratingSummary(false);
     }, 500);
   };
@@ -159,7 +159,7 @@ export function NewsPreview() {
         const result = await userApi.getFavorites();
         const items = result.data || result.items || [];
         if (items.length > 0) {
-          const favoriteIds = new Set(items.map((item: any) => item.id));
+          const favoriteIds = new Set<number>(items.map((item: any) => Number(item.id)));
           setBookmarked(favoriteIds);
         }
       } catch (error) {
@@ -223,7 +223,7 @@ export function NewsPreview() {
       }
 
       if (cat === '推荐') {
-        const params: { trending_only?: boolean; keyword?: string; source?: string } = { trending_only: true };
+        const params: { trending_only?: boolean; keyword?: string; source?: string; today_only?: boolean } = { trending_only: true, today_only: true };
         if (kw.trim()) params.keyword = kw.trim();
         if (src !== 'all') params.source = src;
         const data = await fetchNews(p, pageSize, params);
@@ -236,7 +236,7 @@ export function NewsPreview() {
         return;
       }
 
-      const params: { category?: string; keyword?: string; source?: string } = {};
+      const params: { category?: string; keyword?: string; source?: string; today_only?: boolean } = { today_only: true };
       if (cat !== '全部') params.category = cat;
       if (kw.trim()) params.keyword = kw.trim();
       if (src !== 'all') params.source = src;
@@ -256,19 +256,6 @@ export function NewsPreview() {
     }
   };
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    setError('');
-    try {
-      await triggerCrawl();
-      await loadNews(1, selectedCategory, searchQuery);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '刷新失败');
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   useEffect(() => {
     loadNews(1, selectedCategory, searchQuery, selectedSource);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -279,6 +266,19 @@ export function NewsPreview() {
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
+
+  useEffect(() => {
+    const { settings } = useStore.getState();
+    if (settings.newsUpdateNotification && total > prevTotalRef.current && prevTotalRef.current > 0 && !hasNotifiedRef.current) {
+      toast.success('新闻更新已完成');
+      playDingSound();
+      hasNotifiedRef.current = true;
+    }
+    prevTotalRef.current = total;
+    if (total === 0) {
+      hasNotifiedRef.current = false;
+    }
+  }, [total]);
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / pageSize)), [total, pageSize]);
 
@@ -337,7 +337,7 @@ export function NewsPreview() {
 
   const goPage = (p: number) => {
     if (p < 1 || p > totalPages || p === page) return;
-    loadNews(p, selectedCategory, searchQuery);
+    loadNews(p, selectedCategory, searchQuery, selectedSource);
   };
 
   const stopSpeak = () => {

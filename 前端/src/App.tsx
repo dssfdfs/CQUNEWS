@@ -17,7 +17,8 @@ import { NewsDetail } from '@/components/NewsDetail';
 
 import { History } from '@/components/History';
 import { Settings } from '@/components/Settings';
-import { Toast } from '@/components/Toast';
+import { ToastContainer, toast } from '@/components/Toast';
+import { playDingSound } from '@/lib/sound';
 import { AdminDashboard } from '@/pages/AdminDashboard';
 import { AdminUserManagement } from '@/pages/AdminUserManagement';
 import { AdminFeedbackManagement } from '@/pages/AdminFeedbackManagement';
@@ -110,6 +111,12 @@ function Dashboard() {
         addHistory({ content, summary, titles });
         userApi.recordBehavior('generate', undefined, { content_length: content.length }).catch(() => {});
         
+        const { settings } = useStore.getState();
+        if (settings.actionCompleteNotification) {
+          toast.success('摘要已完成');
+        }
+        playDingSound();
+        
       } catch (err) {
         console.error(err);
         const errorMessage = err instanceof Error ? err.message : '生成失败，请稍后重试';
@@ -184,6 +191,7 @@ function Dashboard() {
       <Sidebar activeItem={activeNav} onItemClick={handleNavClick} />
       
       <div className="flex-1 overflow-y-auto">
+        <ToastContainer />
         {activeNav === 'summary' && (
           <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <div className="max-w-7xl mx-auto px-6 py-4">
@@ -309,7 +317,7 @@ function AdminApp() {
   return (
     <>
       {renderContent()}
-      <Toast />
+      <ToastContainer />
     </>
   );
 }

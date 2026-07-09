@@ -43,7 +43,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
 export async function fetchNews(
   page = 1,
   pageSize = 12,
-  params: { category?: string; source?: string; keyword?: string; trending_only?: boolean; ids?: number[] } = {}
+  params: { category?: string; source?: string; keyword?: string; trending_only?: boolean; ids?: number[]; today_only?: boolean } = {}
 ): Promise<NewsListResponse> {
   const qs = new URLSearchParams({
     page: String(page),
@@ -53,6 +53,7 @@ export async function fetchNews(
   if (params.source) qs.set('source', params.source);
   if (params.keyword) qs.set('keyword', params.keyword);
   if (params.trending_only) qs.set('trending_only', 'true');
+  if (params.today_only) qs.set('today_only', 'true');
   if (params.ids && params.ids.length > 0) {
     params.ids.forEach((id) => qs.append('ids', String(id)));
   }

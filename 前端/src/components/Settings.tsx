@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, Fragment } from 'react';
 import { useStore } from '@/store/useStore';
 import { userApi } from '@/lib/api';
 import { getTranslation } from '@/lib/i18n';
-import { User, Bell, Shield, Palette, Globe, Save, RefreshCw, HelpCircle, ChevronRight, Info, Sun, Moon, Monitor, AlertCircle, CheckCircle, Upload, Eye, EyeOff, Volume2, Mail, Crown, Send, MessageSquare } from 'lucide-react';
+import { User, Bell, Shield, Palette, Save, RefreshCw, HelpCircle, ChevronRight, Info, Sun, Moon, Monitor, AlertCircle, CheckCircle, Upload, Eye, EyeOff, Volume2, Crown, Send, MessageSquare } from 'lucide-react';
 
 const navigateToAdminLogin = () => {
   localStorage.removeItem('token');
@@ -22,7 +22,6 @@ const sections: SettingSection[] = [
   { id: 'security', titleKey: 'security', icon: Shield, descriptionKey: 'manage_security' },
   { id: 'appearance', titleKey: 'appearance', icon: Palette, descriptionKey: 'customize_theme' },
   { id: 'notification', titleKey: 'notification', icon: Bell, descriptionKey: 'configure_notifications' },
-  { id: 'language', titleKey: 'language', icon: Globe, descriptionKey: 'select_language' },
 ];
 
 type ThemeType = 'light' | 'dark' | 'system';
@@ -54,10 +53,9 @@ export function Settings() {
     settings, 
     setTheme, 
     setFontSize, 
-    setLanguageSetting, 
-    setEmailNotification, 
     setSoundNotification, 
-    setQualityNotification, 
+    setNewsUpdateNotification,
+    setActionCompleteNotification,
     saveSettings,
     loadSettings,
     settingsLoading,
@@ -516,20 +514,6 @@ export function Settings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-blue-500" />
-                <div>
-                  <h4 className="font-medium text-gray-800 dark:text-gray-100">{t('email_notification')}</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t('email_when_new_result')}</p>
-                </div>
-              </div>
-              <ToggleSwitch 
-                enabled={settings.emailNotification} 
-                onChange={setEmailNotification} 
-              />
-            </div>
-            
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="flex items-center gap-3">
                 <Volume2 className="w-5 h-5 text-green-500" />
                 <div>
                   <h4 className="font-medium text-gray-800 dark:text-gray-100">{t('sound_notification')}</h4>
@@ -544,57 +528,30 @@ export function Settings() {
             
             <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-orange-500" />
+                <Bell className="w-5 h-5 text-purple-500" />
                 <div>
-                  <h4 className="font-medium text-gray-800 dark:text-gray-100">{t('quality_notification')}</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t('notify_on_low_quality')}</p>
+                  <h4 className="font-medium text-gray-800 dark:text-gray-100">{t('news_update_notification')}</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">当新闻数量有更新时显示提示</p>
                 </div>
               </div>
               <ToggleSwitch 
-                enabled={settings.qualityNotification} 
-                onChange={setQualityNotification} 
+                enabled={settings.newsUpdateNotification} 
+                onChange={setNewsUpdateNotification} 
               />
             </div>
             
             <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5 text-purple-500" />
+                <CheckCircle className="w-5 h-5 text-blue-500" />
                 <div>
-                  <h4 className="font-medium text-gray-800 dark:text-gray-100">{t('news_update_notification')}</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t('push_when_new_news')}</p>
+                  <h4 className="font-medium text-gray-800 dark:text-gray-100">操作完成提示</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">当摘要生成等操作完成时显示提示</p>
                 </div>
               </div>
-              <ToggleSwitch enabled={true} onChange={() => {}} />
-            </div>
-          </div>
-        );
-
-      case 'language':
-        return (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('app_language')}</label>
-              <select 
-                className="select-field"
-                value={settings.language}
-                onChange={(e) => {
-                  setLanguageSetting(e.target.value);
-                  document.documentElement.lang = e.target.value;
-                }}
-              >
-                <option value="zh">{t('chinese_simplified')}</option>
-                <option value="en">{t('english')}</option>
-              </select>
-            </div>
-            
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-blue-600 mt-0.5" />
-                <div>
-                  <h5 className="font-medium text-blue-800 dark:text-blue-200">{t('multi_language_support')}</h5>
-                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">{t('language_switch_note')}</p>
-                </div>
-              </div>
+              <ToggleSwitch 
+                enabled={settings.actionCompleteNotification} 
+                onChange={setActionCompleteNotification} 
+              />
             </div>
           </div>
         );

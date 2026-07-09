@@ -277,6 +277,13 @@ export const adminApi = {
     return response.json();
   },
 
+  getDailyStats: async (days: number = 7): Promise<{ data: Array<{ date: string; generate_count: number; view_count: number; share_count: number }> }> => {
+    const response = await fetch(`/api/admin/analytics/daily-stats?days=${days}`, {
+      headers: adminHeaders(),
+    });
+    return response.json();
+  },
+
   updateUserStatus: async (userId: number, status: string): Promise<UserInfo> => {
     const response = await fetch(`/api/admin/users/${userId}/status`, {
       method: 'PUT',
@@ -291,6 +298,9 @@ export const adminApi = {
       method: 'DELETE',
       headers: adminHeaders(),
     });
+    if (!response.ok) {
+      throw new Error('删除用户失败');
+    }
     return response.json();
   },
 
@@ -300,6 +310,9 @@ export const adminApi = {
       headers: adminHeaders(),
       body: JSON.stringify({ user_ids: userIds }),
     });
+    if (!response.ok) {
+      throw new Error('批量删除失败');
+    }
     return response.json();
   },
 
@@ -474,18 +487,53 @@ export const adminApi = {
     return response.json();
   },
 
-  backupDatabase: async () => {
+  backupDatabase: async (backupDir?: string) => {
     const response = await fetch('/api/admin/config/backup', {
       method: 'POST',
+      headers: adminHeaders(),
+      body: JSON.stringify({ backup_dir: backupDir }),
+    });
+    return response.json();
+  },
+
+  getBackupFiles: async (backupDir?: string): Promise<{ backups: Array<{ filename: string; size: string; created_at: string }>; backup_dir: string }> => {
+    const params = backupDir ? `?backup_dir=${encodeURIComponent(backupDir)}` : '';
+    const response = await fetch(`/api/admin/config/backups${params}`, {
       headers: adminHeaders(),
     });
     return response.json();
   },
 
-  importData: async () => {
+  downloadBackup: async (filename: string, backupDir?: string) => {
+    const params = backupDir ? `?backup_dir=${encodeURIComponent(backupDir)}` : '';
+    const response = await fetch(`/api/admin/config/backups/${filename}${params}`, {
+      headers: adminHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('下载备份文件失败');
+    }
+    const blob = await response.blob();
+    const contentDisposition = response.headers.get('Content-Disposition');
+    const filenameFromHeader = contentDisposition?.match(/filename=(.+)/)?.[1] || filename;
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filenameFromHeader;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  },
+
+  importDatabase: async (file: File): Promise<{ success: boolean; message: string; backup_before_import?: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
     const response = await fetch('/api/admin/config/import', {
       method: 'POST',
-      headers: adminHeaders(),
+      headers: {
+        Authorization: adminHeaders().Authorization || '',
+      },
+      body: formData,
     });
     return response.json();
   },

@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { handleNewsRedirect, recordBehavior } from '../lib/behavior';
 import {
   ArrowLeft,
   ExternalLink,
@@ -202,6 +203,12 @@ export function NewsDetail() {
     try {
       const summary = await generateSummary(news.content, '摘要', '中文');
       setAiSummary(summary);
+      recordBehavior({
+        action_type: 'generate',
+        target_id: news.id,
+        category: news.category || '综合',
+        title: news.title,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : '生成摘要失败');
     } finally {
@@ -320,16 +327,14 @@ export function NewsDetail() {
               {news.title}
             </h1>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <a
-                href={news.original_url}
-                target="_blank"
-                rel="noreferrer noopener"
+              <button
+                onClick={() => handleNewsRedirect(news.id, news.original_url, news.category || undefined, news.title)}
                 className="btn-primary flex items-center gap-2"
                 title="阅读原文"
               >
                 <ExternalLink className="w-4 h-4" />
                 阅读原文
-              </a>
+              </button>
               <button
                 onClick={() => toggleBookmark(news.id)}
                 className={`p-2 rounded-lg transition-colors ${

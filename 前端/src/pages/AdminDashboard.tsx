@@ -16,8 +16,6 @@ import {
   RefreshCw,
   Tag,
   Zap,
-  CheckCircle,
-  AlertCircle,
 } from 'lucide-react';
 import {
   LineChart,
@@ -34,6 +32,7 @@ import {
   Area,
   Legend,
 } from 'recharts';
+import { WordCloud } from '@/components/WordCloud';
 
 interface WordItem {
   text: string;
@@ -55,24 +54,27 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
   const [wordCloudData, setWordCloudData] = useState<WordItem[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapData | null>(null);
   const [newsCategoryData, setNewsCategoryData] = useState<NewsCategoryData | null>(null);
+  const [dailyStats, setDailyStats] = useState<Array<{ date: string; generate_count: number; view_count: number; share_count: number }>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [summaryData, behaviorData, wordCloudResult, heatmapResult, newsCategoryResult] = await Promise.all([
+        const [summaryData, behaviorData, wordCloudResult, heatmapResult, newsCategoryResult, dailyStatsResult] = await Promise.all([
           adminApi.getAnalyticsSummary(),
           adminApi.getUserBehavior(),
           adminApi.getWordCloud(),
           adminApi.getHeatmap(),
           adminApi.getNewsCategory(),
+          adminApi.getDailyStats(),
         ]);
         setSummary(summaryData);
         setBehavior(behaviorData);
         setWordCloudData(wordCloudResult?.words || []);
         setHeatmapData(heatmapResult);
         setNewsCategoryData(newsCategoryResult);
+        setDailyStats(dailyStatsResult?.data || []);
       } catch (error) {
         console.error('Failed to fetch analytics data:', error);
       } finally {
@@ -329,37 +331,41 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
                   </ResponsiveContainer>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 border border-gray-100">
+                <div className="bg-white rounded-xl p-6 border border-gray-100 overflow-visible">
                   <div className="flex items-center gap-2 mb-4">
                     <BarChart3 className="w-5 h-5 text-indigo-600" />
                     <h2 className="text-lg font-semibold text-gray-800">新闻分类占比</h2>
                   </div>
-                  <ResponsiveContainer width="100%" height={280}>
-                    <PieChart>
-                      <Pie
-                        data={newsCategoryData?.category_distribution || []}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={2}
-                        dataKey="value"
-                        label={({ name, percent }) => `${name}: ${((percent || 0) * 100).toFixed(0)}%`}
-                      >
-                        {(newsCategoryData?.category_distribution || []).map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#fff',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                        }}
-                      />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <div className="h-[320px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={newsCategoryData?.category_distribution || []}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={100}
+                          paddingAngle={2}
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                          labelLine={{ strokeWidth: 1 }}
+                        >
+                          {(newsCategoryData?.category_distribution || []).map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value) => [`${value}条`]}
+                          contentStyle={{
+                            backgroundColor: '#fff',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                          }}
+                        />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
 
@@ -420,60 +426,51 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
 
                 <div className="bg-white rounded-xl p-6 border border-gray-100">
                   <div className="flex items-center gap-2 mb-4">
-                    <Activity className="w-5 h-5 text-indigo-600" />
-                    <h2 className="text-lg font-semibold text-gray-800">系统概览</h2>
+                    <TrendingUp className="w-5 h-5 text-indigo-600" />
+                    <h2 className="text-lg font-semibold text-gray-800">近7天用户行为统计</h2>
                   </div>
-                  <div className="space-y-6">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">总操作记录</span>
-                        <span className="font-medium text-gray-800">{behavior?.total_records || 0}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-indigo-600 h-2 rounded-full transition-all"
-                          style={{ width: `${Math.min((behavior?.total_records || 0) / 1000 * 100, 100)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">平均响应时间</span>
-                        <span className="font-medium text-gray-800">{behavior?.avg_duration || 0}s</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full transition-all ${
-                            (behavior?.avg_duration || 0) < 5 ? 'bg-green-500' :
-                            (behavior?.avg_duration || 0) < 10 ? 'bg-yellow-500' : 'bg-red-500'
-                          }`}
-                          style={{ width: `${Math.min((behavior?.avg_duration || 0) / 30 * 100, 100)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
-                      <div className="text-center p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                          <span className="text-2xl font-bold text-indigo-600">
-                            {behavior?.action_distribution?.find(a => a.name === '生成摘要')?.value || 0}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500">生成摘要</p>
-                      </div>
-                      <div className="text-center p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <AlertCircle className="w-4 h-4 text-orange-500" />
-                          <span className="text-2xl font-bold text-purple-600">
-                            {behavior?.action_distribution?.find(a => a.name === '查看新闻')?.value || 0}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500">查看新闻</p>
-                      </div>
-                    </div>
-                  </div>
+                  <ResponsiveContainer width="100%" height={280}>
+                    <LineChart data={dailyStats}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 10 }} />
+                      <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#fff',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px',
+                        }}
+                      />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="generate_count"
+                        name="生成摘要"
+                        stroke="#8b5cf6"
+                        strokeWidth={2}
+                        dot={{ fill: '#8b5cf6', strokeWidth: 2 }}
+                        activeDot={{ r: 6, fill: '#8b5cf6' }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="view_count"
+                        name="浏览次数"
+                        stroke="#6366f1"
+                        strokeWidth={2}
+                        dot={{ fill: '#6366f1', strokeWidth: 2 }}
+                        activeDot={{ r: 6, fill: '#6366f1' }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="share_count"
+                        name="分享次数"
+                        stroke="#10b981"
+                        strokeWidth={2}
+                        dot={{ fill: '#10b981', strokeWidth: 2 }}
+                        activeDot={{ r: 6, fill: '#10b981' }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
 
@@ -484,63 +481,7 @@ export function AdminDashboard({ activeItem, onItemClick }: AdminDashboardProps)
                     <h2 className="text-lg font-semibold text-gray-800">用户画像 - 热门话题词云</h2>
                     <span className="ml-auto text-sm text-gray-500">基于近7天用户行为</span>
                   </div>
-                  <div className="min-h-[280px] flex items-center justify-center flex-wrap gap-3 p-4">
-                    {wordCloudData.map((word, index) => {
-                      const maxValue = Math.max(...wordCloudData.map(w => w.value));
-                      const minValue = Math.min(...wordCloudData.map(w => w.value));
-                      const normalizedSize = minValue === maxValue 
-                        ? 1 
-                        : (word.value - minValue) / (maxValue - minValue);
-                      const fontSize = 14 + normalizedSize * 24;
-                      const categoryColors: Record<string, string> = {
-                        '科技': '#6366f1',
-                        '财经': '#f97316',
-                        '体育': '#10b981',
-                        '娱乐': '#ec4899',
-                        '时政': '#8b5cf6',
-                        '教育': '#06b6d4',
-                        '健康': '#22c55e',
-                        '生活': '#f59e0b',
-                        '其他': '#6b7280',
-                      };
-                      const color = categoryColors[word.category] || '#6b7280';
-                      return (
-                        <span
-                          key={index}
-                          className="px-4 py-2 rounded-full cursor-default hover:shadow-md transition-shadow"
-                          style={{
-                            fontSize: `${fontSize}px`,
-                            backgroundColor: `${color}15`,
-                            color: color,
-                            fontWeight: normalizedSize > 0.7 ? '600' : '400',
-                          }}
-                          title={`${word.text}: ${word.value}次`}
-                        >
-                          {word.text}
-                        </span>
-                      );
-                    })}
-                  </div>
-                  <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-100">
-                    {[
-                      { label: '科技', color: '#6366f1' },
-                      { label: '财经', color: '#f97316' },
-                      { label: '体育', color: '#10b981' },
-                      { label: '娱乐', color: '#ec4899' },
-                      { label: '时政', color: '#8b5cf6' },
-                      { label: '教育', color: '#06b6d4' },
-                      { label: '健康', color: '#22c55e' },
-                      { label: '生活', color: '#f59e0b' },
-                    ].map((cat) => (
-                      <div key={cat.label} className="flex items-center gap-2">
-                        <span
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: cat.color }}
-                        ></span>
-                        <span className="text-sm text-gray-600">{cat.label}</span>
-                      </div>
-                    ))}
-                  </div>
+                  <WordCloud words={wordCloudData} />
                 </div>
               </div>
             </>

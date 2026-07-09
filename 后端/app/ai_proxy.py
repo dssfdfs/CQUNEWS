@@ -107,6 +107,31 @@ MAX_VIDEO_URL_SIZE = 50 * 1024 * 1024
 ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi"]
 
 
+def clean_ai_response(content: str, model: str) -> str:
+    if not content:
+        return content
+    
+    cleaned = content
+    
+    if model == "Kimi":
+        title_prefixes = [
+            '客观纪实型标题', '客观纪实型', '数据亮点型标题', '数据亮点型', 
+            '轻量化标题', '类型一', '类型二', '类型三', '1.', '2.', '3.'
+        ]
+        for prefix in title_prefixes:
+            cleaned = re.sub(r'^' + re.escape(prefix) + r'\s*[：:]?\s*', '', cleaned)
+    
+    elif model == "千问":
+        summary_prefixes = [
+            '新闻摘要', '摘要', '【新闻摘要】', '【摘要】', 
+            '**新闻摘要**', '**新闻摘要：**', '新闻摘要：', '摘要：'
+        ]
+        for prefix in summary_prefixes:
+            cleaned = re.sub(r'^' + re.escape(prefix) + r'\s*[：:]?\s*', '', cleaned)
+    
+    return cleaned.strip()
+
+
 def extract_video_summary_text(result: dict) -> str:
     try:
         choices = result.get("choices")
@@ -166,14 +191,12 @@ class QualityCheckResponse(BaseModel):
     credibility: int = Field(..., description="新闻可信度")
     readability: int = Field(..., description="内容可读性")
     engagement: int = Field(..., description="读者吸引力")
-    relevance: int = Field(..., description="主题相关性")
 
 
 def calculate_text_quality(content: str, summary: str, titles: dict[str, str]) -> dict[str, int]:
     credibility = 75
     readability = 75
     engagement = 75
-    relevance = 75
 
     content_length = len(content.strip())
     summary_length = len(summary.strip())
@@ -236,44 +259,6 @@ def calculate_text_quality(content: str, summary: str, titles: dict[str, str]) -
             credibility += 10
             break
 
-    content_lower = content.lower()
-    summary_lower = summary.lower()
-    
-    content_keywords = set(re.findall(r'[\u4e00-\u9fa5]{2,}', content_lower))
-    summary_keywords = set(re.findall(r'[\u4e00-\u9fa5]{2,}', summary_lower))
-    
-    if content_keywords and summary_keywords:
-        overlap = len(content_keywords & summary_keywords)
-        total = len(content_keywords | summary_keywords)
-        if total > 0:
-            similarity = overlap / total
-            relevance = min(100, int(relevance + similarity * 30))
-            if similarity < 0.2:
-                relevance -= 20
-            elif similarity < 0.5:
-                relevance -= 10
-
-    for title in titles.values():
-        title_keywords = set(re.findall(r'[\u4e00-\u9fa5]{2,}', title.lower()))
-        if content_keywords and title_keywords:
-            title_overlap = len(content_keywords & title_keywords)
-            title_total = len(content_keywords | title_keywords)
-            if title_total > 0:
-                title_similarity = title_overlap / title_total
-                if title_similarity > 0.3:
-                    relevance += 10
-                elif title_similarity < 0.1:
-                    relevance -= 15
-
-    if summary_length > 0 and content_length > 0:
-        coverage_ratio = summary_length / content_length
-        if coverage_ratio >= 0.2 and coverage_ratio <= 0.6:
-            relevance += 10
-        elif coverage_ratio < 0.1:
-            relevance -= 15
-        elif coverage_ratio > 0.8:
-            relevance -= 5
-
     if '来源' in content or '作者' in content:
         credibility += 15
     if '版权' in content or '原创' in content:
@@ -283,7 +268,6 @@ def calculate_text_quality(content: str, summary: str, titles: dict[str, str]) -
         "credibility": max(0, min(100, credibility)),
         "readability": max(0, min(100, readability)),
         "engagement": max(0, min(100, engagement)),
-        "relevance": max(0, min(100, relevance)),
     }
 
 
@@ -298,7 +282,6 @@ async def quality_check(req: QualityCheckRequest):
             "credibility": 75,
             "readability": 75,
             "engagement": 75,
-            "relevance": 75,
         }
 
 
@@ -452,6 +435,12 @@ async def process_ai_request(
                     }],
                     "usage": result.get("usage", {}),
                 }
+
+            cleaned_content = clean_ai_response(
+                result["choices"][0]["message"]["content"],
+                req.model
+            )
+            result["choices"][0]["message"]["content"] = cleaned_content
 
             return result
 

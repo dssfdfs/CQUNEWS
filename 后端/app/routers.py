@@ -155,7 +155,9 @@ def list_news(
                 (col(News.title).like(like)) | (col(News.summary).like(like))
             )
         if today_only:
-            stmt = stmt.where(col(News.published_at).like("2026-07-06%"))
+            from datetime import datetime
+            today = datetime.now().strftime("%Y-%m-%d")
+            stmt = stmt.where(col(News.published_at).like(f"{today}%"))
         all_items = db.exec(stmt.order_by(News.id.desc())).all()
         
         filtered_items = [
@@ -754,3 +756,44 @@ def reset_password_endpoint(req: ResetPasswordRequest):
         db.delete(code_record)
         db.commit()
         return {"success": True, "message": "密码重置成功"}
+
+
+class RecordBehaviorRequest(BaseModel):
+    action_type: str = Field(..., description="行为类型: view, redirect, generate")
+    target_id: int = Field(..., description="目标新闻ID")
+    category: str = Field(default="综合", description="新闻分类")
+    title: str = Field(default="", description="新闻标题")
+
+
+@router.post("/behavior/record")
+def record_behavior(req: RecordBehaviorRequest, request: Request) -> dict[str, Any]:
+    with Session(engine) as db:
+        current_user = None
+        authorization = request.headers.get("Authorization")
+        if authorization and authorization.startswith("Bearer "):
+            try:
+                from .auth import decode_token
+                token = authorization[7:]
+                payload = decode_token(token)
+                if payload.get("type") == "access":
+                    user_id = int(payload["sub"])
+                    current_user = db.get(User, user_id)
+            except Exception:
+                pass
+        
+        import json
+        extra_data = json.dumps({
+            "category": req.category or "综合",
+            "title": req.title[:50],
+        })
+        
+        if current_user:
+            db.add(UserBehavior(
+                user_id=current_user.id,
+                action_type=req.action_type,
+                target_id=req.target_id,
+                extra_data=extra_data,
+            ))
+            db.commit()
+        
+        return {"success": True}

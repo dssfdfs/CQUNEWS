@@ -20,7 +20,6 @@ interface HistoryItem {
     credibility: number;
     readability: number;
     engagement: number;
-    relevance: number;
   };
   status: string;
   category: string;
@@ -37,9 +36,9 @@ interface SettingsState {
   theme: 'light' | 'dark' | 'system';
   fontSize: number;
   language: string;
-  emailNotification: boolean;
   soundNotification: boolean;
-  qualityNotification: boolean;
+  newsUpdateNotification: boolean;
+  actionCompleteNotification: boolean;
   storageQuota: number;
   animationEnabled: boolean;
   glassEffectEnabled: boolean;
@@ -57,7 +56,6 @@ interface NewsState {
     credibility: number;
     readability: number;
     engagement: number;
-    relevance: number;
   };
   step: number;
   summaryType: string;
@@ -94,7 +92,6 @@ interface NewsState {
     credibility: number;
     readability: number;
     engagement: number;
-    relevance: number;
   }) => void;
   setStep: (step: number) => void;
   setSummaryType: (summaryType: string) => void;
@@ -122,14 +119,15 @@ interface NewsState {
   
   login: (username: string, password: string) => Promise<boolean>;
   register: (username: string, email: string, password: string) => Promise<boolean>;
+  loadHistoryFromBackend: () => Promise<void>;
   logout: () => void;
   
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
   setFontSize: (fontSize: number) => void;
   setLanguageSetting: (language: string) => void;
-  setEmailNotification: (enabled: boolean) => void;
   setSoundNotification: (enabled: boolean) => void;
-  setQualityNotification: (enabled: boolean) => void;
+  setNewsUpdateNotification: (enabled: boolean) => void;
+  setActionCompleteNotification: (enabled: boolean) => void;
   setStorageQuota: (quota: number) => void;
   setAnimationEnabled: (enabled: boolean) => void;
   setGlassEffectEnabled: (enabled: boolean) => void;
@@ -185,9 +183,9 @@ const loadSettingsFromStorage = (): SettingsState => {
     theme: 'light',
     fontSize: 14,
     language: 'zh',
-    emailNotification: true,
-    soundNotification: false,
-    qualityNotification: true,
+    soundNotification: true,
+    newsUpdateNotification: true,
+    actionCompleteNotification: true,
     storageQuota: 50 * 1024 * 1024,
     animationEnabled: true,
     glassEffectEnabled: false,
@@ -261,7 +259,6 @@ export const useStore = create<NewsState>((set, get) => ({
     credibility: 0,
     readability: 0,
     engagement: 0,
-    relevance: 0,
   },
   step: 1,
   summaryType: '标准摘要',
@@ -290,12 +287,12 @@ export const useStore = create<NewsState>((set, get) => ({
   setModel: (model) => set({ model }),
   setLanguage: (language) => set({ language }),
   setInputType: (inputType) => {
-        set((state) => ({ 
+        set(() => ({ 
             inputType,
             content: '',
             summary: '',
             titles: { objective: '', dataHighlight: '', lightweight: '' },
-            quality: { credibility: 0, readability: 0, engagement: 0, relevance: 0 },
+            quality: { credibility: 0, readability: 0, engagement: 0 },
             customPrompt: '',
             step: 1,
         }));
@@ -377,7 +374,7 @@ export const useStore = create<NewsState>((set, get) => ({
     content: '',
     summary: '',
     titles: { objective: '', dataHighlight: '', lightweight: '' },
-    quality: { credibility: 0, readability: 0, engagement: 0, relevance: 0 },
+    quality: { credibility: 0, readability: 0, engagement: 0 },
     step: 1,
   }),
   
@@ -399,9 +396,9 @@ export const useStore = create<NewsState>((set, get) => ({
   setTheme: (theme) => set((state) => ({ settings: { ...state.settings, theme } })),
   setFontSize: (fontSize) => set((state) => ({ settings: { ...state.settings, fontSize } })),
   setLanguageSetting: (language) => set((state) => ({ settings: { ...state.settings, language } })),
-  setEmailNotification: (enabled) => set((state) => ({ settings: { ...state.settings, emailNotification: enabled } })),
   setSoundNotification: (enabled) => set((state) => ({ settings: { ...state.settings, soundNotification: enabled } })),
-  setQualityNotification: (enabled) => set((state) => ({ settings: { ...state.settings, qualityNotification: enabled } })),
+  setNewsUpdateNotification: (enabled) => set((state) => ({ settings: { ...state.settings, newsUpdateNotification: enabled } })),
+  setActionCompleteNotification: (enabled) => set((state) => ({ settings: { ...state.settings, actionCompleteNotification: enabled } })),
   setStorageQuota: (quota) => set((state) => ({ settings: { ...state.settings, storageQuota: quota } })),
   setAnimationEnabled: (enabled) => set((state) => ({ settings: { ...state.settings, animationEnabled: enabled } })),
   setGlassEffectEnabled: (enabled) => set((state) => ({ settings: { ...state.settings, glassEffectEnabled: enabled } })),
@@ -532,7 +529,7 @@ export const useStore = create<NewsState>((set, get) => ({
             content: item.content,
             summary: item.summary,
             titles: item.titles ? JSON.parse(item.titles) : { objective: '', dataHighlight: '', lightweight: '' },
-            quality: item.quality ? JSON.parse(item.quality) : { credibility: 0, readability: 0, engagement: 0, relevance: 0 },
+            quality: item.quality ? JSON.parse(item.quality) : { credibility: 0, readability: 0, engagement: 0 },
             status: item.status,
             category: item.category || '综合',
             createdAt: new Date(item.created_at),
@@ -632,7 +629,7 @@ export const useStore = create<NewsState>((set, get) => ({
       content: '',
       summary: '',
       titles: { objective: '', dataHighlight: '', lightweight: '' },
-      quality: { credibility: 0, readability: 0, engagement: 0, relevance: 0 },
+      quality: { credibility: 0, readability: 0, engagement: 0 },
       customPrompt: '',
       inputType: 'text',
       model: 'DeepSeek',

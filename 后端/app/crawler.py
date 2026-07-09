@@ -71,22 +71,55 @@ def _extract_published_at(text: str) -> str | None:
     patterns = [
         r"(20\d{2})[-/年](\d{1,2})[-/月](\d{1,2})[日 ]?(\d{1,2})[:：]?(\d{1,2})?",
         r"(20\d{2})(\d{2})(\d{2})(\d{2})(\d{2})?",
+        r"(20\d{2})[-/年](\d{1,2})[-/月](\d{1,2})日?",
+        r"(20\d{2})-(\d{1,2})-(\d{1,2})T(\d{1,2}):(\d{1,2})",
+        r"(20\d{2})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2})",
     ]
+    now = datetime.now()
     for p in patterns:
         m = re.search(p, text)
         if m:
             try:
                 g = m.groups()
-                if len(g) == 5 and g[4] is not None:
-                    return f"{g[0]}-{int(g[1]):02d}-{int(g[2]):02d} {int(g[3]):02d}:{int(g[4]):02d}:00"
-                if len(g) == 4:
-                    return f"{g[0]}-{int(g[1]):02d}-{int(g[2]):02d} {int(g[3]):02d}:00:00"
+                year, month, day = int(g[0]), int(g[1]), int(g[2])
+                if month < 1 or month > 12 or day < 1 or day > 31:
+                    continue
+                if year < 2020 or year > now.year + 1:
+                    continue
+                hour, minute = 0, 0
+                if len(g) >= 4 and g[3] is not None:
+                    hour = int(g[3])
+                    if hour > 23:
+                        continue
+                if len(g) >= 5 and g[4] is not None:
+                    minute = int(g[4])
+                    if minute > 59:
+                        continue
+                return f"{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:00"
             except Exception:
                 continue
     return None
 
 
-def _clean_html(html: str) -> tuple[str, str]:
+def _extract_date_from_url(url: str) -> str | None:
+    url_date_patterns = [
+        r"/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/",
+        r"/(\d{4})(\d{2})(\d{2})/",
+        r"/(\d{4})[-/](\d{1,2})[-/](\d{1,2})[-/]\d+",
+    ]
+    for pattern in url_date_patterns:
+        m = re.search(pattern, url)
+        if m:
+            try:
+                year, month, day = int(m.group(1)), int(m.group(2)), int(m.group(3))
+                if 2020 <= year <= datetime.now().year + 1 and 1 <= month <= 12 and 1 <= day <= 31:
+                    return f"{year:04d}-{month:02d}-{day:02d} 00:00:00"
+            except Exception:
+                continue
+    return None
+
+
+def _clean_html(html: str, url: str = "") -> tuple[str, str, str, str | None]:
     soup = BeautifulSoup(html, "lxml")
     for tag in soup(["script", "style", "noscript", "iframe", "form", "aside"]):
         tag.decompose()
@@ -104,17 +137,35 @@ def _clean_html(html: str) -> tuple[str, str]:
     lines = [ln for ln in text.splitlines() if ln.strip()]
     content = "\n".join(lines)
     summary = content[:120] if content else ""
+    
     published = None
-    time_tag = soup.find("span", class_=re.compile(r"time|date|pub", re.I)) or soup.find(
-        "meta", attrs={"property": "article:published_time"}
-    )
-    if time_tag:
-        if time_tag.name == "meta":
-            published = _extract_published_at(time_tag.get("content", ""))
-        else:
+    
+    url_date = _extract_date_from_url(url)
+    if url_date:
+        published = url_date
+    
+    if not published:
+        meta_time = soup.find("meta", attrs={"property": "article:published_time"}) or \
+                    soup.find("meta", attrs={"property": "og:article:published_time"}) or \
+                    soup.find("meta", attrs={"name": "pubdate"}) or \
+                    soup.find("meta", attrs={"name": "publishdate"}) or \
+                    soup.find("meta", attrs={"name": "date"})
+        if meta_time:
+            published = _extract_published_at(meta_time.get("content", ""))
+    
+    if not published:
+        time_tag = soup.find("time") or \
+                   soup.find("span", class_=re.compile(r"time|date|pub", re.I)) or \
+                   soup.find("div", class_=re.compile(r"time|date|pub", re.I))
+        if time_tag:
             published = _extract_published_at(time_tag.get_text())
+    
+    if not published and article != soup:
+        published = _extract_published_at(article.get_text()[:1000])
+    
     if not published:
         published = _extract_published_at(soup.get_text()[:2000])
+    
     return title, summary, content, published  # type: ignore[return-value]
 
 
@@ -243,7 +294,7 @@ def fetch_article(session: requests.Session, url: str, source_name: str, categor
             logger.debug("Non-200 %s for %s", resp.status_code, url)
             return None
         text = _decode_response(resp)
-        title, summary, content, published = _clean_html(text)
+        title, summary, content, published = _clean_html(text, url)
         if not title or len(content) < 40:
             return None
         classified = _classify_category(title, summary, content, category)
@@ -305,6 +356,8 @@ def _persist_crawl(source: CrawlSource, result: CrawlResult, duration_ms: int) -
                 ).first()
                 if exists:
                     continue
+                final_published = item.published_at or now
+                
                 news = News(
                     title=item.title,
                     summary=item.summary,
@@ -312,7 +365,7 @@ def _persist_crawl(source: CrawlSource, result: CrawlResult, duration_ms: int) -
                     category=item.category,
                     source=item.source,
                     original_url=item.url,
-                    published_at=item.published_at or now,
+                    published_at=final_published,
                     views=item.views,
                     is_trending=1 if item.is_trending else 0,
                     crawl_status=1,

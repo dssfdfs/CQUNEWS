@@ -129,7 +129,7 @@ export function History() {
       setContent(selectedItem.content);
       setSummary('');
       setTitles({ objective: '', dataHighlight: '', lightweight: '' });
-      setQuality({ credibility: 0, readability: 0, engagement: 0, relevance: 0 });
+      setQuality({ credibility: 0, readability: 0, engagement: 0 });
       setStep(1);
       
       if (selectedItem.model_type) {
@@ -173,7 +173,7 @@ export function History() {
   const handleDownloadSingle = () => {
     if (!selectedItem) return;
 
-    const content = `# 记录详情\n\n## 基本信息\n- 分类：${selectedItem.category}\n- 状态：${selectedItem.status}\n- 创建时间：${new Date(selectedItem.createdAt).toLocaleString('zh-CN')}\n\n## 原始内容\n\n${selectedItem.content}\n\n## 生成的标题\n\n### 客观纪实标题\n${selectedItem.titles.objective}\n\n### 数据亮点标题\n${selectedItem.titles.dataHighlight}\n\n### 轻量化标题\n${selectedItem.titles.lightweight}\n\n## 摘要内容\n\n${editingSummary ? editSummaryContent : savedSummary}\n\n## 质量指标\n${selectedItem.quality ? `\n- 新闻可信度：${selectedItem.quality.credibility}%\n- 内容可读性：${selectedItem.quality.readability}%\n- 读者吸引力：${selectedItem.quality.engagement}%\n- 主题相关性：${selectedItem.quality.relevance}%` : ''}`;
+    const content = `# 记录详情\n\n## 基本信息\n- 分类：${selectedItem.category}\n- 状态：${selectedItem.status}\n- 创建时间：${new Date(selectedItem.createdAt).toLocaleString('zh-CN')}\n\n## 原始内容\n\n${selectedItem.content}\n\n## 生成的标题\n\n### 客观纪实标题\n${selectedItem.titles.objective}\n\n### 数据亮点标题\n${selectedItem.titles.dataHighlight}\n\n### 轻量化标题\n${selectedItem.titles.lightweight}\n\n## 摘要内容\n\n${editingSummary ? editSummaryContent : savedSummary}\n\n## 质量指标\n${selectedItem.quality ? `\n- 新闻可信度：${selectedItem.quality.credibility}%\n- 内容可读性：${selectedItem.quality.readability}%\n- 读者吸引力：${selectedItem.quality.engagement}%` : ''}`;
 
     const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -231,7 +231,7 @@ export function History() {
     const folder = zip.folder('历史记录导出');
 
     itemsToExport.forEach(item => {
-      const content = `# 记录详情\n\n## 基本信息\n- 分类：${item.category}\n- 状态：${item.status}\n- 创建时间：${new Date(item.createdAt).toLocaleString('zh-CN')}\n\n## 原始内容\n\n${item.content}\n\n## 生成的标题\n\n### 客观纪实标题\n${item.titles.objective}\n\n### 数据亮点标题\n${item.titles.dataHighlight}\n\n### 轻量化标题\n${item.titles.lightweight}\n\n## 摘要内容\n\n${item.summary}\n\n## 质量指标\n${item.quality ? `\n- 新闻可信度：${item.quality.credibility}%\n- 内容可读性：${item.quality.readability}%\n- 读者吸引力：${item.quality.engagement}%\n- 主题相关性：${item.quality.relevance}%` : ''}`;
+      const content = `# 记录详情\n\n## 基本信息\n- 分类：${item.category}\n- 状态：${item.status}\n- 创建时间：${new Date(item.createdAt).toLocaleString('zh-CN')}\n\n## 原始内容\n\n${item.content}\n\n## 生成的标题\n\n### 客观纪实标题\n${item.titles.objective}\n\n### 数据亮点标题\n${item.titles.dataHighlight}\n\n### 轻量化标题\n${item.titles.lightweight}\n\n## 摘要内容\n\n${item.summary}\n\n## 质量指标\n${item.quality ? `\n- 新闻可信度：${item.quality.credibility}%\n- 内容可读性：${item.quality.readability}%\n- 读者吸引力：${item.quality.engagement}%` : ''}`;
       
       const fileName = `记录_${new Date(item.createdAt).toLocaleDateString('zh-CN').replace(/\//g, '-')}_${item.id.substring(0, 8)}.md`;
       folder?.file(fileName, content);
