@@ -1,4 +1,4 @@
-import { Shield, BookOpen, Heart, Link2 } from 'lucide-react';
+import { Shield, BookOpen, Heart } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 
 export function QualityVerification() {
@@ -38,15 +38,6 @@ export function QualityVerification() {
       description: '标题吸引力、内容趣味性、阅读兴趣',
       ...getScoreColor(quality.engagement),
     },
-    {
-      id: 'relevance',
-      label: '主题相关性',
-      value: quality.relevance,
-      unit: '分',
-      icon: Link2,
-      description: '标题与内容匹配度、主题把握程度',
-      ...getScoreColor(quality.relevance),
-    },
   ];
 
   const getRingWidth = (value: number, max: number) => {
@@ -61,7 +52,7 @@ export function QualityVerification() {
         <h2 className="text-xl font-bold text-gray-800">质量校验</h2>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {metrics.map((item) => {
           const Icon = item.icon;
           const ringWidth = getRingWidth(item.value, 100);

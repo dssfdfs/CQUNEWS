@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Newspaper, Clock, Network, TrendingUp, Sparkles, ChevronRight, Star, ExternalLink, ArrowRight } from 'lucide-react';
+import { Newspaper, Clock, Network, TrendingUp, Sparkles, ChevronRight, Star, RotateCcw, Crosshair, ExternalLink, ArrowRight, Search } from 'lucide-react';
 import { useStore } from '@/store/useStore';
+import ForceGraph3D from 'react-force-graph-3d';
+import * as THREE from 'three';
+import { recordBehavior } from '../lib/behavior';
 
 interface RecommendedNews {
   id: number;
@@ -16,21 +19,34 @@ interface RecommendedNews {
   is_trending: boolean;
 }
 
+type EntityType = 'PERSON' | 'ORG' | 'GPE' | 'EVENT' | 'TECHNOLOGY' | 'PRODUCT' | 'OTHER';
+type RelationType = '涉及' | '关联' | '位于' | '属于' | '发布' | '参与' | '合作' | '包含' | '主题词' | '摘要' | '推荐' | '特征' | '分类' | '标签';
+
 interface KnowledgeGraphNode {
   id: string;
   label: string;
-  type: 'topic' | 'entity' | 'attribute';
-  x: number;
-  y: number;
+  type: 'topic' | 'news' | 'entity' | 'attribute';
+  entityType?: EntityType;
+  dominantEntityType?: EntityType;
   size: number;
   weight: number;
   cluster: number;
+  newsId?: number;
+  newsIds?: number[];
+  isRelevant?: boolean;
 }
 
 interface KnowledgeGraphLink {
   source: string;
   target: string;
   label?: string;
+  weight: number;
+  relationType?: RelationType;
+}
+
+interface KnowledgeGraphData {
+  nodes: KnowledgeGraphNode[];
+  links: KnowledgeGraphLink[];
 }
 
 const categoryColors: Record<string, string> = {
@@ -49,10 +65,45 @@ export function NewsRecommend() {
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState<RecommendedNews[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [knowledgeGraph, setKnowledgeGraph] = useState<{ nodes: KnowledgeGraphNode[], links: KnowledgeGraphLink[] }>({ nodes: [], links: [] });
+  const [knowledgeGraph, setKnowledgeGraph] = useState<KnowledgeGraphData>({ nodes: [], links: [] });
   const [showKnowledgeGraph, setShowKnowledgeGraph] = useState(false);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const [relatedNews, setRelatedNews] = useState<RecommendedNews[]>([]);
+  const [allNews, setAllNews] = useState<RecommendedNews[]>([]);
+  const graphRef = useRef<any>(null);
+
+  const handleNewsClick = (news: RecommendedNews) => {
+    recordBehavior({
+      action_type: 'view',
+      target_id: news.id,
+      category: news.category,
+      title: news.title,
+    });
+    navigate(`/news/${news.id}`);
+  };
+
+  useEffect(() => {
+    if (showKnowledgeGraph && knowledgeGraph.nodes.length > 0 && graphRef.current) {
+      setTimeout(() => {
+        const camera = graphRef.current.camera();
+        if (camera) {
+          camera.position.set(0, 0, 300);
+          camera.lookAt(0, 0, 0);
+        }
+      }, 500);
+    }
+  }, [knowledgeGraph.nodes.length, showKnowledgeGraph]);
+
+  useEffect(() => {
+    if (showKnowledgeGraph) {
+      generateKnowledgeGraph();
+    }
+  }, [showKnowledgeGraph]);
+
+  useEffect(() => {
+    if (showKnowledgeGraph && (content || summary)) {
+      generateKnowledgeGraph();
+    }
+  }, [content, summary, showKnowledgeGraph]);
 
   const getCategory = () => {
     if (history.length > 0) {
@@ -64,39 +115,59 @@ export function NewsRecommend() {
   useEffect(() => {
     if (summary && content && titles.objective) {
       fetchRecommendations();
-      generateKnowledgeGraph();
     } else {
       fetchDefaultRecommendations();
     }
   }, [summary, content, titles, history]);
 
-  const fetchRelatedNews = async (keyword: string) => {
-    try {
-      const response = await fetch(`/api/news?keyword=${encodeURIComponent(keyword)}&page_size=5`);
-      const result = await response.json();
-      if (result.items && result.items.length > 0) {
-        setRelatedNews(result.items.slice(0, 5));
-      } else {
-        setRelatedNews([]);
-      }
-    } catch (error) {
-      console.error('Failed to fetch related news:', error);
-      setRelatedNews([]);
+  useEffect(() => {
+    if (content || summary) {
+      fetchDefaultRecommendations();
     }
-  };
+  }, [content, summary]);
 
   useEffect(() => {
-    if (selectedNode) {
-      fetchRelatedNews(selectedNode);
-    } else {
-      setRelatedNews([]);
+    generateKnowledgeGraph();
+  }, [recommendations, summary, content, titles]);
+
+  useEffect(() => {
+    if (showKnowledgeGraph) {
+      fetch('/api/news?page_size=200&today_only=true')
+        .then(res => res.json())
+        .then(result => setAllNews(result.items || []))
+        .catch(() => setAllNews([]));
     }
-  }, [selectedNode]);
+  }, [showKnowledgeGraph]);
+
+  const [cameraX, setCameraX] = useState(0);
+  const [cameraY, setCameraY] = useState(0);
+
+  useEffect(() => {
+    if (showKnowledgeGraph && knowledgeGraph.nodes.length > 0 && graphRef.current) {
+      setTimeout(() => {
+        graphRef.current.cameraPosition(
+          { x: cameraX, y: cameraY, z: 1125 },
+          { x: cameraX, y: cameraY, z: 0 },
+          500
+        );
+      }, 500);
+    }
+  }, [knowledgeGraph, showKnowledgeGraph, cameraX, cameraY]);
+
+  useEffect(() => {
+    if (showKnowledgeGraph && graphRef.current) {
+      graphRef.current.cameraPosition(
+        { x: cameraX, y: cameraY, z: 1125 },
+        { x: cameraX, y: cameraY, z: 0 },
+        200
+      );
+    }
+  }, [cameraX, cameraY, showKnowledgeGraph]);
 
   const fetchDefaultRecommendations = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/news?page_size=5');
+      const response = await fetch('/api/news?page_size=5&today_only=true');
       const result = await response.json();
       if (result.items && result.items.length > 0) {
         setRecommendations(result.items.slice(0, 5));
@@ -121,8 +192,8 @@ export function NewsRecommend() {
       if (category && category !== '综合') {
         url = `/api/news?category=${encodeURIComponent(category)}&page_size=5`;
       } else {
-        const keywords = extractKeywords(content + ' ' + summary + ' ' + titles.objective);
-        const keywordStr = keywords.map(k => k.word).join(' ');
+        const keywords = extractKeywordsAndEntities(content + ' ' + summary + ' ' + titles.objective);
+        const keywordStr = keywords.map((k: { word: string }) => k.word).join(' ');
         url = `/api/news?keyword=${encodeURIComponent(keywordStr)}&page_size=5`;
       }
       
@@ -142,125 +213,197 @@ export function NewsRecommend() {
     }
   };
 
-  const clusterKeywords = (keywords: Array<{ word: string; weight: number; position: number }>): Array<{ word: string; weight: number; position: number; cluster: number }> => {
-    const clusters: Record<string, number> = {};
-    const clusterKeywordsList: Array<{ word: string; weight: number; position: number; cluster: number }> = [];
-    
-    const synonymGroups = [
-      ['科技', '技术', '互联网', '人工智能', 'AI', '智能', '数据', '数字化'],
-      ['经济', '金融', '市场', '企业', '公司', '投资', '股票', '贸易'],
-      ['政策', '政府', '国家', '中国', '国际', '外交', '合作', '发展'],
-      ['教育', '学校', '学生', '教师', '学习', '培训', '课程', '考试'],
-      ['健康', '医疗', '医院', '医生', '疾病', '疫苗', '营养', '身体'],
-      ['环境', '气候', '能源', '环保', '绿色', '可持续', '生态'],
-      ['文化', '艺术', '历史', '传统', '遗产', '博物馆', '文学'],
-      ['体育', '运动', '比赛', '奥运会', '足球', '篮球', '健身'],
-      ['娱乐', '电影', '音乐', '明星', '综艺', '演出', '节目'],
+  const identifyEntityType = (word: string): EntityType => {
+    const orgPatterns = [
+      /[\u4e00-\u9fa5]{2,}大学/,
+      /[\u4e00-\u9fa5]{2,}公司/,
+      /[\u4e00-\u9fa5]{2,}集团/,
+      /[\u4e00-\u9fa5]{2,}科技/,
+      /[\u4e00-\u9fa5]{2,}企业/,
+      /[\u4e00-\u9fa5]{2,}研究院/,
+      /[\u4e00-\u9fa5]{2,}研究所/,
+      /[\u4e00-\u9fa5]{2,}政府/,
+      /[\u4e00-\u9fa5]{2,}部门/,
+      /[\u4e00-\u9fa5]{2,}机构/,
+      /[\u4e00-\u9fa5]{2,}协会/,
+      /[\u4e00-\u9fa5]{2,}联盟/,
+      /[\u4e00-\u9fa5]{2,}基金会/,
+      /[\u4e00-\u9fa5]{2,}委员会/,
+      /[\u4e00-\u9fa5]{2,}银行/,
+      /[\u4e00-\u9fa5]{2,}医院/,
+      /[\u4e00-\u9fa5]{2,}学校/,
+      /[\u4e00-\u9fa5]{2,}学院/,
+      /[\u4e00-\u9fa5]{2,}媒体/,
+      /[\u4e00-\u9fa5]{2,}报社/,
+      /[\u4e00-\u9fa5]{2,}通讯社/,
     ];
-
-    let currentCluster = 0;
-    keywords.forEach(keyword => {
-      let foundCluster = -1;
-      for (let i = 0; i < synonymGroups.length; i++) {
-        const group = synonymGroups[i];
-        if (group.some(synonym => keyword.word.includes(synonym) || synonym.includes(keyword.word))) {
-          foundCluster = i;
-          break;
-        }
-      }
-      
-      if (foundCluster === -1) {
-        foundCluster = currentCluster + synonymGroups.length;
-        currentCluster++;
-      }
-      
-      clusterKeywordsList.push({ ...keyword, cluster: foundCluster });
-      clusters[keyword.word] = foundCluster;
-    });
-
-    return clusterKeywordsList;
+    
+    const commonOrgs = ['腾讯', '阿里巴巴', '百度', '华为', '小米', '京东', '美团', '字节', '滴滴', '网易', '新浪', '搜狐', '网易', '新华网', '人民网', '央视', '新华社', '澎湃', '凤凰网'];
+    
+    const gpePatterns = [
+      /[\u4e00-\u9fa5]{2,}省/,
+      /[\u4e00-\u9fa5]{2,}市/,
+      /[\u4e00-\u9fa5]{2,}区/,
+      /[\u4e00-\u9fa5]{2,}县/,
+      /[\u4e00-\u9fa5]{2,}镇/,
+      /[\u4e00-\u9fa5]{2,}村/,
+      /[\u4e00-\u9fa5]{2,}国家/,
+      /[\u4e00-\u9fa5]{2,}州/,
+      /[\u4e00-\u9fa5]{2,}港/,
+      /[\u4e00-\u9fa5]{2,}澳/,
+      /[\u4e00-\u9fa5]{2,}岛/,
+      /[\u4e00-\u9fa5]{2,}山/,
+      /[\u4e00-\u9fa5]{2,}河/,
+      /[\u4e00-\u9fa5]{2,}湖/,
+      /[\u4e00-\u9fa5]{2,}海/,
+      /[\u4e00-\u9fa5]{2,}江/,
+      /[\u4e00-\u9fa5]{2,}路/,
+      /[\u4e00-\u9fa5]{2,}街/,
+    ];
+    
+    const commonGPEs = ['北京', '上海', '广州', '深圳', '成都', '杭州', '南京', '武汉', '重庆', '西安', '天津', '苏州', '郑州', '长沙', '青岛', '沈阳', '大连', '厦门', '香港', '澳门', '台湾', '中国', '美国', '日本', '韩国', '英国', '法国', '德国', '俄罗斯', '印度', '巴西'];
+    
+    const eventPatterns = [
+      /[\u4e00-\u9fa5]{2,}大会/,
+      /[\u4e00-\u9fa5]{2,}会议/,
+      /[\u4e00-\u9fa5]{2,}峰会/,
+      /[\u4e00-\u9fa5]{2,}论坛/,
+      /[\u4e00-\u9fa5]{2,}展览/,
+      /[\u4e00-\u9fa5]{2,}赛事/,
+      /[\u4e00-\u9fa5]{2,}活动/,
+      /[\u4e00-\u9fa5]{2,}计划/,
+      /[\u4e00-\u9fa5]{2,}项目/,
+      /[\u4e00-\u9fa5]{2,}工程/,
+      /[\u4e00-\u9fa5]{2,}行动/,
+      /[\u4e00-\u9fa5]{2,}改革/,
+      /[\u4e00-\u9fa5]{2,}政策/,
+      /[\u4e00-\u9fa5]{2,}发布会/,
+      /[\u4e00-\u9fa5]{2,}会议/,
+    ];
+    
+    const techPatterns = [
+      /[\u4e00-\u9fa5]{2,}技术/,
+      /[\u4e00-\u9fa5]{2,}系统/,
+      /[\u4e00-\u9fa5]{2,}平台/,
+      /[\u4e00-\u9fa5]{2,}算法/,
+      /[\u4e00-\u9fa5]{2,}模型/,
+      /[\u4e00-\u9fa5]{2,}框架/,
+      /[\u4e00-\u9fa5]{2,}协议/,
+      /[\u4e00-\u9fa5]{2,}标准/,
+      /[\u4e00-\u9fa5]{2,}芯片/,
+      /[\u4e00-\u9fa5]{2,}软件/,
+      /[\u4e00-\u9fa5]{2,}硬件/,
+      /[\u4e00-\u9fa5]{2,}网络/,
+      /[\u4e00-\u9fa5]{2,}数据/,
+      /[\u4e00-\u9fa5]{2,}智能/,
+      /[\u4e00-\u9fa5]{2,}AI/,
+      /[\u4e00-\u9fa5]{2,}人工智能/,
+      /[A-Za-z]{3,}/,
+    ];
+    
+    const productPatterns = [
+      /[\u4e00-\u9fa5]{2,}手机/,
+      /[\u4e00-\u9fa5]{2,}电脑/,
+      /[\u4e00-\u9fa5]{2,}汽车/,
+      /[\u4e00-\u9fa5]{2,}飞机/,
+      /[\u4e00-\u9fa5]{2,}软件/,
+      /[\u4e00-\u9fa5]{2,}应用/,
+      /[\u4e00-\u9fa5]{2,}APP/,
+      /[\u4e00-\u9fa5]{2,}设备/,
+      /[\u4e00-\u9fa5]{2,}产品/,
+      /[\u4e00-\u9fa5]{2,}服务/,
+      /[\u4e00-\u9fa5]{2,}系统/,
+      /[\u4e00-\u9fa5]{2,}平台/,
+      /[\u4e00-\u9fa5]{2,}工具/,
+    ];
+    
+    const personIndicators = ['先生', '女士', '博士', '教授', '专家', '经理', '主任', '书记', '主席', '局长', '院长', '总理', '部长', '委员', '代表', '记者'];
+    
+    if (orgPatterns.some(p => p.test(word)) || commonOrgs.some(org => word.includes(org))) return 'ORG';
+    if (gpePatterns.some(p => p.test(word)) || commonGPEs.some(gpe => word.includes(gpe))) return 'GPE';
+    if (eventPatterns.some(p => p.test(word))) return 'EVENT';
+    if (techPatterns.some(p => p.test(word))) return 'TECHNOLOGY';
+    if (productPatterns.some(p => p.test(word))) return 'PRODUCT';
+    if (personIndicators.some(indicator => word.includes(indicator))) return 'PERSON';
+    
+    return 'OTHER';
   };
 
-  const generateKnowledgeGraph = () => {
-    const keywords = extractKeywords(content + ' ' + summary);
-    const clusteredKeywords = clusterKeywords(keywords);
-    
-    const nodes: KnowledgeGraphNode[] = [];
-    const links: KnowledgeGraphLink[] = [];
-    
-    const centerX = 250;
-    const centerY = 180;
-    
-    const topicLabel = titles.objective || '新闻主题';
-    nodes.push({ id: 'topic', label: topicLabel, type: 'topic', x: centerX, y: centerY, size: 45, weight: 100, cluster: -1 });
-    
-    const entityKeywords = clusteredKeywords.slice(0, 4);
-    const attributeKeywords = clusteredKeywords.slice(4, 8);
-    
-    const relationLabels = ['相关', '包含', '涉及', '关联'];
-    const attributeRelationLabels = ['属性', '特征', '描述', '标签'];
-    
-    entityKeywords.forEach((keyword, index) => {
-      const angle = (index * 90) * (Math.PI / 180);
-      const radius = 130;
-      const variance = (Math.random() - 0.5) * 20;
-      const x = centerX + (radius + variance) * Math.cos(angle);
-      const y = centerY + (radius + variance) * Math.sin(angle);
-      const size = 28 + (keyword.weight / 15);
-      
-      nodes.push({ 
-        id: keyword.word, 
-        label: keyword.word, 
-        type: 'entity', 
-        x, y, 
-        size: Math.min(size, 32), 
-        weight: Math.round(keyword.weight),
-        cluster: keyword.cluster
-      });
-      links.push({ 
-        source: 'topic', 
-        target: keyword.word,
-        label: relationLabels[index % relationLabels.length]
-      });
-      
-      const attributesForEntity = attributeKeywords.filter((_, i) => i % entityKeywords.length === index);
-      attributesForEntity.forEach((attr, attrIndex) => {
-        const attrAngle = angle + (attrIndex - 0.5) * 0.5;
-        const attrRadius = radius + 80 + Math.random() * 20;
-        const attrX = centerX + attrRadius * Math.cos(attrAngle);
-        const attrY = centerY + attrRadius * Math.sin(attrAngle);
-        
-        nodes.push({ 
-          id: attr.word, 
-          label: attr.word, 
-          type: 'attribute', 
-          x: attrX, 
-          y: attrY, 
-          size: 20, 
-          weight: Math.round(attr.weight),
-          cluster: keyword.cluster
-        });
-        links.push({ 
-          source: keyword.word, 
-          target: attr.word,
-          label: attributeRelationLabels[attrIndex % attributeRelationLabels.length]
-        });
-      });
-    });
-
-    setKnowledgeGraph({ nodes, links });
-  };
-
-  const extractKeywords = (text: string): Array<{ word: string; weight: number; position: number }> => {
+  const extractKeywordsAndEntities = (text: string, newsId?: number): Array<{ word: string; weight: number; position: number; type: 'entity' | 'attribute'; entityType?: EntityType; newsId?: number; cluster?: number }> => {
     const stopWords = ['的', '了', '是', '在', '我', '有', '和', '就', '不', '人', '都', '一', '一个', '上', '也', '很', '到', '说', '要', '去', '你', '会', '着', '没有', '看', '好', '自己', '这', '新闻', '报道', '文章', '视频', '内容', '摘要', '生成', '标题', '可以', '需要', '进行', '问题', '情况', '工作', '相关', '发展', '重要', '研究', '分析', '表示', '指出', '认为', '建议', '应该', '可能', '已经', '正在', '将会', '通过', '根据', '按照', '以及', '对于', '关于', '由于', '如果', '虽然', '但是', '因此', '而且', '同时', '另外', '比如', '例如', '包括', '等等', '这个', '那个', '这样', '那样', '如何', '什么', '哪里', '为什么', '因为', '所以'];
     
+    const entityPatterns = [
+      /[\u4e00-\u9fa5]{2,}大学/g,
+      /[\u4e00-\u9fa5]{2,}公司/g,
+      /[\u4e00-\u9fa5]{2,}集团/g,
+      /[\u4e00-\u9fa5]{2,}科技/g,
+      /[\u4e00-\u9fa5]{2,}企业/g,
+      /[\u4e00-\u9fa5]{2,}研究院/g,
+      /[\u4e00-\u9fa5]{2,}研究所/g,
+      /[\u4e00-\u9fa5]{2,}政府/g,
+      /[\u4e00-\u9fa5]{2,}部门/g,
+      /[\u4e00-\u9fa5]{2,}机构/g,
+      /[\u4e00-\u9fa5]{2,}协会/g,
+      /[\u4e00-\u9fa5]{2,}会议/g,
+      /[\u4e00-\u9fa5]{2,}峰会/g,
+      /[\u4e00-\u9fa5]{2,}论坛/g,
+      /[\u4e00-\u9fa5]{2,}展览/g,
+      /[\u4e00-\u9fa5]{2,}赛事/g,
+      /[\u4e00-\u9fa5]{2,}政策/g,
+      /[\u4e00-\u9fa5]{2,}计划/g,
+      /[\u4e00-\u9fa5]{2,}项目/g,
+      /[\u4e00-\u9fa5]{2,}工程/g,
+      /[\u4e00-\u9fa5]{2,}技术/g,
+      /[\u4e00-\u9fa5]{2,}系统/g,
+      /[\u4e00-\u9fa5]{2,}平台/g,
+      /[\u4e00-\u9fa5]{2,}算法/g,
+      /[\u4e00-\u9fa5]{2,}模型/g,
+      /[\u4e00-\u9fa5]{2,}省/g,
+      /[\u4e00-\u9fa5]{2,}市/g,
+      /[\u4e00-\u9fa5]{2,}国家/g,
+      /[\u4e00-\u9fa5]{2,}区/g,
+      /[\u4e00-\u9fa5]{2,}县/g,
+      /[\u4e00-\u9fa5]{2,}港/g,
+      /[\u4e00-\u9fa5]{2,}澳/g,
+      /[\u4e00-\u9fa5]{2,}岛/g,
+      /[\u4e00-\u9fa5]{2,}山/g,
+      /[\u4e00-\u9fa5]{2,}河/g,
+      /[\u4e00-\u9fa5]{2,}湖/g,
+      /[\u4e00-\u9fa5]{2,}海/g,
+      /[\u4e00-\u9fa5]{2,}江/g,
+      /[\u4e00-\u9fa5]{2,}银行/g,
+      /[\u4e00-\u9fa5]{2,}医院/g,
+      /[\u4e00-\u9fa5]{2,}学校/g,
+      /[\u4e00-\u9fa5]{2,}学院/g,
+      /[\u4e00-\u9fa5]{2,}联盟/g,
+      /[\u4e00-\u9fa5]{2,}基金会/g,
+      /[\u4e00-\u9fa5]{2,}委员会/g,
+      /[\u4e00-\u9fa5]{2,}行动/g,
+      /[\u4e00-\u9fa5]{2,}改革/g,
+      /[A-Za-z0-9]{3,}/g,
+    ];
+
     const words = text.match(/[\u4e00-\u9fa5]{2,}/g) || [];
-    const wordInfo: Record<string, { count: number; positions: number[] }> = {};
+    const wordInfo: Record<string, { count: number; positions: number[]; type: 'entity' | 'attribute'; entityType?: EntityType }> = {};
     
+    entityPatterns.forEach(pattern => {
+      const matches = text.match(pattern);
+      if (matches) {
+        matches.forEach(match => {
+          if (!wordInfo[match]) {
+            wordInfo[match] = { count: 0, positions: [], type: 'entity', entityType: identifyEntityType(match) };
+          }
+          wordInfo[match].count += 2;
+          wordInfo[match].type = 'entity';
+          wordInfo[match].entityType = identifyEntityType(match);
+        });
+      }
+    });
+
     words.forEach((word, index) => {
       if (!stopWords.includes(word) && word.length >= 2) {
         if (!wordInfo[word]) {
-          wordInfo[word] = { count: 0, positions: [] };
+          wordInfo[word] = { count: 0, positions: [], type: 'attribute', entityType: undefined };
         }
         wordInfo[word].count++;
         wordInfo[word].positions.push(index);
@@ -268,15 +411,201 @@ export function NewsRecommend() {
     });
 
     const scoredWords = Object.entries(wordInfo).map(([word, info]) => {
-      const positionScore = info.positions.reduce((sum, pos) => {
-        return sum + (1 - pos / words.length) * 2;
-      }, 0) / info.positions.length;
+      const positionScore = info.positions.length > 0 
+        ? info.positions.reduce((sum, pos) => sum + (1 - pos / words.length) * 2, 0) / info.positions.length 
+        : 0.5;
       const lengthBonus = word.length >= 3 ? 0.5 : 0;
-      const weight = info.count * 3 + positionScore + lengthBonus;
-      return { word, weight, position: info.positions[0] };
+      const entityBonus = info.type === 'entity' ? 1.0 : 0;
+      const typeBonus = info.entityType === 'PERSON' || info.entityType === 'ORG' ? 0.5 : 0;
+      const weight = info.count * 3 + positionScore + lengthBonus + entityBonus + typeBonus;
+      return { word, weight, position: info.positions[0] || 0, type: info.type, entityType: info.entityType, newsId };
     });
 
     return scoredWords.sort((a, b) => b.weight - a.weight).slice(0, 12);
+  };
+
+  const generateKnowledgeGraph = async () => {
+    const effectiveRecommendations = recommendations.length > 0 ? recommendations : [];
+    const hasContent = content || summary;
+    const nodes: KnowledgeGraphNode[] = [];
+    const links: KnowledgeGraphLink[] = [];
+    const nodeIds = new Set<string>();
+    
+    const topicLabel = titles.objective || '新闻主题';
+    const topicNewsIds = effectiveRecommendations.map(n => n.id);
+    nodes.push({ id: 'topic', label: topicLabel, type: 'topic', size: 45, weight: 100, cluster: -1, newsIds: topicNewsIds, isRelevant: true });
+    nodeIds.add('topic');
+    
+    const contentKeywords = hasContent ? extractKeywordsAndEntities(content + ' ' + summary) : [];
+    const contentKeywordSet = new Set(contentKeywords.map(k => k.word));
+    
+    const allNewsEntities: Record<string, { weight: number; entityType?: EntityType; newsIds: number[] }> = {};
+    
+    try {
+      const response = await fetch('/api/news?page_size=100&today_only=true');
+      const result = await response.json();
+      const newsList = result.items || [];
+      setAllNews(newsList);
+      
+      newsList.forEach((news: RecommendedNews) => {
+        const text = `${news.title} ${news.summary || ''}`;
+        const keywords = extractKeywordsAndEntities(text);
+        keywords.forEach(kw => {
+          if (!allNewsEntities[kw.word]) {
+            allNewsEntities[kw.word] = { weight: 0, entityType: kw.entityType, newsIds: [] };
+          }
+          allNewsEntities[kw.word].weight += kw.weight;
+          if (kw.entityType) {
+            allNewsEntities[kw.word].entityType = kw.entityType;
+          }
+          if (!allNewsEntities[kw.word].newsIds.includes(news.id)) {
+            allNewsEntities[kw.word].newsIds.push(news.id);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Failed to fetch all news for knowledge graph:', error);
+    }
+    
+    const newsNodes: KnowledgeGraphNode[] = [];
+    effectiveRecommendations.forEach((news, index) => {
+      const newsNodeId = `news-${news.id}`;
+      newsNodes.push({
+        id: newsNodeId,
+        label: news.title.length > 12 ? news.title.slice(0, 11) + '...' : news.title,
+        type: 'news',
+        size: 26,
+        weight: news.views || 100,
+        cluster: index,
+        newsId: news.id,
+        isRelevant: true,
+      });
+      nodeIds.add(newsNodeId);
+      
+      links.push({
+        source: 'topic',
+        target: newsNodeId,
+        label: '推荐',
+        weight: 1,
+        relationType: '推荐',
+      });
+    });
+    nodes.push(...newsNodes);
+    
+    Object.entries(allNewsEntities).forEach(([word, info]) => {
+      const size = Math.max(15, 20 + (info.weight / 25));
+      const appearsInContent = contentKeywordSet.has(word);
+      const appearsInRecommended = info.newsIds.some(id => effectiveRecommendations.some(r => r.id === id));
+      const isRelevant = appearsInContent || appearsInRecommended;
+      
+      if (!nodeIds.has(word)) {
+        nodes.push({
+          id: word,
+          label: word,
+          type: 'entity',
+          entityType: info.entityType,
+          size: Math.min(size, 35),
+          weight: Math.round(info.weight),
+          cluster: info.newsIds.length,
+          newsIds: info.newsIds,
+          isRelevant,
+        });
+        nodeIds.add(word);
+        
+        links.push({
+          source: 'topic',
+          target: word,
+          label: isRelevant ? '主题词' : '关联',
+          weight: isRelevant ? 1 : 0.5,
+          relationType: isRelevant ? '主题词' : '关联',
+        });
+      }
+    });
+    
+    if (hasContent) {
+      contentKeywords.forEach(cw => {
+        if (nodeIds.has(cw.word)) {
+          links.push({
+            source: 'topic',
+            target: cw.word,
+            label: '摘要',
+            weight: 1.2,
+            relationType: '摘要',
+          });
+        }
+      });
+    }
+    
+    effectiveRecommendations.forEach(news => {
+      const text = `${news.title} ${news.summary || ''}`;
+      const newsKeywords = extractKeywordsAndEntities(text);
+      newsKeywords.forEach(keyword => {
+        if (keyword.type === 'entity' && nodeIds.has(keyword.word)) {
+          const existingLink = links.find(l => 
+            l.source === `news-${news.id}` && l.target === keyword.word
+          );
+          if (!existingLink) {
+            links.push({
+              source: `news-${news.id}`,
+              target: keyword.word,
+              label: '包含',
+              weight: 0.8,
+              relationType: '包含',
+            });
+          }
+        }
+      });
+    });
+    
+    Object.entries(allNewsEntities).forEach(([source, sourceInfo]) => {
+      Object.entries(allNewsEntities).forEach(([target, targetInfo]) => {
+        if (source !== target && nodeIds.has(source) && nodeIds.has(target)) {
+          const commonNews = sourceInfo.newsIds.filter(id => targetInfo.newsIds.includes(id));
+          if (commonNews.length > 0) {
+            const existingLink = links.find(l => 
+              (l.source === source && l.target === target) ||
+              (l.source === target && l.target === source)
+            );
+            if (!existingLink) {
+              links.push({
+                source,
+                target,
+                label: '关联',
+                weight: commonNews.length * 0.5,
+                relationType: '关联',
+              });
+            }
+          }
+        }
+      });
+    });
+    
+    const entityTypeCounts: Record<EntityType, number> = {
+      PERSON: 0,
+      ORG: 0,
+      GPE: 0,
+      EVENT: 0,
+      TECHNOLOGY: 0,
+      PRODUCT: 0,
+      OTHER: 0,
+    };
+    
+    nodes.forEach(node => {
+      if (node.entityType && node.entityType !== 'OTHER') {
+        entityTypeCounts[node.entityType]++;
+      }
+    });
+    
+    const sortedTypes = Object.entries(entityTypeCounts)
+      .sort((a, b) => b[1] - a[1]);
+    const dominantType = sortedTypes[0]?.[1] > 0 ? sortedTypes[0][0] as EntityType : undefined;
+    
+    const topicNodeIndex = nodes.findIndex(n => n.id === 'topic');
+    if (topicNodeIndex !== -1 && dominantType) {
+      nodes[topicNodeIndex].dominantEntityType = dominantType;
+    }
+    
+    setKnowledgeGraph({ nodes, links });
   };
 
   const formatDate = (dateStr: string) => {
@@ -297,44 +626,8 @@ export function NewsRecommend() {
     }
   };
 
-  const entityColors = [
-    { fill: '#818cf8', stroke: '#6366f1', gradientId: 'entity0' },
-    { fill: '#60a5fa', stroke: '#3b82f6', gradientId: 'entity1' },
-    { fill: '#a5b4fc', stroke: '#818cf8', gradientId: 'entity2' },
-    { fill: '#c7d2fe', stroke: '#a5b4fc', gradientId: 'entity3' },
-    { fill: '#a78bfa', stroke: '#8b5cf6', gradientId: 'entity4' },
-    { fill: '#c4b5fd', stroke: '#a78bfa', gradientId: 'entity5' },
-    { fill: '#6366f1', stroke: '#4f46e5', gradientId: 'entity6' },
-    { fill: '#4f46e5', stroke: '#4338ca', gradientId: 'entity7' },
-    { fill: '#3b82f6', stroke: '#2563eb', gradientId: 'entity8' },
-  ];
-
-  const attributeColors = [
-    { fill: '#e0e7ff', stroke: '#a5b4fc', gradientId: 'attr0' },
-    { fill: '#c7d2fe', stroke: '#818cf8', gradientId: 'attr1' },
-    { fill: '#ede9fe', stroke: '#a78bfa', gradientId: 'attr2' },
-    { fill: '#e0e7ff', stroke: '#a5b4fc', gradientId: 'attr3' },
-    { fill: '#c7d2fe', stroke: '#818cf8', gradientId: 'attr4' },
-    { fill: '#ede9fe', stroke: '#a78bfa', gradientId: 'attr5' },
-    { fill: '#e0e7ff', stroke: '#a5b4fc', gradientId: 'attr6' },
-    { fill: '#c7d2fe', stroke: '#818cf8', gradientId: 'attr7' },
-    { fill: '#ede9fe', stroke: '#a78bfa', gradientId: 'attr8' },
-  ];
-
-  const getNodeColor = (type: string, cluster: number = 0) => {
-    if (type === 'topic') {
-      return { fill: '#6366f1', stroke: '#4f46e5', gradientId: 'topicGradient', textColor: '#ffffff' };
-    }
-    if (type === 'attribute') {
-      const color = attributeColors[cluster % attributeColors.length];
-      return { ...color, textColor: '#4f46e5' };
-    }
-    const color = entityColors[cluster % entityColors.length];
-    return { ...color, textColor: '#ffffff' };
-  };
-
   const trendingNews = recommendations.filter(n => n.is_trending);
-  const showKnowledgeGraphButton = content.length >= 100;
+  const showKnowledgeGraphButton = content.length >= 200;
 
   return (
     <div className="card p-6">
@@ -365,273 +658,361 @@ export function NewsRecommend() {
 
       {showKnowledgeGraph && (
         <div className="mb-6 p-6 bg-white rounded-2xl border border-gray-100 shadow-lg">
-          <h3 className="flex items-center gap-2 text-base font-semibold text-gray-800 mb-6">
-            <Network className="w-5 h-5 text-indigo-600" />
-            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">关联聚类知识图谱</span>
-            <span className="text-sm font-normal text-gray-400">- 点击节点查看详情</span>
-          </h3>
-          <div className="flex justify-center relative">
-            <svg width="500" height="400" className="overflow-visible">
-              <defs>
-                <radialGradient id="topicGradient" cx="40%" cy="40%">
-                  <stop offset="0%" stopColor="#a5b4fc" />
-                  <stop offset="50%" stopColor="#6366f1" />
-                  <stop offset="100%" stopColor="#4f46e5" />
-                </radialGradient>
-                {entityColors.map((color, index) => (
-                  <radialGradient key={`entity-${index}`} id={color.gradientId} cx="40%" cy="40%">
-                    <stop offset="0%" stopColor={color.fill} />
-                    <stop offset="50%" stopColor={color.stroke} />
-                    <stop offset="100%" stopColor={color.stroke} />
-                  </radialGradient>
-                ))}
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-                <filter id="glow-sm">
-                  <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#c7d2fe" stopOpacity="0.6"/>
-                  <stop offset="50%" stopColor="#818cf8" stopOpacity="1"/>
-                  <stop offset="100%" stopColor="#c7d2fe" stopOpacity="0.6"/>
-                </linearGradient>
-              </defs>
-              <circle cx="250" cy="200" r="180" fill="#6366f1" fillOpacity="0.03" />
-              <circle cx="250" cy="200" r="130" fill="#818cf8" fillOpacity="0.05" />
-              {knowledgeGraph.links.map((link, index) => {
-                const source = knowledgeGraph.nodes.find(n => n.id === link.source);
-                const target = knowledgeGraph.nodes.find(n => n.id === link.target);
-                if (!source || !target) return null;
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="flex items-center gap-2 text-base font-semibold text-gray-800">
+              <Network className="w-5 h-5 text-indigo-600" />
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">关联聚类知识图谱</span>
+              <span className="text-sm font-normal text-gray-400">- 拖拽旋转 · 滚轮缩放 · 点击查看详情</span>
+            </h3>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const currentNews = history.length > 0 ? history[0] : null;
+                  if (currentNews && graphRef.current) {
+                    const newsNode = knowledgeGraph.nodes.find((n) => n.newsId === Number(currentNews.id));
+                    if (newsNode) {
+                      const nodeWithCoords = newsNode as unknown as { x: number; y: number; z: number };
+                      graphRef.current.cameraPosition(
+                        { x: nodeWithCoords.x + 150, y: nodeWithCoords.y + 100, z: 200 },
+                        { x: nodeWithCoords.x, y: nodeWithCoords.y, z: nodeWithCoords.z },
+                        1000
+                      );
+                    }
+                  }
+                }}
+                className="flex items-center gap-1 px-3 py-1.5 bg-indigo-100 hover:bg-indigo-200 rounded-lg text-xs font-medium text-indigo-600 transition-colors"
+              >
+                <Crosshair className="w-3 h-3" />
+                定位当前新闻
+              </button>
+              <button
+                onClick={() => graphRef.current?.d3Force('center')?.initialize && generateKnowledgeGraph()}
+                className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-600 transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                重置视角
+              </button>
+              <div className="flex flex-col gap-1 ml-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">X坐标</span>
+                  <input
+                    type="range"
+                    min="-1000"
+                    max="1000"
+                    value={cameraX}
+                    onChange={(e) => setCameraX(Number(e.target.value))}
+                    className="w-32 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">Y坐标</span>
+                  <input
+                    type="range"
+                    min="-1000"
+                    max="1000"
+                    value={cameraY}
+                    onChange={(e) => setCameraY(Number(e.target.value))}
+                    className="w-32 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div 
+              className="relative h-[450px] rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50"
+              tabIndex={0}
+              autoFocus
+              style={{ outline: 'none' }}
+            >
+            <ForceGraph3D
+              ref={graphRef}
+              graphData={knowledgeGraph}
+              nodeLabel={(node) => node.label}
+              nodeColor={(node) => {
+                if (node.entityType === 'PERSON') return '#ec4899';
+                if (node.entityType === 'ORG') return '#92400e';
+                if (node.entityType === 'GPE') return '#10b981';
+                if (node.entityType === 'EVENT') return '#f59e0b';
+                if (node.entityType === 'TECHNOLOGY') return '#8b5cf6';
+                if (node.entityType === 'PRODUCT') return '#06b6d4';
                 
-                const isMain = source.id === 'topic';
-                const isAttributeLink = target.type === 'attribute';
+                if (node.type === 'topic' && node.dominantEntityType) {
+                  if (node.dominantEntityType === 'PERSON') return '#ec4899';
+                  if (node.dominantEntityType === 'ORG') return '#92400e';
+                  if (node.dominantEntityType === 'GPE') return '#10b981';
+                  if (node.dominantEntityType === 'EVENT') return '#f59e0b';
+                  if (node.dominantEntityType === 'TECHNOLOGY') return '#8b5cf6';
+                  if (node.dominantEntityType === 'PRODUCT') return '#06b6d4';
+                }
                 
-                return (
-                  <g key={index}>
-                    <line
-                      x1={source.x}
-                      y1={source.y}
-                      x2={target.x}
-                      y2={target.y}
-                      stroke={isMain ? 'url(#lineGradient)' : '#c7d2fe'}
-                      strokeWidth={isMain ? '2.5' : '1.5'}
-                      strokeDasharray={isAttributeLink ? '6,4' : 'none'}
-                      className="transition-all duration-500"
-                      style={{
-                        opacity: isMain ? 0.8 : 0.6,
-                      }}
-                    />
-                    {link.label && (
-                      <g>
-                        <rect
-                          x={(source.x + target.x) / 2 - 25}
-                          y={(source.y + target.y) / 2 - 12}
-                          width={50}
-                          height={20}
-                          rx={10}
-                          fill="#f0f1ff"
-                          stroke="#a5b4fc"
-                          strokeWidth="1"
-                        />
-                        <text
-                          x={(source.x + target.x) / 2}
-                          y={(source.y + target.y) / 2 + 4}
-                          textAnchor="middle"
-                          fill="#4f46e5"
-                          fontSize="10"
-                          fontWeight="500"
-                          className="pointer-events-none"
-                        >
-                          {link.label}
-                        </text>
-                      </g>
-                    )}
-                  </g>
-                );
-              })}
-              {knowledgeGraph.nodes.map((node) => {
-                const colors = getNodeColor(node.type, node.cluster);
-                const isTopic = node.type === 'topic';
-                const isAttribute = node.type === 'attribute';
-                const isSelected = selectedNode === node.id;
-                const displaySize = isSelected ? node.size * 1.4 : node.size;
-                return (
-                  <g 
-                    key={node.id}
-                    className="cursor-pointer"
-                    onClick={() => setSelectedNode(isSelected ? null : node.id)}
-                  >
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r={displaySize + 15}
-                      fill={colors.fill}
-                      fillOpacity={isSelected ? 0.15 : (isAttribute ? 0.05 : 0.08)}
-                      className="transition-all duration-300"
-                    />
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r={displaySize}
-                      fill={isTopic ? `url(#${colors.gradientId})` : (isAttribute ? colors.fill : `url(#${colors.gradientId})`)}
-                      stroke={colors.stroke}
-                      strokeWidth={isSelected ? '3' : (isAttribute ? '1.5' : '2')}
-                      filter={isTopic ? "url(#glow)" : (isAttribute ? "none" : "url(#glow-sm)")}
-                      className="transition-all duration-300"
-                    />
-                    {isTopic && (
-                      <circle
-                        cx={node.x}
-                        cy={node.y}
-                        r={displaySize - 8}
-                        fill="white"
-                        fillOpacity="0.08"
-                      />
-                    )}
-                    {isAttribute && (
-                      <circle
-                        cx={node.x}
-                        cy={node.y}
-                        r={displaySize - 2}
-                        fill="none"
-                        stroke={colors.stroke}
-                        strokeWidth="1"
-                        strokeDasharray="3,3"
-                      />
-                    )}
-                    <text
-                      x={node.x}
-                      y={node.y}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fill={colors.textColor || 'white'}
-                      fontSize={Math.max(8, Math.min(14, (displaySize * 1.4) / Math.max(1, node.label.length)))}
-                      fontWeight="600"
-                      className="pointer-events-none select-none transition-all duration-300"
-                    >
-                      {node.label.length > 6 ? node.label.slice(0, 5) + '...' : node.label}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
+                if (node.type === 'topic') return '#6366f1';
+                if (node.type === 'news') return '#f59e0b';
+                if (node.type === 'attribute') return node.isRelevant ? '#e0e7ff' : '#d1d5db';
+                if (node.type === 'entity' && node.isRelevant === false) return '#d1d5db';
+                
+                return node.isRelevant === false ? '#d1d5db' : '#818cf8';
+              }}
+              nodeVal={(node) => node.size * (node.isRelevant === false ? 0.7 : 1)}
+              nodeThreeObject={(node: KnowledgeGraphNode) => {
+                const group = new THREE.Group();
+                
+                const baseSize = node.type === 'topic' ? 45 : (node.type === 'news' ? 26 : 20);
+                const size = Math.max(baseSize, node.size * (node.isRelevant === false ? 0.7 : 1));
+                const geometry = new THREE.SphereGeometry(size * 0.5, 16, 16);
+                const color = (() => {
+                  if (node.entityType === 'PERSON') return '#ec4899';
+                  if (node.entityType === 'ORG') return '#92400e';
+                  if (node.entityType === 'GPE') return '#10b981';
+                  if (node.entityType === 'EVENT') return '#f59e0b';
+                  if (node.entityType === 'TECHNOLOGY') return '#8b5cf6';
+                  if (node.entityType === 'PRODUCT') return '#06b6d4';
+                  
+                  if (node.type === 'topic' && node.dominantEntityType) {
+                    if (node.dominantEntityType === 'PERSON') return '#ec4899';
+                    if (node.dominantEntityType === 'ORG') return '#92400e';
+                    if (node.dominantEntityType === 'GPE') return '#10b981';
+                    if (node.dominantEntityType === 'EVENT') return '#f59e0b';
+                    if (node.dominantEntityType === 'TECHNOLOGY') return '#8b5cf6';
+                    if (node.dominantEntityType === 'PRODUCT') return '#06b6d4';
+                  }
+                  
+                  if (node.type === 'topic') return '#6366f1';
+                  if (node.type === 'news') return '#f59e0b';
+                  if (node.type === 'attribute') return node.isRelevant ? '#e0e7ff' : '#d1d5db';
+                  if (node.type === 'entity' && node.isRelevant === false) return '#d1d5db';
+                  
+                  return node.isRelevant === false ? '#d1d5db' : '#818cf8';
+                })();
+                
+                const material = new THREE.MeshStandardMaterial({ 
+                  color: new THREE.Color(color),
+                  emissive: new THREE.Color(color),
+                  emissiveIntensity: 0.3,
+                });
+                const sphere = new THREE.Mesh(geometry, material);
+                group.add(sphere);
+                
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d')!;
+                const fontSize = Math.max(14, size * 0.5);
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                const textWidth = ctx.measureText(node.label).width;
+                canvas.width = textWidth + 20;
+                canvas.height = fontSize + 10;
+                
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#333333';
+                ctx.fillText(node.label, canvas.width / 2, canvas.height / 2);
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+                const sprite = new THREE.Sprite(spriteMaterial);
+                sprite.position.y = size * 0.5 + fontSize * 0.6;
+                sprite.scale.set(canvas.width * 0.18, canvas.height * 0.18, 1);
+                group.add(sprite);
+                
+                return group;
+              }}
+              linkColor={(link) => {
+                const sourceNode = typeof link.source === 'object' ? link.source : knowledgeGraph.nodes.find(n => n.id === link.source);
+                const targetNode = typeof link.target === 'object' ? link.target : knowledgeGraph.nodes.find(n => n.id === link.target);
+                const isRelevant = sourceNode?.isRelevant !== false && targetNode?.isRelevant !== false;
+                if (sourceNode?.type === 'topic') return isRelevant ? '#a5b4fc' : '#9ca3af';
+                return isRelevant ? '#c7d2fe' : '#d1d5db';
+              }}
+              linkWidth={(link) => Math.max(1, link.weight * 0.5)}
+              linkOpacity={0.6}
+              linkDirectionalArrowLength={6}
+              linkDirectionalArrowColor="#818cf8"
+              onNodeClick={(node) => {
+                setSelectedNode(node.id === selectedNode ? null : node.id);
+              }}
+              onNodeHover={(node) => {
+                if (node) {
+                  document.body.style.cursor = 'pointer';
+                } else {
+                  document.body.style.cursor = 'default';
+                }
+              }}
+              backgroundColor="#f8fafc"
+            />
             {selectedNode && (
               <div
-                className="absolute pointer-events-auto"
-                style={{ zIndex: 9999, right: '0', bottom: '0' }}
+                className="absolute top-4 left-4 rounded-xl border-2 shadow-xl z-10"
+                style={{
+                  width: '280px',
+                  backgroundColor: '#ffffff',
+                  borderColor: '#818cf8',
+                  padding: '14px',
+                  maxHeight: '400px',
+                  overflowY: 'auto',
+                }}
               >
                 {(() => {
                   const node = knowledgeGraph.nodes.find(n => n.id === selectedNode);
                   if (!node) return null;
                   const isTopic = node.type === 'topic';
+                  const isNews = node.type === 'news';
                   const isAttribute = node.type === 'attribute';
+                  const isEntity = node.type === 'entity';
+                  
+                  const getNewsForEntity = () => {
+                    if (!node.newsIds || node.newsIds.length === 0) return [];
+                    return allNews.filter(n => node.newsIds?.includes(n.id));
+                  };
+                  
                   return (
-                    <div
-                      className="rounded-xl border-2 shadow-lg"
-                      style={{
-                        position: 'relative',
-                        width: '280px',
-                        backgroundColor: '#ffffff',
-                        borderColor: '#818cf8',
-                        padding: '12px',
-                        boxSizing: 'border-box',
-                        maxHeight: '400px',
-                        overflowY: 'auto',
-                      }}
-                    >
+                    <div>
                       <div
                         className="rounded-t-xl mb-3"
                         style={{
                           height: '6px',
-                          background: 'linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%)',
+                          background: isNews 
+                            ? 'linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%)'
+                            : 'linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%)',
                         }}
                       />
-                      <div
-                        className="font-bold text-lg mb-2 text-center"
-                        style={{ color: '#4f46e5', wordWrap: 'break-word', whiteSpace: 'pre-wrap', overflow: 'hidden' }}
-                      >
-                        {node.label}
+                      <div className="font-bold text-sm mb-2" style={{ color: isNews ? '#d97706' : '#4f46e5', wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        {(() => {
+                          if (isNews && node.newsId) {
+                            const fullNews = recommendations.find(r => r.id === node.newsId);
+                            return fullNews ? fullNews.title : node.label;
+                          }
+                          return node.label;
+                        })()}
                       </div>
-                      <div
-                        className="text-sm text-center mb-2"
-                        style={{ color: '#6366f1', wordWrap: 'break-word', whiteSpace: 'pre-wrap', overflow: 'hidden' }}
-                      >
-                        {isTopic ? '主题节点' : isAttribute ? '属性标签' : '关联实体'}
+                      <div className="text-sm text-center mb-2" style={{ color: isNews ? '#f59e0b' : '#6366f1' }}>
+                        {isTopic ? '主题节点' : isNews ? '推荐新闻' : isAttribute ? '属性标签' : '关联实体'}
+                        {node.isRelevant === false && ' (无关)'}
                       </div>
-                      <div
-                        className="text-xs text-center mb-3 pb-3 border-b border-gray-100"
-                        style={{ color: '#818cf8', wordWrap: 'break-word', whiteSpace: 'pre-wrap', overflow: 'hidden' }}
-                      >
+                      {node.entityType && !isTopic && !isNews && !isAttribute && (
+                        <div className="text-xs text-center mb-2 px-3 py-1.5 rounded-full" style={{ backgroundColor: '#f3f4f6', color: '#4b5563', display: 'inline-block', marginLeft: 'auto', marginRight: 'auto' }}>
+                          {node.entityType === 'PERSON' ? '人物' : 
+                           node.entityType === 'ORG' ? '机构' : 
+                           node.entityType === 'GPE' ? '地点' : 
+                           node.entityType === 'EVENT' ? '事件' : 
+                           node.entityType === 'TECHNOLOGY' ? '技术' : 
+                           node.entityType === 'PRODUCT' ? '产品' : '其他'}
+                        </div>
+                      )}
+                      <div className="text-xs text-center" style={{ color: '#64748b' }}>
                         权重: {node.weight} | 聚类: #{node.cluster + 1}
                       </div>
-                      <div className="mt-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Newspaper className="w-4 h-4 text-indigo-600" />
-                          <span className="text-xs font-semibold text-gray-700">关联新闻 ({relatedNews.length})</span>
+                      
+                      {isNews && node.newsId && (
+                        <div className="mt-3 pt-3 border-t border-gray-100">
+                          <button
+                            onClick={() => {
+                              const news = allNews.find(n => n.id === node.newsId);
+                              if (news) {
+                                handleNewsClick(news);
+                              } else {
+                                navigate(`/news/${node.newsId}`);
+                              }
+                            }}
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 text-white text-xs font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            查看新闻详情
+                          </button>
                         </div>
-                        {relatedNews.length > 0 ? (
-                          <div className="space-y-2">
-                            {relatedNews.map((newsItem, index) => (
-                              <div
-                                key={newsItem.id}
-                                className="p-2 rounded-lg bg-gray-50 hover:bg-indigo-50 cursor-pointer transition-colors"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(`/news/${newsItem.id}`);
-                                }}
-                              >
-                                <div className="flex items-start gap-2">
-                                  <span className="text-xs font-medium text-indigo-600 mt-0.5">{index + 1}</span>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-xs text-gray-800 font-medium line-clamp-2">
-                                      {newsItem.title}
-                                    </p>
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <span className="text-xs text-gray-500">{newsItem.source}</span>
-                                      <ArrowRight className="w-3 h-3 text-indigo-400" />
-                                    </div>
-                                  </div>
-                                </div>
+                      )}
+                      
+                      {(isEntity || isTopic || isAttribute) && node.newsIds && node.newsIds.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-gray-100">
+                          <div className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
+                            <Newspaper className="w-3 h-3" />
+                            所属新闻 ({node.newsIds.length})
+                          </div>
+                          <div className="space-y-1.5">
+                            {getNewsForEntity().slice(0, 5).map(news => (
+                              <div key={news.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors">
+                                <button
+                                  onClick={() => handleNewsClick(news)}
+                                  className="text-xs text-indigo-600 truncate flex-1 mr-2 text-left hover:text-indigo-800 hover:underline"
+                                  title={news.title}
+                                >
+                                  {news.title.length > 20 ? news.title.slice(0, 19) + '...' : news.title}
+                                </button>
+                                <button
+                                  onClick={() => handleNewsClick(news)}
+                                  className="flex items-center gap-1 px-2 py-1 bg-indigo-100 text-indigo-600 text-xs rounded hover:bg-indigo-200 transition-colors"
+                                >
+                                  <ArrowRight className="w-3 h-3" />
+                                  跳转
+                                </button>
                               </div>
                             ))}
+                            {getNewsForEntity().length > 5 && (
+                              <div className="text-xs text-center text-gray-400">
+                                还有 {getNewsForEntity().length - 5} 条新闻...
+                              </div>
+                            )}
                           </div>
-                        ) : (
-                          <div className="text-center py-4">
-                            <p className="text-xs text-gray-400">暂无关联新闻</p>
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
+                      
+                      {(isTopic || isAttribute) && !node.newsIds && (
+                        <div className="mt-3 pt-3 border-t border-gray-100">
+                          <button
+                            onClick={() => navigate(`/news?keyword=${encodeURIComponent(node.label)}`)}
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-lg hover:bg-indigo-100 transition-colors"
+                          >
+                            <Search className="w-3 h-3" />
+                            搜索"{node.label}"相关新闻
+                          </button>
+                        </div>
+                      )}
+                      
+                      {isNews && node.newsId && (
+                        <div className="text-xs text-center mt-2" style={{ color: '#9ca3af' }}>
+                          新闻ID: {node.newsId}
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
               </div>
             )}
           </div>
-          <div className="flex items-center justify-center gap-6 mt-6">
+          <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
             <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-full">
               <div className="w-4 h-4 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 shadow-md" />
               <span className="text-xs font-medium text-indigo-700">主题节点</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full">
-              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 shadow-md" />
-              <span className="text-xs font-medium text-blue-700">关联实体</span>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 rounded-full">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-md" />
+              <span className="text-xs font-medium text-amber-700">推荐新闻</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-50 to-rose-50 rounded-full">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 shadow-md" />
+              <span className="text-xs font-medium text-rose-700">人物</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 rounded-full">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-amber-600 to-orange-800 shadow-md" />
+              <span className="text-xs font-medium text-amber-800">机构</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-full">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 shadow-md" />
+              <span className="text-xs font-medium text-green-700">地点</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-50 to-purple-50 rounded-full">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 shadow-md" />
+              <span className="text-xs font-medium text-violet-700">技术</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-50 to-teal-50 rounded-full">
+              <div className="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 shadow-md" />
+              <span className="text-xs font-medium text-cyan-700">产品</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full">
+              <div className="w-4 h-4 rounded-full bg-gray-300" />
+              <span className="text-xs font-medium text-gray-600">无关实体</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-50 to-violet-50 rounded-full">
               <div className="w-4 h-4 rounded-full border-2 border-indigo-300 bg-indigo-50" />
               <span className="text-xs font-medium text-indigo-600">属性标签</span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full">
-              <div className="w-6 h-1 bg-gradient-to-r from-blue-300 via-indigo-400 to-blue-300 rounded-full" />
-              <span className="text-xs font-medium text-indigo-600">语义关联</span>
             </div>
           </div>
         </div>
@@ -647,7 +1028,7 @@ export function NewsRecommend() {
             {trendingNews.map((news) => (
               <div
                 key={news.id}
-                onClick={() => navigate(`/news/${news.id}`)}
+                onClick={() => handleNewsClick(news)}
                 className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100 hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-start gap-3">
@@ -666,10 +1047,13 @@ export function NewsRecommend() {
                         热门
                       </span>
                     </div>
-                    <h3 className="font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 mb-3">
+                    <h3 className="font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 mb-2">
                       {news.title}
                     </h3>
-                    <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-500 line-clamp-2">
+                      {news.summary}
+                    </p>
+                    <div className="flex items-center justify-between mt-3">
                       <span className="text-xs text-gray-400">{news.source}</span>
                       <span className="text-xs text-gray-400 flex items-center gap-1">
                         <Star className="w-3 h-3" />
@@ -700,7 +1084,7 @@ export function NewsRecommend() {
             {recommendations.map((news, index) => (
               <div
                 key={news.id}
-                onClick={() => navigate(`/news/${news.id}`)}
+                onClick={() => handleNewsClick(news)}
                 className="p-4 bg-white border border-gray-100 rounded-xl hover:border-primary-200 hover:shadow-sm transition-all cursor-pointer group"
               >
                 <div className="flex items-start gap-4">
@@ -721,10 +1105,13 @@ export function NewsRecommend() {
                         {formatDate(news.published_at)}
                       </span>
                     </div>
-                    <h3 className="font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 mb-2">
+                    <h3 className="font-medium text-gray-800 group-hover:text-primary-600 transition-colors line-clamp-2 mb-1">
                       {news.title}
                     </h3>
-                    <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-500 line-clamp-2">
+                      {news.summary}
+                    </p>
+                    <div className="flex items-center justify-between mt-2">
                       <span className="text-xs text-gray-400">{news.source}</span>
                       <div className="flex items-center gap-3">
                         <span className="text-xs text-gray-400 flex items-center gap-1">

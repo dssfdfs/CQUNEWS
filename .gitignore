@@ -10,5 +10,8 @@ dist/
 .DS_Store
 Thumbs.db
 cqunews.db
+cqunews.db-shm
+cqunews.db-wal
 backups/
 uploads/
+*.zip

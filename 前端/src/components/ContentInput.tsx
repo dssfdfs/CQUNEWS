@@ -232,8 +232,8 @@ export function ContentInput() {
         throw new Error('视频预处理超时，请尝试更短的视频');
       }
 
-      // 阶段3：生成视频摘要
-      setVideoProcessStage('正在生成摘要...');
+      // 阶段3：分析视频内容生成摘要
+      setVideoProcessStage('正在分析视频内容...');
       const summaryResponse = await fetch('/api/video/summary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -246,19 +246,12 @@ export function ContentInput() {
       const summaryResult = await summaryResponse.json();
 
       if (!summaryResult.success) {
-        throw new Error(summaryResult.detail || summaryResult.message || '视频摘要生成失败');
+        throw new Error(summaryResult.detail || summaryResult.message || '视频分析失败');
       }
 
       setContent(summaryResult.summary);
       setVideoSuccess(true);
       setTimeout(() => setVideoSuccess(false), 3000);
-      
-      setTimeout(() => {
-        window.dispatchEvent(new Event('navigate-to-summary'));
-        setTimeout(() => {
-          window.dispatchEvent(new Event('generate-all'));
-        }, 300);
-      }, 500);
 
     } catch (error) {
       setVideoError(error instanceof Error ? error.message : '视频处理失败');
@@ -301,13 +294,6 @@ export function ContentInput() {
         }
         setVideoSuccess(true);
         setTimeout(() => setVideoSuccess(false), 3000);
-        
-        setTimeout(() => {
-          window.dispatchEvent(new Event('navigate-to-summary'));
-          setTimeout(() => {
-            window.dispatchEvent(new Event('generate-all'));
-          }, 300);
-        }, 500);
       } else {
         setVideoError(result.detail || result.message || '视频处理失败');
       }

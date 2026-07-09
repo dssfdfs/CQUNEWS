@@ -21,11 +21,7 @@ import {
   Clock,
   ChevronDown,
   ChevronRight,
-  HardDrive,
-  Upload,
-  Trash2,
   Info,
-  FolderOpen,
   ToggleLeft,
   ToggleRight,
   Wifi,
@@ -52,22 +48,6 @@ interface ModelConfig {
   is_active: boolean;
 }
 
-const DEFAULT_MODEL_CONFIGS: Record<string, Record<string, string>> = {
-  'Deepseek': {
-    api_key: 'sk-ca2a253625df40619c2967ef23a4b87d',
-  },
-  '阿里云千问': {
-    app_id: '6001766',
-    api_key: 'sk-ws-H.EMMDPEE.jDBh.MEYCIQD1gei0N-aQWOaatIU0_TQtyK_wNK8SWd-cFERo5P7ecwIhAK3hsaAKHQTS3Nsm2tmz9xPsevomTzARtbBthrf0GbjX',
-  },
-  'Kimi': {
-    api_key: 'sk-YXUjTOxa0VemwPWasgNhUSU2wgQ4vWTJBuZRInWszFnPBMw2',
-  },
-  '豆包': {
-    api_key: 'ark-08b4ae22-2edc-4371-89ef-8d5e56cdb3f1-1c7aa',
-  },
-};
-
 const maskApiKey = (key: string): string => {
   if (!key) return '';
   if (key.length <= 8) return '*'.repeat(key.length);
@@ -86,18 +66,58 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
   const [testingModels, setTestingModels] = useState<Record<string, boolean>>({});
   const [testResults, setTestResults] = useState<Record<string, { success: boolean; message: string } | null>>({});
   
-  const [storageQuota, setStorageQuota] = useState(500 * 1024 * 1024);
-  const [cacheSize, setCacheSize] = useState(156);
-  const [historySize, setHistorySize] = useState(28);
-  const [clearingCache, setClearingCache] = useState(false);
-  const [clearingHistory, setClearingHistory] = useState(false);
   const [backingUp, setBackingUp] = useState(false);
-  const [importingData, setImportingData] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [backupFiles, setBackupFiles] = useState<Array<{ filename: string; size: string; created_at: string }>>([]);
+  const [loadingBackups, setLoadingBackups] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importFileInput, setImportFileInput] = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
     loadModelConfigs();
+    loadBackupFiles();
   }, []);
+
+  const loadBackupFiles = async () => {
+    setLoadingBackups(true);
+    try {
+      const result = await adminApi.getBackupFiles();
+      setBackupFiles(result?.backups || []);
+    } catch (err) {
+      console.error('Failed to load backup files:', err);
+      setBackupFiles([]);
+    } finally {
+      setLoadingBackups(false);
+    }
+  };
+
+  const handleImportDatabase = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    if (!file.name.endsWith('.db')) {
+      error('请上传.db格式的数据库备份文件');
+      return;
+    }
+    
+    setImporting(true);
+    try {
+      const result = await adminApi.importDatabase(file);
+      if (result.success) {
+        success(result.message);
+        await loadBackupFiles();
+      } else {
+        error(result.message);
+      }
+    } catch (err) {
+      error('数据库导入失败');
+    } finally {
+      setImporting(false);
+      if (importFileInput) {
+        importFileInput.value = '';
+      }
+    }
+  };
 
   const loadModelConfigs = async () => {
     try {
@@ -110,8 +130,7 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
       const testResultMap: Record<string, { success: boolean; message: string } | null> = {};
       
       result.models.forEach(model => {
-        const defaultConfig = DEFAULT_MODEL_CONFIGS[model.name] || {};
-        configs[model.name] = { ...defaultConfig, ...model.config };
+        configs[model.name] = model.config || {};
         urls[model.name] = model.url || model.default_url;
         showKeyMap[model.name] = false;
         testResultMap[model.name] = null;
@@ -191,37 +210,12 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
     }
   };
 
-  const handleClearCache = async () => {
-    setClearingCache(true);
-    try {
-      await adminApi.clearCache();
-      setCacheSize(0);
-      success('缓存清理成功');
-    } catch (err) {
-      error('缓存清理失败');
-    } finally {
-      setClearingCache(false);
-    }
-  };
-
-  const handleClearHistory = async () => {
-    setClearingHistory(true);
-    try {
-      await adminApi.clearHistory();
-      setHistorySize(0);
-      success('历史记录清理成功');
-    } catch (err) {
-      error('历史记录清理失败');
-    } finally {
-      setClearingHistory(false);
-    }
-  };
-
   const handleBackup = async () => {
     setBackingUp(true);
     try {
       await adminApi.backupDatabase();
       success('数据库备份成功');
+      await loadBackupFiles();
     } catch (err) {
       error('数据库备份失败');
     } finally {
@@ -229,15 +223,12 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
     }
   };
 
-  const handleImportData = async () => {
-    setImportingData(true);
+  const handleDownloadBackup = async (filename: string) => {
     try {
-      await adminApi.importData();
-      success('数据导入成功');
+      await adminApi.downloadBackup(filename);
+      success('备份文件下载成功');
     } catch (err) {
-      error('数据导入失败');
-    } finally {
-      setImportingData(false);
+      error('备份文件下载失败');
     }
   };
 
@@ -521,108 +512,7 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 p-6">
-              <div className="flex items-center gap-2 mb-6">
-                <HardDrive className="w-5 h-5 text-indigo-600" />
-                <h2 className="text-lg font-semibold text-gray-800">存储空间</h2>
-              </div>
-
-              <div className="space-y-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-600">本地缓存</span>
-                    <span className="font-medium text-gray-800">{cacheSize} MB</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-primary-600 h-2 rounded-full" style={{ width: `${Math.min((cacheSize / storageQuota) * 100, 100)}%` }}></div>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-600">历史记录</span>
-                    <span className="font-medium text-gray-800">{historySize} MB</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-green-500 h-2 rounded-full" style={{ width: `${Math.min((historySize / storageQuota) * 100, 100)}%` }}></div>
-                  </div>
-                </div>
-
-                <div className="border-t border-gray-200 pt-6">
-                  <h4 className="font-medium text-gray-800 mb-4">存储空间配额</h4>
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-gray-600">当前配额</span>
-                      <span className="font-medium text-gray-800">
-                        {(storageQuota / (1024 * 1024)).toFixed(0)} MB
-                      </span>
-                    </div>
-                    <input 
-                      type="range" 
-                      min="50" 
-                      max="1000" 
-                      value={(storageQuota / (1024 * 1024)).toFixed(0)}
-                      onChange={(e) => setStorageQuota(parseInt(e.target.value) * 1024 * 1024)}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-600" 
-                    />
-                    <div className="flex justify-between text-sm text-gray-500 mt-2">
-                      <span>50 MB</span>
-                      <span className="font-medium text-gray-700">
-                        {(storageQuota / (1024 * 1024)).toFixed(0)} MB
-                      </span>
-                      <span>1000 MB</span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-2">调整系统存储空间上限，超出配额将无法保存新的数据</p>
-                  </div>
-                </div>
-
-                <div className="border-t border-gray-200 pt-6">
-                  <h4 className="font-medium text-gray-800 mb-4">存储位置</h4>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <FolderOpen className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-800">应用数据目录</p>
-                        <p className="text-xs text-gray-500">./data/cqunews.db</p>
-                      </div>
-                    </div>
-                    <button className="text-sm text-primary-600 hover:text-primary-700">
-                      打开目录
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <button 
-                    onClick={handleClearCache}
-                    disabled={clearingCache}
-                    className="btn-secondary flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    {clearingCache ? (
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <RefreshCw className="w-4 h-4" />
-                    )}
-                    {clearingCache ? '清理中...' : '清除缓存'}
-                  </button>
-                  
-                  <button 
-                    onClick={handleClearHistory}
-                    disabled={clearingHistory}
-                    className="btn-outline flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    {clearingHistory ? (
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-4 h-4" />
-                    )}
-                    {clearingHistory ? '清除中...' : '清除历史'}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-100 p-6">
+            <div className="bg-white rounded-xl border border-gray-100 p-6 col-span-2">
               <div className="flex items-center gap-2 mb-6">
                 <Database className="w-5 h-5 text-indigo-600" />
                 <h2 className="text-lg font-semibold text-gray-800">数据管理</h2>
@@ -672,19 +562,27 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
                     )}
                     {backingUp ? '备份中...' : '备份数据'}
                   </button>
-                  
+
                   <button 
-                    onClick={handleImportData}
-                    disabled={importingData}
-                    className="w-full btn-outline flex items-center justify-center gap-2 disabled:opacity-50"
+                    onClick={() => importFileInput?.click()}
+                    disabled={importing}
+                    className="w-full btn-secondary flex items-center justify-center gap-2 disabled:opacity-50"
                   >
-                    {importingData ? (
+                    {importing ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />
                     ) : (
-                      <Upload className="w-4 h-4" />
+                      <RefreshCw className="w-4 h-4" />
                     )}
-                    {importingData ? '导入中...' : '导入数据'}
+                    {importing ? '导入中...' : '导入备份 (回退)'}
                   </button>
+                  <input
+                    ref={setImportFileInput}
+                    type="file"
+                    accept=".db"
+                    onChange={handleImportDatabase}
+                    className="hidden"
+                  />
+
                 </div>
 
                 <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
@@ -695,24 +593,52 @@ export function AdminSettings({ activeItem, onItemClick }: AdminSettingsProps) {
                       <ul className="text-sm text-yellow-700 mt-1">
                         <li>定期导出数据库文件进行备份</li>
                         <li>备份文件建议存放在安全位置</li>
-                        <li>导入数据前请确保应用已关闭</li>
+                        <li>导入备份前会自动创建当前数据的备份，可用于回退</li>
                       </ul>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h5 className="font-medium text-gray-700 mb-2">数据统计</h5>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-2xl font-bold text-indigo-600">1</p>
-                      <p className="text-sm text-gray-500">数据库文件</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-indigo-600">12</p>
-                      <p className="text-sm text-gray-500">数据表</p>
-                    </div>
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium text-gray-800">备份文件</h4>
+                    <span className="text-xs text-gray-500">仅显示最近5个备份</span>
                   </div>
+                  {loadingBackups ? (
+                    <div className="flex items-center justify-center py-4">
+                      <RefreshCw className="w-5 h-5 text-gray-400 animate-spin" />
+                      <span className="ml-2 text-sm text-gray-500">加载中...</span>
+                    </div>
+                  ) : backupFiles.length === 0 ? (
+                    <div className="text-center py-4 text-sm text-gray-500">
+                      暂无备份文件，点击"备份数据"创建备份
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {backupFiles.map((file) => (
+                        <div
+                          key={file.filename}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Database className="w-5 h-5 text-gray-400" />
+                            <div>
+                              <p className="text-sm font-medium text-gray-800">{file.filename}</p>
+                              <p className="text-xs text-gray-500">
+                                {new Date(file.created_at).toLocaleString('zh-CN')} · {file.size}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleDownloadBackup(file.filename)}
+                            className="p-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

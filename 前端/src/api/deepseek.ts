@@ -4,6 +4,10 @@ interface ApiConfig {
   model: string;
 }
 
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 interface Message {
   role: 'system' | 'user';
   content: string;
@@ -92,10 +96,21 @@ ${content}
     userPrompt += `\n\n额外要求：${customPrompt}`;
   }
 
-  return callDeepSeek(apiConfig?.model || 'DeepSeek', [
+  const result = await callDeepSeek(apiConfig?.model || 'DeepSeek', [
     { role: 'system', content: systemPrompt },
     { role: 'user', content: userPrompt },
   ], apiConfig);
+  
+  const cleanSummary = (summary: string): string => {
+    const prefixes = ['新闻摘要', '摘要', '【新闻摘要】', '【摘要】', '**新闻摘要**', '**新闻摘要：**', '新闻摘要：', '摘要：'];
+    let cleaned = summary;
+    prefixes.forEach(prefix => {
+      cleaned = cleaned.replace(new RegExp(`^${escapeRegex(prefix)}\\s*[：:]?\\s*`), '');
+    });
+    return cleaned.trim();
+  };
+  
+  return cleanSummary(result);
 }
 
 export async function generateTitles(content: string, language: string, apiConfig?: ApiConfig, customPrompt?: string): Promise<{
@@ -124,10 +139,28 @@ ${language === '中文' ? '请使用中文' : 'Please use English'}，每个标�
   ], apiConfig);
 
   const lines = result.split('\n').filter(line => line.trim());
+  
+  const cleanTitle = (line: string | undefined, type: string): string => {
+    if (!line) return '';
+    let cleaned = line.replace(/^[\d\.\-\*]+\s*/, '');
+    
+    const prefixesToRemove: Record<string, string[]> = {
+      objective: ['客观纪实型标题', '客观纪实型', '类型一', '1.'],
+      dataHighlight: ['数据亮点型标题', '数据亮点型', '类型二', '2.'],
+      lightweight: ['轻量化标题', '类型三', '3.'],
+    };
+    
+    prefixesToRemove[type]?.forEach(prefix => {
+      cleaned = cleaned.replace(new RegExp(`^${escapeRegex(prefix)}\\s*[：:]?\\s*`), '');
+    });
+    
+    return cleaned.trim();
+  };
+  
   return {
-    objective: lines[0]?.replace(/^[\d\.\-\*]+\s*/, '') || '',
-    dataHighlight: lines[1]?.replace(/^[\d\.\-\*]+\s*/, '') || '',
-    lightweight: lines[2]?.replace(/^[\d\.\-\*]+\s*/, '') || '',
+    objective: cleanTitle(lines[0], 'objective'),
+    dataHighlight: cleanTitle(lines[1], 'dataHighlight'),
+    lightweight: cleanTitle(lines[2], 'lightweight'),
   };
 }
 
@@ -139,7 +172,6 @@ export async function verifyQuality(content: string, summary: string, titles: {
   credibility: number;
   readability: number;
   engagement: number;
-  relevance: number;
 }> {
   try {
     const response = await fetch('/api/quality-check', {
@@ -175,9 +207,8 @@ ${summary}
 1. 新闻可信度（credibility）：信息来源可靠性、内容真实性、事实准确性
 2. 内容可读性（readability）：语言流畅度、逻辑清晰度、阅读体验
 3. 读者吸引力（engagement）：标题吸引力、内容趣味性、是否能激发阅读兴趣
-4. 主题相关性（relevance）：标题与内容的匹配度、摘要对核心主题的把握程度
 
-请以JSON格式输出，格式为：{"credibility": 分数, "readability": 分数, "engagement": 分数, "relevance": 分数}`;
+请以JSON格式输出，格式为：{"credibility": 分数, "readability": 分数, "engagement": 分数}`;
 
   const result = await callDeepSeek(apiConfig?.model || 'DeepSeek', [
     { role: 'system', content: systemPrompt },
@@ -195,7 +226,6 @@ ${summary}
       credibility: 85,
       readability: 80,
       engagement: 75,
-      relevance: 85,
     };
   }
 }

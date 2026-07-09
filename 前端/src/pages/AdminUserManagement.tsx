@@ -18,10 +18,8 @@ import {
   Ban,
   Check,
   Clock,
-  TrendingUp,
   Trash2,
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface AdminUserManagementProps {
   activeItem: string;
@@ -37,11 +35,14 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
   const [selectedUser, setSelectedUser] = useState<UserInfo | null>(null);
   const [userHistory, setUserHistory] = useState<UserHistoryItem[]>([]);
   const [userWordCloud, setUserWordCloud] = useState<Array<{ text: string; value: number; type: string }>>([]);
-  const [summaryStats, setSummaryStats] = useState<Array<{ date: string; count: number }>>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [deleteMode, setDeleteMode] = useState<'single' | 'batch' | null>(null);
+  const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -76,16 +77,13 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
     try {
       const historyData = await adminApi.getUserHistory(user.id);
       const profileData = await adminApi.getUserProfile(user.id);
-      const statsData = await adminApi.getUserSummaryStats(user.id);
 
       setUserHistory(historyData.history || []);
       setUserWordCloud(profileData.tags || []);
-      setSummaryStats(statsData.data || []);
     } catch (err) {
       console.error('Failed to fetch user details:', err);
       setUserHistory([]);
       setUserWordCloud([]);
-      setSummaryStats([]);
     }
   };
 
@@ -94,7 +92,6 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
     setSelectedUser(null);
     setUserHistory([]);
     setUserWordCloud([]);
-    setSummaryStats([]);
     document.body.style.overflow = '';
   };
 
@@ -126,28 +123,46 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
     }
   };
 
-  const handleDeleteUser = async (userId: number, username: string) => {
-    if (!window.confirm(`确定要删除用户 "${username}" 吗？此操作不可撤销。`)) return;
+  const showConfirm = (message: string, mode: 'single' | 'batch', userId?: number) => {
+    setConfirmMessage(message);
+    setDeleteMode(mode);
+    setDeleteUserId(userId || null);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirm = async () => {
+    setShowConfirmModal(false);
     try {
-      await adminApi.deleteUser(userId);
-      success('用户删除成功');
+      if (deleteMode === 'single' && deleteUserId) {
+        await adminApi.deleteUser(deleteUserId);
+        success('用户删除成功');
+      } else if (deleteMode === 'batch') {
+        await adminApi.batchDeleteUsers(selectedUsers);
+        success('批量删除成功');
+        setSelectedUsers([]);
+      }
       fetchUsers();
     } catch (err) {
-      error('删除用户失败');
+      error('删除失败');
+    } finally {
+      setDeleteMode(null);
+      setDeleteUserId(null);
     }
   };
 
-  const batchDeleteUsers = async () => {
+  const handleCancel = () => {
+    setShowConfirmModal(false);
+    setDeleteMode(null);
+    setDeleteUserId(null);
+  };
+
+  const handleDeleteUser = (userId: number, username: string) => {
+    showConfirm(`删除功能不可撤销，你确定要删除用户 "${username}" 吗？`, 'single', userId);
+  };
+
+  const batchDeleteUsers = () => {
     if (selectedUsers.length === 0) return;
-    if (!window.confirm(`确定要删除选中的 ${selectedUsers.length} 个用户吗？此操作不可撤销。`)) return;
-    try {
-      await adminApi.batchDeleteUsers(selectedUsers);
-      success('批量删除成功');
-      setSelectedUsers([]);
-      fetchUsers();
-    } catch (err) {
-      error('批量删除失败');
-    }
+    showConfirm(`删除功能不可撤销，你确定要删除 ${selectedUsers.length} 个用户吗？`, 'batch');
   };
 
   const navItems = [
@@ -582,30 +597,6 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
 
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-indigo-600" />
-                      七天摘要生成量
-                    </h3>
-                    <div className="h-48">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={summaryStats}>
-                          <defs>
-                            <linearGradient id="summaryGradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                              <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.05} />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                          <YAxis tick={{ fontSize: 10 }} />
-                          <Tooltip formatter={(value) => [`${value} 次`, '生成量']} />
-                          <Area type="monotone" dataKey="count" stroke="#8b5cf6" fillOpacity={1} fill="url(#summaryGradient)" />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                       <Activity className="w-5 h-5 text-indigo-600" />
                       行为轨迹
                     </h3>
@@ -646,6 +637,44 @@ export function AdminUserManagement({ activeItem, onItemClick }: AdminUserManage
                     className="w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
                   >
                     关闭
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {showConfirmModal && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
+              onClick={handleCancel}
+            />
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-xl shadow-xl w-full max-w-md transform transition-all">
+                <div className="p-6 border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                      <Trash2 className="w-5 h-5 text-red-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800">确认删除</h3>
+                      <p className="text-sm text-gray-500 mt-1">{confirmMessage}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 flex gap-4">
+                  <button
+                    onClick={handleCancel}
+                    className="flex-1 py-3 border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    取消
+                  </button>
+                  <button
+                    onClick={handleConfirm}
+                    className="flex-1 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    确认删除
                   </button>
                 </div>
               </div>

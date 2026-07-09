@@ -322,7 +322,7 @@ export function HomePage() {
     setContent(newsContent);
     setSummary('');
     setTitles({ objective: '', dataHighlight: '', lightweight: '' });
-    setQuality({ credibility: 0, readability: 0, engagement: 0, relevance: 0 });
+    setQuality({ credibility: 0, readability: 0, engagement: 0 });
     setStep(1);
     setIsGenerating(false);
     

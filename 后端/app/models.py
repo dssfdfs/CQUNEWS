@@ -201,7 +201,7 @@ class UserBehavior(SQLModel, table=True):
     __tabname__ = "user_behavior"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.id", index=True)
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id", index=True)
     action_type: str = Field(max_length=32, index=True)
     target_id: Optional[int] = Field(default=None, index=True)
     extra_data: Optional[str] = Field(default=None)

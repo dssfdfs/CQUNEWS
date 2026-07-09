@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timedelta
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile, status
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlmodel import Session, select, func, delete
@@ -213,14 +213,22 @@ def get_analytics_summary(db: Session = Depends(get_session), admin: AdminUser =
 
 @router.get("/analytics/news-category")
 def get_news_category_distribution(
+    days: int = 30,
     db: Session = Depends(get_session),
     admin: AdminUser = Depends(get_admin_user),
 ):
-    today = datetime.utcnow().isoformat()[:10]
-
-    query = select(News.category, func.count(News.id)).where(
-        News.created_at >= today
-    ).group_by(News.category)
+    from datetime import timedelta
+    
+    if days <= 0:
+        query = select(News.category, func.count(News.id)).where(
+            News.audit_status == 1
+        ).group_by(News.category)
+    else:
+        days_ago = (datetime.utcnow() - timedelta(days=days)).isoformat()[:10]
+        query = select(News.category, func.count(News.id)).where(
+            News.audit_status == 1,
+            News.created_at >= days_ago
+        ).group_by(News.category)
 
     results = db.exec(query).all()
 
@@ -233,6 +241,8 @@ def get_news_category_distribution(
         "education": "教育",
         "health": "健康",
         "life": "生活",
+        "综合": "综合",
+        "other": "其他",
     }
 
     distribution = []
@@ -240,10 +250,14 @@ def get_news_category_distribution(
         if category:
             distribution.append({
                 "name": category_labels.get(category, category),
-                "value": count,
+                "value": int(count),
             })
 
-    return {"category_distribution": distribution}
+    total = sum(d["value"] for d in distribution)
+    for d in distribution:
+        d["percentage"] = round((d["value"] / total * 100) if total > 0 else 0, 1)
+
+    return {"category_distribution": distribution, "total": total}
 
 
 def to_beijing_time(date_str: Optional[str]) -> Optional[str]:
@@ -299,36 +313,6 @@ class BatchDeleteRequest(BaseModel):
     user_ids: list[int]
 
 
-@router.delete("/users/{user_id}")
-def delete_user(
-    user_id: int,
-    db: Session = Depends(get_session),
-    admin: AdminUser = Depends(get_admin_user),
-):
-    user = db.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
-
-    db.exec(delete(UserBehavior).where(UserBehavior.user_id == user_id))
-    db.exec(delete(UserProfile).where(UserProfile.user_id == user_id))
-    db.exec(delete(UserProfileHistory).where(UserProfileHistory.user_id == user_id))
-    db.exec(delete(UserSettings).where(UserSettings.user_id == user_id))
-    db.exec(delete(LoginHistory).where(LoginHistory.user_id == user_id))
-    db.exec(delete(Notification).where(Notification.user_id == user_id))
-    db.exec(delete(AuditLog).where(AuditLog.user_id == user_id))
-    db.exec(delete(Feedback).where(Feedback.user_id == user_id))
-    db.exec(delete(UserHistory).where(UserHistory.user_id == user_id))
-    db.exec(delete(UserMaterial).where(UserMaterial.user_id == user_id))
-    db.exec(delete(PasswordResetToken).where(PasswordResetToken.user_id == user_id))
-    db.exec(delete(EmailVerificationCode).where(EmailVerificationCode.user_id == user_id))
-    db.exec(delete(UserFavoriteNews).where(UserFavoriteNews.user_id == user_id))
-
-    db.delete(user)
-    db.commit()
-
-    return {"message": "用户删除成功"}
-
-
 @router.delete("/users/batch")
 def batch_delete_users(
     request: BatchDeleteRequest,
@@ -362,6 +346,36 @@ def batch_delete_users(
     return {"message": f"成功删除 {len(request.user_ids)} 个用户"}
 
 
+@router.delete("/users/{user_id}")
+def delete_user(
+    user_id: int,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="用户不存在")
+
+    db.exec(delete(UserBehavior).where(UserBehavior.user_id == user_id))
+    db.exec(delete(UserProfile).where(UserProfile.user_id == user_id))
+    db.exec(delete(UserProfileHistory).where(UserProfileHistory.user_id == user_id))
+    db.exec(delete(UserSettings).where(UserSettings.user_id == user_id))
+    db.exec(delete(LoginHistory).where(LoginHistory.user_id == user_id))
+    db.exec(delete(Notification).where(Notification.user_id == user_id))
+    db.exec(delete(AuditLog).where(AuditLog.user_id == user_id))
+    db.exec(delete(Feedback).where(Feedback.user_id == user_id))
+    db.exec(delete(UserHistory).where(UserHistory.user_id == user_id))
+    db.exec(delete(UserMaterial).where(UserMaterial.user_id == user_id))
+    db.exec(delete(PasswordResetToken).where(PasswordResetToken.user_id == user_id))
+    db.exec(delete(EmailVerificationCode).where(EmailVerificationCode.user_id == user_id))
+    db.exec(delete(UserFavoriteNews).where(UserFavoriteNews.user_id == user_id))
+
+    db.delete(user)
+    db.commit()
+
+    return {"message": "用户删除成功"}
+
+
 @router.get("/users/{user_id}/history")
 def get_user_history(
     user_id: int,
@@ -393,7 +407,7 @@ def get_user_history(
             "action_label": action_labels.get(behavior.action_type, behavior.action_type),
             "target_id": behavior.target_id,
             "metadata": meta_data,
-            "timestamp": behavior.timestamp,
+            "timestamp": to_beijing_time(behavior.timestamp),
         })
 
     return {"history": result}
@@ -793,6 +807,23 @@ def get_user_profile_word_cloud(
             if news and news.category:
                 word_counts[news.category] = word_counts.get(news.category, 0) + 3
         
+        if behavior.action_type == "redirect" and behavior.target_id:
+            news = db.get(News, behavior.target_id)
+            if news and news.category:
+                word_counts[news.category] = word_counts.get(news.category, 0) + 4
+                
+                text = ""
+                if news.title:
+                    text += news.title + " "
+                if news.summary:
+                    text += news.summary + " "
+                
+                words = re.findall(r'[\u4e00-\u9fa5]{2,}|[A-Za-z]+', text)
+                for word in words:
+                    if word.lower() in stopwords or len(word) < 2:
+                        continue
+                    word_counts[word] = word_counts.get(word, 0) + 2
+        
         if behavior.action_type == "generate" and behavior.target_id:
             news = db.get(News, behavior.target_id)
             if news:
@@ -845,6 +876,197 @@ def get_user_profile_word_cloud(
     words.sort(key=lambda x: x["value"], reverse=True)
     
     return {"words": words[:50]}
+
+
+@router.get("/analytics/daily-stats")
+def get_daily_stats(
+    days: int = 7,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    from datetime import timedelta
+    from .models import UserHistory
+    
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=days)
+    
+    result = []
+    day_names = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
+    
+    for i in range(days):
+        current_date = (end_date - timedelta(days=days - 1 - i)).date()
+        date_str = current_date.strftime("%Y-%m-%d")
+        day_name = day_names[current_date.weekday()]
+        
+        generate_count = db.exec(
+            select(func.count(UserBehavior.id)).where(
+                UserBehavior.action_type == "generate",
+                UserBehavior.timestamp.like(f"{date_str}%"),
+            )
+        ).first()
+        generate_count = generate_count[0] if generate_count else 0
+        
+        user_history_count = db.exec(
+            select(func.count(UserHistory.id)).where(
+                UserHistory.created_at.like(f"{date_str}%"),
+            )
+        ).first()
+        generate_count += user_history_count[0] if user_history_count else 0
+        
+        view_count = db.exec(
+            select(func.count(UserBehavior.id)).where(
+                UserBehavior.action_type.in_(["view", "redirect"]),
+                UserBehavior.timestamp.like(f"{date_str}%"),
+            )
+        ).first()
+        view_count = view_count[0] if view_count else 0
+        
+        share_count = db.exec(
+            select(func.count(UserBehavior.id)).where(
+                UserBehavior.action_type == "share",
+                UserBehavior.timestamp.like(f"{date_str}%"),
+            )
+        ).first()
+        share_count = share_count[0] if share_count else 0
+        
+        feedback_count = db.exec(
+            select(func.count(Feedback.id)).where(
+                Feedback.created_at.like(f"{date_str}%"),
+            )
+        ).first()
+        feedback_count = feedback_count[0] if feedback_count else 0
+        
+        active_users = db.exec(
+            select(func.count(func.distinct(UserBehavior.user_id))).where(
+                UserBehavior.timestamp.like(f"{date_str}%"),
+            )
+        ).first()
+        active_users = active_users[0] if active_users else 0
+        
+        result.append({
+            "date": date_str,
+            "day_name": day_name,
+            "generate_count": int(generate_count),
+            "view_count": int(view_count),
+            "share_count": int(share_count),
+            "feedback_count": int(feedback_count),
+            "active_users": int(active_users),
+        })
+    
+    return {"data": result}
+
+
+@router.get("/analytics/word-stats")
+def get_word_stats(
+    word: str,
+    days: int = 7,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    from datetime import timedelta
+    from .models import UserHistory
+    import json
+    
+    days_ago = (datetime.utcnow() - timedelta(days=days)).isoformat()
+    
+    behaviors = db.exec(
+        select(UserBehavior).where(UserBehavior.timestamp >= days_ago)
+    ).all()
+    
+    histories = db.exec(
+        select(UserHistory).where(UserHistory.created_at >= days_ago)
+    ).all()
+    
+    news_items = db.exec(select(News)).all()
+    
+    word_lower = word.lower()
+    
+    related_news_ids = set()
+    for news in news_items:
+        text = f"{news.title or ''} {news.summary or ''}".lower()
+        if word_lower in text:
+            related_news_ids.add(news.id)
+        if news.category and word_lower == news.category.lower():
+            related_news_ids.add(news.id)
+    
+    related_users = set()
+    click_count = 0
+    view_count = 0
+    share_count = 0
+    generate_count = 0
+    
+    for behavior in behaviors:
+        matched = False
+        
+        if behavior.target_id in related_news_ids:
+            matched = True
+        
+        if not matched and behavior.extra_data:
+            try:
+                extra = json.loads(behavior.extra_data)
+                if 'category' in extra and extra['category'] and word_lower == extra['category'].lower():
+                    matched = True
+                if 'title' in extra and extra['title'] and word_lower in extra['title'].lower():
+                    matched = True
+            except:
+                pass
+        
+        if matched:
+            if behavior.user_id:
+                related_users.add(behavior.user_id)
+            if behavior.action_type == "view":
+                view_count += 1
+            elif behavior.action_type == "generate":
+                generate_count += 1
+            elif behavior.action_type == "click" or behavior.action_type == "redirect":
+                click_count += 1
+                view_count += 1
+            elif behavior.action_type == "share":
+                share_count += 1
+    
+    for history in histories:
+        matched = False
+        
+        if history.content and word_lower in history.content.lower():
+            matched = True
+        if history.category and word_lower == history.category.lower():
+            matched = True
+        if history.summary and word_lower in history.summary.lower():
+            matched = True
+        if history.titles and word_lower in history.titles.lower():
+            matched = True
+        
+        if matched:
+            if history.user_id:
+                related_users.add(history.user_id)
+            generate_count += 1
+            view_count += 1
+    
+    total_users = db.exec(select(func.count(User.id))).first()
+    total_users = total_users[0] if isinstance(total_users, tuple) else (total_users or 0)
+    
+    user_percentage = 0
+    if total_users > 0:
+        user_percentage = round((len(related_users) / total_users) * 100, 2)
+    
+    trend_value = (click_count + view_count + share_count + generate_count)
+    if trend_value > 10:
+        trend = "up"
+    elif trend_value > 0:
+        trend = "stable"
+    else:
+        trend = "down"
+    
+    return {
+        "word": word,
+        "total_users": len(related_users),
+        "user_percentage": user_percentage,
+        "click_count": click_count,
+        "view_count": view_count,
+        "share_count": share_count,
+        "generate_count": generate_count,
+        "trend": trend,
+    }
 
 
 @router.get("/content")
@@ -1122,12 +1344,137 @@ def update_user_status(
     }
 
 
+@router.get("/users/{user_id}/summary-stats")
+def get_user_summary_stats(
+    user_id: int,
+    days: int = 7,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    from .models import UserHistory
+    
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=days)
+    
+    result = []
+    for i in range(days):
+        current_date = (end_date - timedelta(days=days - 1 - i)).date()
+        date_str = current_date.strftime("%Y-%m-%d")
+        
+        behavior_count = db.exec(
+            select(func.count(UserBehavior.id)).where(
+                UserBehavior.user_id == user_id,
+                UserBehavior.action_type == "generate",
+                UserBehavior.timestamp.like(f"{date_str}%"),
+            )
+        ).first()[0] or 0
+        
+        history_count = db.exec(
+            select(func.count(UserHistory.id)).where(
+                UserHistory.user_id == user_id,
+                UserHistory.created_at.like(f"{date_str}%"),
+            )
+        ).first()[0] or 0
+        
+        result.append({
+            "date": date_str,
+            "count": behavior_count + history_count,
+        })
+    
+    return {"data": result}
+
+
+@router.get("/users/{user_id}/profile")
+def get_user_profile(
+    user_id: int,
+    db: Session = Depends(get_session),
+    admin: AdminUser = Depends(get_admin_user),
+):
+    from .models import UserHistory
+    
+    category_counts: dict[str, int] = {}
+    language_counts: dict[str, int] = {}
+    style_counts: dict[str, int] = {}
+    
+    histories = db.exec(
+        select(UserHistory).where(UserHistory.user_id == user_id)
+    ).all()
+    
+    for history in histories:
+        if history.category:
+            category_counts[history.category] = category_counts.get(history.category, 0) + 1
+        if history.language:
+            language_counts[history.language] = language_counts.get(history.language, 0) + 1
+        if history.summary_style:
+            style_counts[history.summary_style] = style_counts.get(history.summary_style, 0) + 1
+    
+    behaviors = db.exec(
+        select(UserBehavior).where(UserBehavior.user_id == user_id).order_by(UserBehavior.timestamp.desc())
+    ).all()
+    
+    for behavior in behaviors:
+        if behavior.extra_data:
+            try:
+                meta = json.loads(behavior.extra_data)
+                if meta.get("category"):
+                    category_counts[meta["category"]] = category_counts.get(meta["category"], 0) + 1
+                if meta.get("language"):
+                    language_counts[meta["language"]] = language_counts.get(meta["language"], 0) + 1
+                if meta.get("summary_style"):
+                    style_counts[meta["summary_style"]] = style_counts.get(meta["summary_style"], 0) + 1
+            except json.JSONDecodeError:
+                pass
+        
+        if behavior.action_type in ["view", "redirect"] and behavior.target_id:
+            news = db.get(News, behavior.target_id)
+            if news and news.category:
+                category_counts[news.category] = category_counts.get(news.category, 0) + 1
+    
+    sorted_categories = sorted(category_counts.items(), key=lambda x: x[1], reverse=True)
+    sorted_languages = sorted(language_counts.items(), key=lambda x: x[1], reverse=True)
+    sorted_styles = sorted(style_counts.items(), key=lambda x: x[1], reverse=True)
+    
+    tags = []
+    for category, count in sorted_categories[:5]:
+        tags.append({
+            "text": category,
+            "value": count,
+            "type": "category",
+        })
+    
+    for lang, count in sorted_languages[:3]:
+        tags.append({
+            "text": lang,
+            "value": count,
+            "type": "language",
+        })
+    
+    for style, count in sorted_styles[:3]:
+        tags.append({
+            "text": style,
+            "value": count,
+            "type": "style",
+        })
+    
+    tags.sort(key=lambda x: x["value"], reverse=True)
+    
+    return {
+        "category_preferences": [{"name": c, "count": n} for c, n in sorted_categories],
+        "language_preferences": [{"name": l, "count": n} for l, n in sorted_languages],
+        "style_preferences": [{"name": s, "count": n} for s, n in sorted_styles],
+        "tags": tags[:10],
+    }
+
+
 MODEL_CONFIGS = {
     "Deepseek": {
         "name": "Deepseek",
         "fields": [{"key": "api_key", "label": "API密钥", "type": "password"}],
-        "default_url": "https://api.deepseek.com/v1/chat/completions",
+        "default_url": settings.DEEPSEEK_API_URL,
+        "default_config": {"api_key": settings.DEEPSEEK_API_KEY},
         "test_prompt": "你好，测试连接",
+        "model_name": settings.DEEPSEEK_MODEL_NAME,
+        "auth_type": "bearer",
     },
     "阿里云千问": {
         "name": "阿里云千问",
@@ -1135,20 +1482,30 @@ MODEL_CONFIGS = {
             {"key": "app_id", "label": "App ID", "type": "text"},
             {"key": "api_key", "label": "API密钥", "type": "password"},
         ],
-        "default_url": "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation",
+        "default_url": settings.QWEN_API_URL,
+        "default_config": {"app_id": settings.QWEN_APP_ID, "api_key": settings.QWEN_API_KEY},
         "test_prompt": "你好，测试连接",
+        "model_name": settings.QWEN_MODEL_NAME,
+        "auth_type": "dashscope",
     },
     "Kimi": {
         "name": "Kimi",
         "fields": [{"key": "api_key", "label": "API密钥", "type": "password"}],
-        "default_url": "https://api.moonshot.cn/v1/chat/completions",
+        "default_url": settings.KIMI_API_URL,
+        "default_config": {"api_key": settings.KIMI_API_KEY},
         "test_prompt": "你好，测试连接",
+        "model_name": settings.KIMI_MODEL_NAME,
+        "auth_type": "bearer",
     },
     "豆包": {
         "name": "豆包",
         "fields": [{"key": "api_key", "label": "API密钥", "type": "password"}],
-        "default_url": "https://api.doubao.com/v1/chat/completions",
+        "default_url": f"{settings.DOUBAO_API_URL}/responses",
+        "default_config": {"api_key": settings.DOUBAO_API_KEY},
         "test_prompt": "你好，测试连接",
+        "model_name": settings.DOUBAO_ENDPOINT_ID,
+        "auth_type": "ark",
+        "endpoint_id": settings.DOUBAO_ENDPOINT_ID,
     },
 }
 
@@ -1164,18 +1521,23 @@ def get_model_configs(db: Session = Depends(get_session), admin: AdminUser = Dep
             "config": {},
         }
         
+        default_config = config.get("default_config", {})
+        
         for field in config["fields"]:
             key = f"model_{model_name.lower().replace(' ', '_')}_{field['key']}"
             cfg = db.exec(select(SystemConfig).where(SystemConfig.key == key)).first()
-            model_config["config"][field["key"]] = cfg.value if cfg else ""
+            db_value = cfg.value if cfg else ""
+            model_config["config"][field["key"]] = db_value if db_value else default_config.get(field["key"], "")
         
         url_key = f"model_{model_name.lower().replace(' ', '_')}_url"
         url_cfg = db.exec(select(SystemConfig).where(SystemConfig.key == url_key)).first()
-        model_config["url"] = url_cfg.value if url_cfg else config["default_url"]
+        db_url_value = url_cfg.value if url_cfg else ""
+        model_config["url"] = db_url_value if db_url_value else config["default_url"]
         
         active_key = f"model_{model_name.lower().replace(' ', '_')}_active"
         active_cfg = db.exec(select(SystemConfig).where(SystemConfig.key == active_key)).first()
-        model_config["is_active"] = active_cfg.value == "true" if active_cfg else False
+        db_active_value = active_cfg.value if active_cfg else ""
+        model_config["is_active"] = db_active_value == "true" if db_active_value else True if default_config and any(default_config.values()) else False
         
         result.append(model_config)
     
@@ -1269,162 +1631,112 @@ def test_model_connection(
     
     model_config = MODEL_CONFIGS[request.model_name]
     test_prompt = model_config["test_prompt"]
+    auth_type = model_config.get("auth_type", "bearer")
+    target_model_name = model_config.get("model_name", "")
+    endpoint_id = model_config.get("endpoint_id", "")
     
     try:
-        if request.model_name == "Deepseek":
+        if auth_type == "ark":
+            api_key = request.config.get("api_key", "")
+            if not api_key:
+                return {"success": False, "message": "请配置豆包API密钥"}
+            
             headers = {
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {request.config.get('api_key', '')}",
+                "Authorization": f"Bearer {api_key}",
             }
-            payload = {
-                "model": "deepseek-chat",
-                "messages": [{"role": "user", "content": test_prompt}],
-                "max_tokens": 50,
-            }
-            response = requests.post(request.url, headers=headers, json=payload, timeout=15)
+            if endpoint_id:
+                headers["X-Volc-Endpoint-Id"] = endpoint_id
             
-        elif request.model_name == "阿里云千问":
-            headers = {"Content-Type": "application/json"}
             payload = {
-                "model": "qwen-plus",
+                "model": target_model_name,
+                "input": [{
+                    "role": "user",
+                    "content": [{"type": "input_text", "text": test_prompt}],
+                }],
+            }
+            
+        elif auth_type == "dashscope":
+            api_key = request.config.get("api_key", "")
+            if not api_key:
+                return {"success": False, "message": "请配置千问API密钥"}
+            
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            }
+            
+            payload = {
+                "model": target_model_name,
                 "input": {"messages": [{"role": "user", "content": test_prompt}]},
                 "parameters": {"max_tokens": 50},
             }
-            response = requests.post(request.url, headers=headers, json=payload, timeout=15)
             
-        elif request.model_name == "Kimi":
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {request.config.get('api_key', '')}",
-            }
-            payload = {
-                "model": "moonshot-v1-8k",
-                "messages": [{"role": "user", "content": test_prompt}],
-                "max_tokens": 50,
-            }
-            response = requests.post(request.url, headers=headers, json=payload, timeout=15)
-
-        elif request.model_name == "豆包":
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {request.config.get('api_key', '')}",
-            }
-            payload = {
-                "model": "doubao",
-                "messages": [{"role": "user", "content": test_prompt}],
-                "max_tokens": 50,
-            }
-            response = requests.post(request.url, headers=headers, json=payload, timeout=15)
-
         else:
-            return {"success": False, "message": "不支持的模型类型"}
+            api_key = request.config.get("api_key", "")
+            if not api_key:
+                return {"success": False, "message": "请配置API密钥"}
+            
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            }
+            
+            if endpoint_id:
+                headers["X-Volc-Endpoint-Id"] = endpoint_id
+            
+            payload = {
+                "model": target_model_name,
+                "messages": [{"role": "user", "content": test_prompt}],
+                "max_tokens": 50,
+            }
+        
+        response = requests.post(request.url, headers=headers, json=payload, timeout=15)
         
         if response.status_code == 200:
-            return {"success": True, "message": "连接测试成功"}
+            result = response.json()
+            content = ""
+            if auth_type == "ark":
+                output = result.get("output", [])
+                if isinstance(output, list) and output:
+                    for item in output:
+                        if item.get("type") == "message" and item.get("role") == "assistant":
+                            content_items = item.get("content", [])
+                            if isinstance(content_items, list):
+                                for ci in content_items:
+                                    if ci.get("type") in ["text", "output_text"]:
+                                        content += ci.get("text", "")
+            elif auth_type == "dashscope":
+                output = result.get("output", {})
+                if output:
+                    content = output.get("text", "")
+            else:
+                choices = result.get("choices", [])
+                if choices:
+                    message = choices[0].get("message", {})
+                    content = message.get("content", "")
+                    if not content:
+                        content = message.get("reasoning_content", "")
+            
+            if content:
+                return {"success": True, "message": "连接测试成功"}
+            else:
+                return {"success": False, "message": "API返回数据格式异常"}
         else:
-            return {"success": False, "message": f"连接失败，状态码: {response.status_code}"}
+            error_msg = ""
+            try:
+                result = response.json()
+                error_msg = result.get("error", {}).get("message", "") or str(result)
+            except:
+                error_msg = response.text[:200]
+            return {"success": False, "message": f"连接失败，状态码: {response.status_code}, 错误: {error_msg}"}
     
+    except requests.exceptions.Timeout:
+        return {"success": False, "message": "请求超时，请检查网络连接"}
+    except requests.exceptions.ConnectionError:
+        return {"success": False, "message": "网络连接失败，请检查API地址"}
     except Exception as e:
         return {"success": False, "message": f"测试失败: {str(e)}"}
-
-
-@router.get("/users/{user_id}/summary-stats")
-def get_user_summary_stats(
-    user_id: int,
-    days: int = 7,
-    db: Session = Depends(get_session),
-    admin: AdminUser = Depends(get_admin_user),
-):
-    end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=days)
-    
-    result = []
-    for i in range(days):
-        current_date = (end_date - timedelta(days=days - 1 - i)).date()
-        date_str = current_date.strftime("%Y-%m-%d")
-        
-        count = db.exec(
-            select(func.count(UserBehavior.id)).where(
-                UserBehavior.user_id == user_id,
-                UserBehavior.action_type == "generate",
-                UserBehavior.timestamp.like(f"{date_str}%"),
-            )
-        ).first()[0]
-        
-        result.append({
-            "date": date_str,
-            "count": count or 0,
-        })
-    
-    return {"data": result}
-
-
-@router.get("/users/{user_id}/profile")
-def get_user_profile(
-    user_id: int,
-    db: Session = Depends(get_session),
-    admin: AdminUser = Depends(get_admin_user),
-):
-    behaviors = db.exec(
-        select(UserBehavior).where(UserBehavior.user_id == user_id).order_by(UserBehavior.timestamp.desc())
-    ).all()
-    
-    category_counts: dict[str, int] = {}
-    language_counts: dict[str, int] = {}
-    style_counts: dict[str, int] = {}
-    
-    for behavior in behaviors:
-        if behavior.action_type == "generate" and behavior.extra_data:
-            try:
-                meta = json.loads(behavior.extra_data)
-                if meta.get("category"):
-                    category_counts[meta["category"]] = category_counts.get(meta["category"], 0) + 1
-                if meta.get("language"):
-                    language_counts[meta["language"]] = language_counts.get(meta["language"], 0) + 1
-                if meta.get("summary_style"):
-                    style_counts[meta["summary_style"]] = style_counts.get(meta["summary_style"], 0) + 1
-            except json.JSONDecodeError:
-                pass
-        
-        if behavior.action_type == "view" and behavior.target_id:
-            news = db.get(News, behavior.target_id)
-            if news and news.category:
-                category_counts[news.category] = category_counts.get(news.category, 0) + 1
-    
-    sorted_categories = sorted(category_counts.items(), key=lambda x: x[1], reverse=True)
-    sorted_languages = sorted(language_counts.items(), key=lambda x: x[1], reverse=True)
-    sorted_styles = sorted(style_counts.items(), key=lambda x: x[1], reverse=True)
-    
-    tags = []
-    for category, count in sorted_categories[:5]:
-        tags.append({
-            "text": category,
-            "value": count,
-            "type": "category",
-        })
-    
-    for lang, count in sorted_languages[:3]:
-        tags.append({
-            "text": lang,
-            "value": count,
-            "type": "language",
-        })
-    
-    for style, count in sorted_styles[:3]:
-        tags.append({
-            "text": style,
-            "value": count,
-            "type": "style",
-        })
-    
-    tags.sort(key=lambda x: x["value"], reverse=True)
-    
-    return {
-        "category_preferences": [{"name": c, "count": n} for c, n in sorted_categories],
-        "language_preferences": [{"name": l, "count": n} for l, n in sorted_languages],
-        "style_preferences": [{"name": s, "count": n} for s, n in sorted_styles],
-        "tags": tags[:10],
-    }
 
 
 @router.get("/summary-stats")
@@ -1478,13 +1790,22 @@ def clear_history(db: Session = Depends(get_session), admin: AdminUser = Depends
     return {"success": True, "message": "历史记录清理成功"}
 
 
+class BackupRequest(BaseModel):
+    backup_dir: Optional[str] = None
+
+
 @router.post("/config/backup")
-def backup_database(db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
+def backup_database(req: BackupRequest, db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
     import os
     import shutil
 
     db_path = settings.DB_PATH
-    backup_dir = os.path.join(os.path.dirname(db_path), "backups")
+    
+    if req.backup_dir and os.path.isabs(req.backup_dir):
+        backup_dir = req.backup_dir
+    else:
+        backup_dir = os.path.join(os.path.dirname(db_path), "backups")
+    
     os.makedirs(backup_dir, exist_ok=True)
 
     backup_filename = f"cqunews_backup_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.db"
@@ -1492,12 +1813,98 @@ def backup_database(db: Session = Depends(get_session), admin: AdminUser = Depen
 
     shutil.copy2(db_path, backup_path)
 
-    return {"success": True, "message": "数据库备份成功", "filename": backup_filename}
+    return {"success": True, "message": "数据库备份成功", "filename": backup_filename, "backup_dir": backup_dir}
+
+
+@router.get("/config/backups")
+def get_backup_files(req: BackupRequest = Depends(), db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
+    import os
+
+    db_path = settings.DB_PATH
+    
+    if req.backup_dir and os.path.isabs(req.backup_dir):
+        backup_dir = req.backup_dir
+    else:
+        backup_dir = os.path.join(os.path.dirname(db_path), "backups")
+    
+    if not os.path.exists(backup_dir):
+        return {"backups": []}
+
+    backups = []
+    for filename in sorted(os.listdir(backup_dir), reverse=True)[:5]:
+        filepath = os.path.join(backup_dir, filename)
+        if os.path.isfile(filepath):
+            file_size = os.path.getsize(filepath)
+            created_at = os.path.getctime(filepath)
+            
+            if file_size < 1024:
+                size_str = f"{file_size} B"
+            elif file_size < 1024 * 1024:
+                size_str = f"{file_size / 1024:.2f} KB"
+            else:
+                size_str = f"{file_size / (1024 * 1024):.2f} MB"
+
+            backups.append({
+                "filename": filename,
+                "size": size_str,
+                "created_at": datetime.fromtimestamp(created_at).isoformat(),
+            })
+
+    return {"backups": backups, "backup_dir": backup_dir}
 
 
 @router.post("/config/import")
-def import_database(db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
-    return {"success": True, "message": "数据导入功能需通过文件上传实现"}
+def import_database(file: UploadFile = File(...), db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
+    import os
+    import shutil
+    import tempfile
+
+    if not file.filename or not file.filename.endswith('.db'):
+        raise HTTPException(status_code=400, detail="请上传.db格式的数据库备份文件")
+
+    db_path = settings.DB_PATH
+    
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.db') as temp_file:
+            temp_file.write(file.file.read())
+            temp_file_path = temp_file.name
+        
+        backup_before_import = f"cqunews_before_import_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.db"
+        backup_before_path = os.path.join(os.path.dirname(db_path), backup_before_import)
+        shutil.copy2(db_path, backup_before_path)
+        
+        db.close()
+        
+        shutil.copy2(temp_file_path, db_path)
+        
+        os.unlink(temp_file_path)
+        
+        return {"success": True, "message": "数据库导入成功", "backup_before_import": backup_before_import}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"导入失败: {str(e)}")
+
+
+@router.get("/config/backups/{filename}")
+def download_backup(filename: str, req: BackupRequest = Depends(), db: Session = Depends(get_session), admin: AdminUser = Depends(get_admin_user)):
+    import os
+
+    db_path = settings.DB_PATH
+    
+    if req.backup_dir and os.path.isabs(req.backup_dir):
+        backup_dir = req.backup_dir
+    else:
+        backup_dir = os.path.join(os.path.dirname(db_path), "backups")
+    
+    filepath = os.path.join(backup_dir, filename)
+
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="备份文件不存在")
+
+    return FileResponse(
+        filepath,
+        filename=filename,
+        media_type="application/octet-stream",
+    )
 
 
 def ensure_default_admin(db: Session) -> None:
